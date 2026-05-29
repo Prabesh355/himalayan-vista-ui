@@ -20,6 +20,9 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const visibleNavLinks = isAdmin
+    ? [...navLinks, { to: "/admin", label: "Admin" }]
+    : navLinks;
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -62,7 +65,7 @@ export function Navbar() {
           </Link>
 
           <ul className="hidden md:flex items-center gap-1">
-            {navLinks(isAdmin).map((l) => (
+            {visibleNavLinks.map((l) => (
               <li key={l.to}>
                 <Link
                   to={l.to}
@@ -120,7 +123,7 @@ export function Navbar() {
 
         {open && (
           <div className="md:hidden mt-2 glass rounded-2xl p-2 animate-fade-up">
-            {navLinks.map((l) => (
+            {visibleNavLinks.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
