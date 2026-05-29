@@ -1,0 +1,39 @@
+import axios from "axios";
+
+/**
+ * Central Axios instance.
+ */
+export const api = axios.create({
+  baseURL: "http://localhost:5000/api",
+  timeout: 15000,
+  headers: { "Content-Type": "application/json" },
+});
+
+// Request Interceptor: Attach JWT Token automatically
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = window.localStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
+// Response Interceptor: Handle global errors (e.g., Token expiration)
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    // Handle unauthorized or token expiry
+    if (err.response?.status === 401) {
+      console.warn('Unauthorized. Logging out...');
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('token');
+      }
+    }
+    
+    return Promise.reject(err);
+  },
+);
+
+export default api;
