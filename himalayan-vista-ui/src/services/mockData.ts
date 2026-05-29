@@ -3,6 +3,7 @@ import annapurna from "@/assets/Annapurna base camp.jpg";
 import annapurnaCircuit from "@/assets/Annapurna Circuit.jpg";
 import manaslu from "@/assets/manaslu.jpg";
 import lobuche from "@/assets/Lobuche.jpg";
+import threePass from "@/assets/Everest three pass trek.jpg";
 import pokhara from "@/assets/dest-pokhara.jpg";
 import kathmandu from "@/assets/dest-kathmandu.jpg";
 import langtang from "@/assets/dest-langtang.jpg";
@@ -163,6 +164,24 @@ export const destinations: Destination[] = [
     rating: 4.8,
     reviews: 248,
     tags: ["Trekking", "Cultural", "Pass"],
+  },
+  {
+    id: "8",
+    slug: "three-pass-trek",
+    name: "Three Pass Trek",
+    region: "Everest",
+    tagline: "Traverse the high Himalayan passes",
+    description:
+      "A classic circuit traversing three high passes near Everest — a challenging and rewarding high-altitude trek for experienced trekkers.",
+    image: threePass,
+    altitude: "5,200 m",
+    bestSeason: "Mar–May · Sep–Nov",
+    difficulty: "Strenuous",
+    duration: "18 days",
+    priceFrom: 1999,
+    rating: 4.9,
+    reviews: 64,
+    tags: ["Trekking", "High Altitude", "Adventure"],
   },
 ];
 
