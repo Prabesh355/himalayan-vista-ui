@@ -1,6 +1,7 @@
 import { j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { L as Link } from "../_libs/tanstack__react-router.mjs";
-import { s as stats, d as destinations, D as DestinationCard, t as testimonials } from "./mockData-DGDYsaR4.mjs";
+import { s as stats, d as destinations, a as testimonials } from "./mockData-CJYvBa3A.mjs";
+import { D as DestinationCard } from "./DestinationCard-DD09kPf0.mjs";
 import { m as motion } from "../_libs/framer-motion.mjs";
 import { h as Sparkles, a as ArrowRight, b as Compass, f as ShieldCheck, i as Star } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__router-core.mjs";

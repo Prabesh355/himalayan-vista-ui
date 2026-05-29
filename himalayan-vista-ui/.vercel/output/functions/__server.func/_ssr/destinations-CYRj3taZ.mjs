@@ -1,5 +1,6 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
-import { d as destinations, D as DestinationCard } from "./mockData-DGDYsaR4.mjs";
+import { D as DestinationCard } from "./DestinationCard-DD09kPf0.mjs";
+import { d as destinations } from "./mockData-CJYvBa3A.mjs";
 import { m as motion } from "../_libs/framer-motion.mjs";
 import { S as Search, g as SlidersHorizontal } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__react-router.mjs";

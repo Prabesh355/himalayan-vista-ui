@@ -4,7 +4,7 @@ import { b as createRouter, a as createRootRouteWithContext, u as useRouter, L a
 import { j as jsxRuntimeExports, r as reactExports } from "../_libs/react.mjs";
 import { J, z } from "../_libs/next-themes.mjs";
 import { T as Toaster$1 } from "../_libs/sonner.mjs";
-import { e as Mountain, X, c as Menu, I as Instagram, k as Twitter, F as Facebook, Y as Youtube, j as Sun, d as Moon } from "../_libs/lucide-react.mjs";
+import { X, c as Menu, I as Instagram, k as Twitter, F as Facebook, Y as Youtube, j as Sun, d as Moon } from "../_libs/lucide-react.mjs";
 import "../_libs/tanstack__router-core.mjs";
 import "../_libs/tanstack__history.mjs";
 import "../_libs/cookie-es.mjs";
@@ -18,7 +18,7 @@ import "crypto";
 import "async_hooks";
 import "stream";
 import "../_libs/isbot.mjs";
-const appCss = "/assets/styles-DvUTSYrj.css";
+const appCss = "/assets/styles-B9v33w1i.css";
 function ThemeProvider({ children }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     J,
@@ -50,10 +50,12 @@ function ThemeToggle() {
     }
   );
 }
+const logo = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODAwIDgwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgPCEtLSBTdW4gLS0+DQogIDxjaXJjbGUgY3g9IjQwMCIgY3k9IjEyMCIgcj0iODAiIGZpbGw9IiNGRkE1MDAiIG9wYWNpdHk9IjAuOSIvPg0KICANCiAgPCEtLSBNb3VudGFpbiBSYW5nZSBCYWNrZ3JvdW5kIC0tPg0KICA8ZGVmcz4NCiAgICA8bGluZWFyR3JhZGllbnQgaWQ9Im1vdW50YWluR3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4NCiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNFOEU4RTg7c3RvcC1vcGFjaXR5OjEiIC8+DQogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNEMEQwRDA7c3RvcC1vcGFjaXR5OjEiIC8+DQogICAgPC9saW5lYXJHcmFkaWVudD4NCiAgPC9kZWZzPg0KICANCiAgPCEtLSBNb3VudGFpbiAxIChMZWZ0KSAtLT4NCiAgPHBvbHlnb24gcG9pbnRzPSIxNTAsNTAwIDM1MCwyMDAgMjgwLDUwMCIgZmlsbD0idXJsKCNtb3VudGFpbkdyYWRpZW50KSIgc3Ryb2tlPSIjNUM0MDMzIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCiAgDQogIDwhLS0gTW91bnRhaW4gMiAoQ2VudGVyKSAtLT4NCiAgPHBvbHlnb24gcG9pbnRzPSIzMDAsNTUwIDUwMCwxNTAgNzAwLDU1MCIgZmlsbD0idXJsKCNtb3VudGFpbkdyYWRpZW50KSIgc3Ryb2tlPSIjNUM0MDMzIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQogIA0KICA8IS0tIE1vdW50YWluIDMgKFJpZ2h0KSAtLT4NCiAgPHBvbHlnb24gcG9pbnRzPSI1NTAsNTAwIDc1MCwyNTAgODIwLDUwMCIgZmlsbD0idXJsKCNtb3VudGFpbkdyYWRpZW50KSIgc3Ryb2tlPSIjNUM0MDMzIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCiAgDQogIDwhLS0gVHJla2tlciAtLT4NCiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDgwLCAyODApIj4NCiAgICA8IS0tIEhlYWQgLS0+DQogICAgPGNpcmNsZSBjeD0iMCIgY3k9Ii0xNSIgcj0iOCIgZmlsbD0iIzNEMjgxNyIvPg0KICAgIDwhLS0gQm9keSAtLT4NCiAgICA8cmVjdCB4PSItNCIgeT0iLTUiIHdpZHRoPSI4IiBoZWlnaHQ9IjI1IiBmaWxsPSIjM0QyODE3Ii8+DQogICAgPCEtLSBMZWdzIC0tPg0KICAgIDxsaW5lIHgxPSItMyIgeTE9IjIwIiB4Mj0iLTYiIHkyPSIzNSIgc3Ryb2tlPSIjM0QyODE3IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPg0KICAgIDxsaW5lIHgxPSIzIiB5MT0iMjAiIHgyPSI4IiB5Mj0iMzUiIHN0cm9rZT0iIzNEMjgxNyIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4NCiAgICA8IS0tIEFybXMgcmFpc2VkIC0tPg0KICAgIDxsaW5lIHgxPSItNCIgeTE9IjUiIHgyPSItMTUiIHkyPSItNSIgc3Ryb2tlPSIjM0QyODE3IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPg0KICAgIDxsaW5lIHgxPSI0IiB5MT0iNSIgeDI9IjE1IiB5Mj0iLTUiIHN0cm9rZT0iIzNEMjgxNyIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4NCiAgPC9nPg0KICANCiAgPCEtLSBUZXh0IC0tPg0KICA8dGV4dCB4PSI0MDAiIHk9IjY4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzNEMjgxNyIgbGV0dGVyLXNwYWNpbmc9IjIiPg0KICAgIE5PTUFEUyBOQVZJR0FURQ0KICA8L3RleHQ+DQogIDx0ZXh0IHg9IjQwMCIgeT0iNzQwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjM0QyODE3IiBsZXR0ZXItc3BhY2luZz0iMiI+DQogICAgTkVQQUwNCiAgPC90ZXh0Pg0KPC9zdmc+DQo=";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/destinations", label: "Destinations" },
   { to: "/packages", label: "Trekking" },
+  { to: "/teams", label: "Our Teams" },
   { to: "/blogs", label: "Stories" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" }
@@ -80,8 +82,8 @@ function Navbar() {
             className: `flex items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-500 ${scrolled ? "glass shadow-elegant" : "bg-transparent"}`,
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs(Link, { to: "/", className: "flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "grid h-9 w-9 place-items-center rounded-xl bg-gradient-summit shadow-glow transition-transform group-hover:rotate-6", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Mountain, { className: "h-5 w-5 text-white", strokeWidth: 2.2 }) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold tracking-tight text-foreground", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: logo, alt: "Nomads Navigate Nepal", className: "h-10 w-10 transition-transform group-hover:rotate-6" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold tracking-tight text-foreground hidden sm:inline", children: [
                   "Nomads ",
                   /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-gradient-sunset", children: "Nepal" })
                 ] })
@@ -153,7 +155,7 @@ function Footer() {
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-12 md:grid-cols-4", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "md:col-span-1", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs(Link, { to: "/", className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "grid h-9 w-9 place-items-center rounded-xl bg-gradient-summit shadow-glow", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Mountain, { className: "h-5 w-5 text-white" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: logo, alt: "Nomads Navigate Nepal", className: "h-10 w-10" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold tracking-tight", children: [
             "Nomads ",
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-gradient-sunset", children: "Nepal" })
@@ -176,6 +178,7 @@ function Footer() {
           links: [
             ["Destinations", "/destinations"],
             ["Trekking Packages", "/packages"],
+            ["Our Teams", "/teams"],
             ["Stories", "/blogs"],
             ["Gallery", "/about"]
           ]
@@ -281,7 +284,7 @@ function ErrorComponent({ error, reset }) {
     ] })
   ] }) });
 }
-const Route$8 = createRootRouteWithContext()({
+const Route$9 = createRootRouteWithContext()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -317,7 +320,7 @@ function RootShell({ children }) {
   ] });
 }
 function RootComponent() {
-  const { queryClient } = Route$8.useRouteContext();
+  const { queryClient } = Route$9.useRouteContext();
   return /* @__PURE__ */ jsxRuntimeExports.jsx(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(ThemeProvider, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-h-screen flex flex-col bg-background", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Navbar, {}),
@@ -327,6 +330,24 @@ function RootComponent() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(Toaster, { position: "top-right" })
   ] }) });
 }
+const $$splitComponentImporter$8 = () => import("./teams-BGpB1iqm.mjs");
+const Route$8 = createFileRoute("/teams")({
+  head: () => ({
+    meta: [{
+      title: "Our Team — Nomads Navigate Nepal"
+    }, {
+      name: "description",
+      content: "Meet our experienced trekking guides and expedition leaders. Local experts with decades of combined experience in the Himalayas."
+    }, {
+      property: "og:title",
+      content: "Our Team — Nomads Navigate Nepal"
+    }, {
+      property: "og:description",
+      content: "Meet the expert guides who lead our Himalayan adventures."
+    }]
+  }),
+  component: lazyRouteComponent($$splitComponentImporter$8, "component")
+});
 const $$splitComponentImporter$7 = () => import("./packages-Ddt1OuTo.mjs");
 const Route$7 = createFileRoute("/packages")({
   head: () => ({
@@ -351,7 +372,7 @@ const Route$6 = createFileRoute("/login")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$6, "component")
 });
-const $$splitComponentImporter$5 = () => import("./destinations-CBDl2dCL.mjs");
+const $$splitComponentImporter$5 = () => import("./destinations-CYRj3taZ.mjs");
 const Route$5 = createFileRoute("/destinations")({
   head: () => ({
     meta: [{
@@ -417,7 +438,7 @@ const Route$1 = createFileRoute("/about")({
   }),
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./index-BKd9YqkU.mjs");
+const $$splitComponentImporter = () => import("./index-DHyAgE1w.mjs");
 const Route = createFileRoute("/")({
   head: () => ({
     meta: [{
@@ -435,45 +456,50 @@ const Route = createFileRoute("/")({
   }),
   component: lazyRouteComponent($$splitComponentImporter, "component")
 });
+const TeamsRoute = Route$8.update({
+  id: "/teams",
+  path: "/teams",
+  getParentRoute: () => Route$9
+});
 const PackagesRoute = Route$7.update({
   id: "/packages",
   path: "/packages",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const LoginRoute = Route$6.update({
   id: "/login",
   path: "/login",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const DestinationsRoute = Route$5.update({
   id: "/destinations",
   path: "/destinations",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const DashboardRoute = Route$4.update({
   id: "/dashboard",
   path: "/dashboard",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const ContactRoute = Route$3.update({
   id: "/contact",
   path: "/contact",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const BlogsRoute = Route$2.update({
   id: "/blogs",
   path: "/blogs",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const AboutRoute = Route$1.update({
   id: "/about",
   path: "/about",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const IndexRoute = Route.update({
   id: "/",
   path: "/",
-  getParentRoute: () => Route$8
+  getParentRoute: () => Route$9
 });
 const rootRouteChildren = {
   IndexRoute,
@@ -483,9 +509,10 @@ const rootRouteChildren = {
   DashboardRoute,
   DestinationsRoute,
   LoginRoute,
-  PackagesRoute
+  PackagesRoute,
+  TeamsRoute
 };
-const routeTree = Route$8._addFileChildren(rootRouteChildren)._addFileTypes();
+const routeTree = Route$9._addFileChildren(rootRouteChildren)._addFileTypes();
 const getRouter = () => {
   const queryClient = new QueryClient();
   const router = createRouter({
