@@ -5,6 +5,11 @@ export default defineConfig({
     server: { entry: "server" },
   },
   nitro: {
-    preset: 'vercel'
+    preset: 'vercel',
+    output: {
+      dir: '.vercel/output',
+      serverDir: '.vercel/output/functions/__server.func',
+      publicDir: '.vercel/output/static',
+    }
   }
 });
