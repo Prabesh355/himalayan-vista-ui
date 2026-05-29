@@ -1,5 +1,6 @@
 import everest from "@/assets/everest-base-camp.jpeg";
 import mera from "@/assets/mera-peak-expedition.jpg";
+import meraSki from "@/assets/Mera Peak ski.jpg";
 import annapurna from "@/assets/annapurna-base-camp.jpg";
 import annapurnaCircuit from "@/assets/annapurna-circuit.jpg";
 import manaslu from "@/assets/manaslu.jpg";
@@ -66,7 +67,7 @@ export const destinations: Destination[] = [
     tagline: "Highest ski descent in Nepal",
     description:
       "Combine trekking and skiing in one adventure. Ascend Mera Peak and ski down the pristine slopes of the Himalayas.",
-    image: mera,
+    image: meraSki,
     altitude: "6,476 m",
     bestSeason: "Mar–May",
     difficulty: "Strenuous",
