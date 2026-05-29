@@ -1,21 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Mail, Lock, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "Login — Nomads Navigate Nepal" },
-      { name: "description", content: "Login to your Nomads Navigate Nepal account." },
+      { title: "Register — Nomads Navigate Nepal" },
+      { name: "description", content: "Create a new Nomads Navigate Nepal account." },
     ],
   }),
-  component: LoginPage,
+  component: RegisterPage,
 });
 
-interface LoginFormData {
+interface RegisterFormData {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+  passwordConfirm: string;
 }
 
 interface ApiResponse {
@@ -30,18 +33,20 @@ interface ApiResponse {
   };
 }
 
-function LoginPage() {
+function RegisterPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<LoginFormData>({
+  const [formData, setFormData] = useState<RegisterFormData>({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
+    passwordConfirm: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Email validation regex
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -53,7 +58,6 @@ function LoginPage() {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (error) setError(null);
   };
 
@@ -63,6 +67,16 @@ function LoginPage() {
     setSuccess(false);
 
     // Validation
+    if (!formData.firstName) {
+      setError("First name is required");
+      return;
+    }
+
+    if (!formData.lastName) {
+      setError("Last name is required");
+      return;
+    }
+
     if (!formData.email) {
       setError("Email is required");
       return;
@@ -83,47 +97,51 @@ function LoginPage() {
       return;
     }
 
+    if (formData.password !== formData.passwordConfirm) {
+      setError("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Get the backend API URL from environment or use default
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-      const response = await fetch(`${apiUrl}/auth/login`, {
+      const response = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
           email: formData.email.toLowerCase(),
           password: formData.password,
+          passwordConfirm: formData.passwordConfirm,
         }),
-        credentials: "include", // Include cookies
+        credentials: "include",
       });
 
       const data: ApiResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || "Registration failed");
       }
 
-      // Success!
       setSuccess(true);
 
-      // Store token in localStorage
       if (data.token) {
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
-      // Show success message briefly then redirect
       setTimeout(() => {
         navigate({ to: "/dashboard" });
       }, 1500);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Login failed. Please try again.";
+      const errorMessage = err instanceof Error ? err.message : "Registration failed. Please try again.";
       setError(errorMessage);
-      console.error("Login error:", err);
+      console.error("Registration error:", err);
     } finally {
       setLoading(false);
     }
@@ -135,23 +153,23 @@ function LoginPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
-            Welcome Back
+            Join Us
           </h1>
           <p className="text-muted-foreground">
-            Login to your Nomads Navigate Nepal account
+            Create your Nomads Navigate Nepal account
           </p>
         </div>
 
-        {/* Login Form */}
+        {/* Register Form */}
         <div className="rounded-2xl glass border border-border/50 p-8">
           {/* Success Message */}
           {success && (
             <div className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-green-600">Login Successful!</p>
+                <p className="font-semibold text-green-600">Registration Successful!</p>
                 <p className="text-sm text-green-600 opacity-75">
-                  Welcome back! Redirecting to your dashboard...
+                  Welcome! Redirecting to your dashboard...
                 </p>
               </div>
             </div>
@@ -162,13 +180,47 @@ function LoginPage() {
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-red-600">Login Failed</p>
+                <p className="font-semibold text-red-600">Registration Failed</p>
                 <p className="text-sm text-red-600 opacity-75">{error}</p>
               </div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Fields */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
+                  First Name
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="John"
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gradient-sunset transition-colors"
+                  disabled={loading}
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-foreground mb-2">
+                  Last Name
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Doe"
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gradient-sunset transition-colors"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
@@ -182,7 +234,7 @@ function LoginPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter your email"
+                  placeholder="john@example.com"
                   className="w-full pl-10 pr-4 py-2 rounded-lg bg-secondary border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gradient-sunset transition-colors"
                   disabled={loading}
                 />
@@ -202,7 +254,27 @@ function LoginPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Enter your password"
+                  placeholder="At least 6 characters"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg bg-secondary border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gradient-sunset transition-colors"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            {/* Confirm Password Field */}
+            <div>
+              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-foreground mb-2">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+                <input
+                  id="passwordConfirm"
+                  type={showPassword ? "text" : "password"}
+                  name="passwordConfirm"
+                  value={formData.passwordConfirm}
+                  onChange={handleChange}
+                  placeholder="Re-enter password"
                   className="w-full pl-10 pr-4 py-2 rounded-lg bg-secondary border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gradient-sunset transition-colors"
                   disabled={loading}
                 />
@@ -217,24 +289,14 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Forgot Password Link */}
-            <div className="text-right">
-              <Link
-                to="/contact"
-                className="text-sm text-gradient-sunset hover:opacity-80 transition-opacity"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            {/* Login Button */}
+            {/* Register Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-6 py-2 rounded-lg bg-gradient-sunset text-white font-semibold hover:shadow-glow hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+              className="w-full mt-6 py-2 rounded-lg bg-gradient-sunset text-white font-semibold hover:shadow-glow hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
@@ -245,26 +307,12 @@ function LoginPage() {
             <div className="flex-1 h-px bg-border/50" />
           </div>
 
-          {/* Register Link */}
+          {/* Login Link */}
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-gradient-sunset hover:opacity-80 transition-opacity font-semibold">
-              Sign up here
+            Already have an account?{" "}
+            <Link to="/login" className="text-gradient-sunset hover:opacity-80 transition-opacity font-semibold">
+              Login here
             </Link>
-          </p>
-        </div>
-
-        {/* Info Section */}
-        <div className="mt-8 p-6 rounded-2xl glass border border-border/50">
-          <h3 className="font-semibold text-foreground mb-3">Demo Credentials</h3>
-          <p className="text-sm text-muted-foreground mb-2">
-            <strong>Email:</strong> demo@nomads.com
-          </p>
-          <p className="text-sm text-muted-foreground">
-            <strong>Password:</strong> demo123456
-          </p>
-          <p className="text-xs text-muted-foreground mt-4 italic">
-            Create your own account to book treks and access exclusive features.
           </p>
         </div>
       </div>

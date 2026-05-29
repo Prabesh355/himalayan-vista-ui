@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamsRouteImport } from './routes/teams'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DestinationsRouteImport } from './routes/destinations'
@@ -28,6 +29,11 @@ const TeamsRoute = TeamsRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PackagesRoute = PackagesRouteImport.update({
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/destinations': typeof DestinationsRoute
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRoute
+  '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/destinations': typeof DestinationsRoute
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRoute
+  '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/destinations': typeof DestinationsRoute
   '/login': typeof LoginRoute
   '/packages': typeof PackagesRoute
+  '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/destinations'
     | '/login'
     | '/packages'
+    | '/register'
     | '/shop'
     | '/teams'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/destinations'
     | '/login'
     | '/packages'
+    | '/register'
     | '/shop'
     | '/teams'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/destinations'
     | '/login'
     | '/packages'
+    | '/register'
     | '/shop'
     | '/teams'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   DestinationsRoute: typeof DestinationsRoute
   LoginRoute: typeof LoginRoute
   PackagesRoute: typeof PackagesRoute
+  RegisterRoute: typeof RegisterRoute
   ShopRoute: typeof ShopRoute
   TeamsRoute: typeof TeamsRoute
 }
@@ -174,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/packages': {
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   DestinationsRoute: DestinationsRoute,
   LoginRoute: LoginRoute,
   PackagesRoute: PackagesRoute,
+  RegisterRoute: RegisterRoute,
   ShopRoute: ShopRoute,
   TeamsRoute: TeamsRoute,
 }
