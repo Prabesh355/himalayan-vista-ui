@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
-import heroImg from "@/assets/hero-himalayas.jpg";
+import heroImg from "@/assets/everest-base-camp.jpeg";
 import { destinations, stats, testimonials } from "@/services/mockData";
 import { DestinationCard } from "@/components/DestinationCard";
 

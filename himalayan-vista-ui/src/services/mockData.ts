@@ -11,6 +11,14 @@ import kathmandu from "@/assets/dest-kathmandu.jpg";
 import langtang from "@/assets/dest-langtang.jpg";
 import chitwan from "@/assets/dest-chitwan.jpg";
 
+// Team member images
+import nishantKarki from "@/assets/Nishant Karki.jpg";
+import sukadevThapa from "@/assets/Sukadev Thapa.jpeg";
+import prashantManiTamang from "@/assets/Prashant Mani Tamang.jpg";
+import aadarshaBhandari from "@/assets/Aadarsha Bhandari.jpg";
+import simonBhattarai from "@/assets/Simon Bhattarai.jpg";
+import janguSherpa from "@/assets/Jangu Sherpa.jpg";
+
 export type Difficulty = "Easy" | "Moderate" | "Challenging" | "Strenuous";
 export type Region = "Everest" | "Annapurna" | "Langtang" | "Kathmandu Valley" | "Pokhara" | "Lowlands";
 
@@ -230,42 +238,42 @@ export const teamMembers: TeamMember[] = [
     name: "Nishant Karki",
     role: "Trekking Guide",
     bio: "Experienced trekking guide with deep knowledge of Himalayan trails and local culture. Passionate about sharing Nepal's natural beauty.",
-    avatar: "https://i.pravatar.cc/120?img=33",
+    avatar: nishantKarki,
   },
   {
     id: "tm2",
     name: "Simon Bhattarai",
     role: "Leading Role",
     bio: "Senior expedition leader and guide with expertise in high-altitude mountaineering. Leads our most challenging expeditions.",
-    avatar: "https://i.pravatar.cc/120?img=34",
+    avatar: simonBhattarai,
   },
   {
     id: "tm3",
     name: "Prashant Mani Tamang",
     role: "Main Guide",
     bio: "Main guide and expedition coordinator with years of experience in managing treks and ensuring traveller safety and comfort.",
-    avatar: "https://i.pravatar.cc/120?img=35",
+    avatar: prashantManiTamang,
   },
   {
     id: "tm4",
     name: "Jangu Sherpa",
     role: "Trekking + Climbing Guide",
     bio: "Expert climbing and trekking guide specializing in high-altitude expeditions. Multi-skilled mountaineer with climbing expertise.",
-    avatar: "https://i.pravatar.cc/120?img=36",
+    avatar: janguSherpa,
   },
   {
     id: "tm5",
     name: "Sukadev Thapa",
     role: "Trekking Guide",
     bio: "Dedicated guide with extensive knowledge of remote trails and local villages. Creates memorable cultural experiences.",
-    avatar: "https://i.pravatar.cc/120?img=37",
+    avatar: sukadevThapa,
   },
   {
     id: "tm6",
     name: "Aadarsha Bhandari",
     role: "Trekking Guide",
     bio: "Professional trekking guide committed to safety and excellent service. Fluent in multiple languages.",
-    avatar: "https://i.pravatar.cc/120?img=38",
+    avatar: aadarshaBhandari,
   },
   {
     id: "tm7",
