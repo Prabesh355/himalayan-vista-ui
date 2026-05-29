@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useRef } from "react";
 import { ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/hero-himalayas.jpg";
 import { destinations, stats, testimonials } from "@/services/mockData";
@@ -152,14 +153,54 @@ function FeaturedDestinations() {
         </Link>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {destinations.slice(0, 8).map((d, i) => (
-          <DestinationCard key={d.id} d={d} index={i} />
-        ))}
-      </div>
+          <div className="relative">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-muted-foreground">Scroll horizontally to view all treks</p>
+            </div>
+            <HorizontalScroller destinations={destinations} />
+          </div>
     </section>
   );
 }
+
+    function HorizontalScroller({ destinations }: { destinations: typeof import("@/services/mockData").destinations }) {
+      const ref = useRef<HTMLDivElement | null>(null);
+
+      const scroll = (dir: 'left' | 'right') => {
+        const el = ref.current;
+        if (!el) return;
+        const amt = Math.round(el.clientWidth * 0.8);
+        el.scrollBy({ left: dir === 'left' ? -amt : amt, behavior: 'smooth' });
+      };
+
+      return (
+        <div className="relative">
+          <button
+            aria-label="scroll left"
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/10 p-2 backdrop-blur-md hover:bg-white/20 hidden md:inline-flex"
+          >
+            ‹
+          </button>
+
+          <div ref={ref} className="flex gap-6 overflow-x-auto pb-6 scroll-pl-6 snap-x snap-mandatory touch-pan-x">
+            {destinations.map((d, i) => (
+              <div key={d.id} className="snap-start min-w-[260px] md:min-w-[300px]">
+                <DestinationCard d={d} index={i} />
+              </div>
+            ))}
+          </div>
+
+          <button
+            aria-label="scroll right"
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/10 p-2 backdrop-blur-md hover:bg-white/20 hidden md:inline-flex"
+          >
+            ›
+          </button>
+        </div>
+      );
+    }
 
 function Why() {
   const items = [
