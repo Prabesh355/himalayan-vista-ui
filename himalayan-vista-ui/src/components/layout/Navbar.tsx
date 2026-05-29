@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart, LogIn, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/logo.svg";
@@ -10,6 +10,7 @@ const navLinks = [
   { to: "/packages", label: "Trekking" },
   { to: "/teams", label: "Our Teams" },
   { to: "/blogs", label: "Stories" },
+  { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;
@@ -72,11 +73,27 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Link
-              to="/login"
-              className="hidden md:inline-flex items-center justify-center rounded-full bg-gradient-sunset px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-glow hover:-translate-y-0.5"
+              to="/shop"
+              className="hidden md:inline-flex items-center justify-center h-10 w-10 rounded-full glass hover:bg-secondary transition-colors"
+              title="Shopping Cart"
             >
-              Plan a Trip
+              <ShoppingCart className="h-5 w-5" />
             </Link>
+            <Link
+              to="/login"
+              className="hidden md:inline-flex items-center justify-center gap-2 rounded-full bg-foreground/10 px-3 py-2 text-sm font-medium hover:bg-foreground/20 transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Link>
+            <button
+              type="button"
+              className="hidden md:inline-flex items-center justify-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-glow hover:-translate-y-0.5"
+              title="Subscribe for updates"
+            >
+              <Bell className="h-4 w-4" />
+              Subscribe
+            </button>
             <button
               type="button"
               aria-label="Menu"
@@ -101,12 +118,29 @@ export function Navbar() {
                 {l.label}
               </Link>
             ))}
-            <Link
-              to="/login"
-              className="mt-1 block rounded-xl bg-gradient-sunset px-4 py-3 text-center text-sm font-semibold text-white"
+            <div className="mt-2 flex gap-2">
+              <Link
+                to="/shop"
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-medium text-foreground"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Shop
+              </Link>
+              <Link
+                to="/login"
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-medium text-foreground"
+              >
+                <LogIn className="h-4 w-4" />
+                Login
+              </Link>
+            </div>
+            <button
+              type="button"
+              className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-sunset px-4 py-3 text-sm font-semibold text-white"
             >
-              Plan a Trip
-            </Link>
+              <Bell className="h-4 w-4" />
+              Subscribe
+            </button>
           </div>
         )}
       </div>
