@@ -36,6 +36,7 @@ export function Footer() {
               links: [
                 ["Destinations", "/destinations"],
                 ["Trekking Packages", "/packages"],
+                ["Our Teams", "/teams"],
                 ["Stories", "/blogs"],
                 ["Gallery", "/about"],
               ],
