@@ -1,6 +1,6 @@
 import everest from "@/assets/everest-base-camp.jpeg";
 import mera from "@/assets/mera-peak-expedition.jpg";
-import meraSki from "@/assets/Mera Peak ski.jpg";
+import meraSki from "@/assets/mera-peak-ski.jpg";
 import annapurna from "@/assets/annapurna-base-camp.jpg";
 import annapurnaCircuit from "@/assets/annapurna-circuit.jpg";
 import manaslu from "@/assets/manaslu.jpg";
