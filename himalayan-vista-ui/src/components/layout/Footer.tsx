@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Mail } from "lucide-react";
 import logo from "@/assets/logo.svg";
 
 export function Footer() {
@@ -18,15 +18,28 @@ export function Footer() {
               Crafting unforgettable Himalayan journeys since 2011. Locally owned, ethically run, lifelong memories.
             </p>
             <div className="mt-5 flex gap-3">
-              {[Instagram, Twitter, Facebook, Youtube].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              <a
+                href="https://www.instagram.com/nomadsnavigatenepal5?igsh=MWJteGl4czI4ejJjZA=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/share/1K8PDHZgfM/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a
+                href="mailto:nomadsnavigatenepal5@gmail.com"
+                className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
             </div>
           </div>
 
