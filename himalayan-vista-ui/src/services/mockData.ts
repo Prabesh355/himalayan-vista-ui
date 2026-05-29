@@ -1,5 +1,8 @@
-import everest from "@/assets/dest-everest.jpg";
-import annapurna from "@/assets/dest-annapurna.jpg";
+import everest from "@/assets/Everest base camp.jpeg";
+import annapurna from "@/assets/Annapurna base camp.jpg";
+import annapurnaCircuit from "@/assets/Annapurna Circuit.jpg";
+import manaslu from "@/assets/manaslu.jpg";
+import lobuche from "@/assets/Lobuche.jpg";
 import pokhara from "@/assets/dest-pokhara.jpg";
 import kathmandu from "@/assets/dest-kathmandu.jpg";
 import langtang from "@/assets/dest-langtang.jpg";
@@ -97,7 +100,7 @@ export const destinations: Destination[] = [
     tagline: "Sacred peaks and remote wilderness",
     description:
       "Trek around the eighth-highest mountain in the world. Experience remote valleys, monasteries, and pristine alpine landscapes.",
-    image: annapurna,
+    image: manaslu,
     altitude: "5,160 m",
     bestSeason: "Sep–Nov · Mar–May",
     difficulty: "Challenging",
@@ -133,7 +136,7 @@ export const destinations: Destination[] = [
     tagline: "Alpine climbing with Everest views",
     description:
       "Combine trekking to Everest Base Camp with a thrilling climb to Lobuche East, with spectacular mountain panoramas.",
-    image: everest,
+    image: lobuche,
     altitude: "6,119 m",
     bestSeason: "Mar–May · Sep–Oct",
     difficulty: "Strenuous",
@@ -151,7 +154,7 @@ export const destinations: Destination[] = [
     tagline: "A journey through every climate zone",
     description:
       "From subtropical forests to the Thorong La pass at 5,416m — the most diverse trek in the Himalayas. Walk through all seasons.",
-    image: annapurna,
+    image: annapurnaCircuit,
     altitude: "5,416 m",
     bestSeason: "Oct–Nov · Mar–Apr",
     difficulty: "Challenging",
