@@ -1,8 +1,10 @@
 import everest from "@/assets/Everest base camp.jpeg";
+import mera from "@/assets/Mera Peak Expedition.JPG";
 import annapurna from "@/assets/Annapurna base camp.jpg";
 import annapurnaCircuit from "@/assets/Annapurna Circuit.jpg";
 import manaslu from "@/assets/manaslu.jpg";
-import lobuche from "@/assets/Lobuche.jpg";
+import lobucheEast from "@/assets/Lobuche East.JPG";
+import threePass from "@/assets/Everest three pass trek.jpg";
 import threePass from "@/assets/Everest three pass trek.jpg";
 import pokhara from "@/assets/dest-pokhara.jpg";
 import kathmandu from "@/assets/dest-kathmandu.jpg";
@@ -65,7 +67,7 @@ export const destinations: Destination[] = [
     tagline: "Highest ski descent in Nepal",
     description:
       "Combine trekking and skiing in one adventure. Ascend Mera Peak and ski down the pristine slopes of the Himalayas.",
-    image: everest,
+    image: mera,
     altitude: "6,476 m",
     bestSeason: "Mar–May",
     difficulty: "Strenuous",
@@ -83,7 +85,7 @@ export const destinations: Destination[] = [
     tagline: "Conquer Nepal's most accessible 6000m peak",
     description:
       "A thrilling climbing expedition to Mera Peak. Experience high-altitude mountaineering with stunning Himalayan views.",
-    image: everest,
+    image: mera,
     altitude: "6,476 m",
     bestSeason: "Mar–May · Sep–Oct",
     difficulty: "Strenuous",
@@ -137,7 +139,7 @@ export const destinations: Destination[] = [
     tagline: "Alpine climbing with Everest views",
     description:
       "Combine trekking to Everest Base Camp with a thrilling climb to Lobuche East, with spectacular mountain panoramas.",
-    image: lobuche,
+    image: lobucheEast,
     altitude: "6,119 m",
     bestSeason: "Mar–May · Sep–Oct",
     difficulty: "Strenuous",
