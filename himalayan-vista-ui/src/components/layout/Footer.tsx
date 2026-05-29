@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Mountain, Twitter, Youtube } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import logo from "@/assets/logo.svg";
 
 export function Footer() {
   return (
@@ -8,9 +9,7 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-summit shadow-glow">
-                <Mountain className="h-5 w-5 text-white" />
-              </span>
+              <img src={logo} alt="Nomads Navigate Nepal" className="h-10 w-10" />
               <span className="font-semibold tracking-tight">
                 Nomads <span className="text-gradient-sunset">Nepal</span>
               </span>
