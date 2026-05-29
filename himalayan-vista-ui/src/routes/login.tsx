@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Mail, Lock, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -87,7 +88,7 @@ function LoginPage() {
 
     try {
       // Get the backend API URL from environment or use default
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const apiUrl = getApiBaseUrl();
 
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",

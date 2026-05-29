@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -105,7 +106,7 @@ function RegisterPage() {
     setLoading(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const apiUrl = getApiBaseUrl();
 
       const response = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",

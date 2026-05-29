@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ShieldCheck, User, Package, BookOpen, MessageSquare } from "lucide-react";
+import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 interface AdminStats {
   totalUsers: number;
@@ -52,7 +53,7 @@ function AdminDashboard() {
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const apiUrl = getApiBaseUrl();
     fetch(`${apiUrl}/admin/dashboard/stats`, {
       method: 'GET',
       credentials: 'include',
