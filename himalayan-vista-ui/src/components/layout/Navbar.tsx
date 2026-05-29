@@ -18,7 +18,20 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsAdmin(parsedUser?.role === 'admin');
+      } catch {
+        setIsAdmin(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -49,7 +62,7 @@ export function Navbar() {
           </Link>
 
           <ul className="hidden md:flex items-center gap-1">
-            {navLinks.map((l) => (
+            {navLinks(isAdmin).map((l) => (
               <li key={l.to}>
                 <Link
                   to={l.to}
