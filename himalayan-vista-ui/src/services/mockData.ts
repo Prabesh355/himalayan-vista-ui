@@ -1,11 +1,10 @@
-import everest from "@/assets/Everest base camp.jpeg";
-import mera from "@/assets/Mera Peak Expedition.JPG";
-import annapurna from "@/assets/Annapurna base camp.jpg";
-import annapurnaCircuit from "@/assets/Annapurna Circuit.jpg";
+import everest from "@/assets/everest-base-camp.jpeg";
+import mera from "@/assets/mera-peak-expedition.jpg";
+import annapurna from "@/assets/annapurna-base-camp.jpg";
+import annapurnaCircuit from "@/assets/annapurna-circuit.jpg";
 import manaslu from "@/assets/manaslu.jpg";
-import lobucheEast from "@/assets/Lobuche East.JPG";
-import threePass from "@/assets/Everest three pass trek.jpg";
-import threePass from "@/assets/Everest three pass trek.jpg";
+import lobucheEast from "@/assets/lobuche-east.jpg";
+import threePass from "@/assets/everest-three-pass-trek.jpg";
 import pokhara from "@/assets/dest-pokhara.jpg";
 import kathmandu from "@/assets/dest-kathmandu.jpg";
 import langtang from "@/assets/dest-langtang.jpg";
