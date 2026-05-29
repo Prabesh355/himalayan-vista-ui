@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/UserPg');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 
@@ -11,7 +11,7 @@ exports.protect = async (req, res, next) => {
     // Get token from header or cookies
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.token) {
+    } else if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
     }
 
@@ -62,7 +62,7 @@ exports.isAuthenticated = async (req, res, next) => {
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.token) {
+    } else if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
     }
 
@@ -70,29 +70,8 @@ exports.isAuthenticated = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id);
     }
-
-    next();
   } catch (error) {
     req.user = null;
-    next();
   }
-};
-    return next(new ErrorResponse(\Not authorized to access this route\, 401));
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select(\-password\);
-    next();
-  } catch (error) {
-    return next(new ErrorResponse(\Token is invalid or expired\, 401));
-  }
-};
-
-exports.authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return next(new ErrorResponse(\You do not have permission to perform this action\, 403));
-    }
-    next();
-  };
+  next();
 };

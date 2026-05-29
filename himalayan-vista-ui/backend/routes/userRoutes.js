@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
-const User = require('../models/User');
+const User = require('../models/UserPg');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 

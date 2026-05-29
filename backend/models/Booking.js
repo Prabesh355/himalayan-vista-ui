@@ -1,214 +1,70 @@
-const mongoose = require('mongoose');
+const { createModel } = require('../lib/postgresModel');
+const { AppError } = require('../utils/errorHandler');
 
-const bookingSchema = new mongoose.Schema(
-  {
-    // Booking identifier
-    bookingNumber: {
-      type: String,
-      unique: true,
-      required: true,
-      index: true,
-    },
+const validBookingStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+const validPaymentStatuses = ['pending', 'partial', 'paid', 'refunded'];
+const validPaymentMethods = ['credit_card', 'debit_card', 'bank_transfer', 'wallet', 'cash'];
 
-    // References
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: [true, 'Please provide a user'],
-      index: true,
-    },
-    package: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Package',
-      required: [true, 'Please provide a package'],
-      index: true,
-    },
+const Booking = createModel('Booking', {
+  defaults: {
+    bookingStatus: 'pending',
+    paymentStatus: 'pending',
+    isActive: true,
+    discount: 0,
+    taxes: 0,
+    insurance: () => ({ included: false, insurancePrice: 0 }),
+  },
+  validate: async (doc) => {
+    if (!doc.user) throw new AppError('Please provide a user', 400);
+    if (!doc.package) throw new AppError('Please provide a package', 400);
+    if (!doc.travelDate) throw new AppError('Please provide travel date', 400);
+    if (!doc.endDate) throw new AppError('Please provide end date', 400);
+    if (!doc.numberOfTravelers || Number(doc.numberOfTravelers) < 1) {
+      throw new AppError('At least 1 traveler is required', 400);
+    }
+    if (Number(doc.numberOfTravelers) > 100) {
+      throw new AppError('Maximum 100 travelers allowed', 400);
+    }
+    if (doc.bookingStatus && !validBookingStatuses.includes(doc.bookingStatus)) {
+      throw new AppError(`${doc.bookingStatus} is not a valid booking status`, 400);
+    }
+    if (doc.paymentStatus && !validPaymentStatuses.includes(doc.paymentStatus)) {
+      throw new AppError(`${doc.paymentStatus} is not a valid payment status`, 400);
+    }
+    if (doc.paymentMethod && !validPaymentMethods.includes(doc.paymentMethod)) {
+      throw new AppError(`Invalid payment method: ${doc.paymentMethod}`, 400);
+    }
+  },
+  beforeSave: async (doc, context) => {
+    if (context.isNew && !doc.bookingNumber) {
+      const count = await Booking.countDocuments();
+      const date = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+      doc.bookingNumber = `BK${date}${String(count + 1).padStart(6, '0')}`;
+    }
 
-    // Travel information
-    travelDate: {
-      type: Date,
-      required: [true, 'Please provide travel date'],
+    if (doc.pricePerPerson != null && doc.numberOfTravelers != null) {
+      doc.totalPrice = Number(doc.pricePerPerson) * Number(doc.numberOfTravelers);
+    }
+  },
+  methods: {
+    canBeCancelled() {
+      return this.bookingStatus !== 'completed' && this.bookingStatus !== 'cancelled';
     },
-    endDate: {
-      type: Date,
-      required: [true, 'Please provide end date'],
-    },
-    numberOfTravelers: {
-      type: Number,
-      required: [true, 'Please provide number of travelers'],
-      min: [1, 'At least 1 traveler is required'],
-      max: [100, 'Maximum 100 travelers allowed'],
-    },
-
-    // Traveler information
-    travelers: [
-      {
-        firstName: {
-          type: String,
-          required: [true, 'Traveler first name is required'],
-          trim: true,
-        },
-        lastName: {
-          type: String,
-          required: [true, 'Traveler last name is required'],
-          trim: true,
-        },
-        email: {
-          type: String,
-          lowercase: true,
-        },
-        phone: String,
-        dateOfBirth: Date,
-        nationality: String,
-        idNumber: String,
-        passportNumber: String,
-        specialRequests: String,
-      },
-    ],
-
-    // Pricing information
-    pricePerPerson: {
-      type: Number,
-      required: [true, 'Price per person is required'],
-      min: [0, 'Price cannot be negative'],
-    },
-    totalPrice: {
-      type: Number,
-      required: [true, 'Total price is required'],
-      min: [0, 'Price cannot be negative'],
-    },
-    discount: {
-      type: Number,
-      default: 0,
-      min: [0, 'Discount cannot be negative'],
-    },
-    discountCode: String,
-    taxes: {
-      type: Number,
-      default: 0,
-      min: [0, 'Taxes cannot be negative'],
-    },
-    insurance: {
-      included: {
-        type: Boolean,
-        default: false,
-      },
-      insurancePrice: {
-        type: Number,
-        default: 0,
-        min: [0, 'Insurance price cannot be negative'],
-      },
-      insuranceType: String,
-    },
-
-    // Status tracking
-    bookingStatus: {
-      type: String,
-      enum: {
-        values: ['pending', 'confirmed', 'cancelled', 'completed'],
-        message: '{VALUE} is not a valid booking status',
-      },
-      default: 'pending',
-      index: true,
-    },
-    paymentStatus: {
-      type: String,
-      enum: {
-        values: ['pending', 'partial', 'paid', 'refunded'],
-        message: '{VALUE} is not a valid payment status',
-      },
-      default: 'pending',
-      index: true,
-    },
-    paymentMethod: {
-      type: String,
-      enum: ['credit_card', 'debit_card', 'bank_transfer', 'wallet', 'cash'],
-    },
-
-    // Additional information
-    specialRequests: String,
-    notes: String,
-    cancellationPolicy: String,
-    
-    // Cancellation tracking
-    cancellationDate: Date,
-    cancellationReason: String,
-    refundAmount: Number,
-    refundStatus: {
-      type: String,
-      enum: ['pending', 'processed', 'rejected'],
-    },
-
-    // Additional tracking
-    isActive: {
-      type: Boolean,
-      default: true,
+    daysUntilTravel() {
+      const today = new Date();
+      const travelDate = new Date(this.travelDate);
+      const diffTime = travelDate - today;
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     },
   },
-  { timestamps: true }
-);
-
-// Indexes for performance
-bookingSchema.index({ user: 1, createdAt: -1 });
-bookingSchema.index({ bookingStatus: 1, paymentStatus: 1 });
-bookingSchema.index({ travelDate: 1 });
-bookingSchema.index({ createdAt: -1 });
-bookingSchema.compound;
-
-// Generate unique booking number
-bookingSchema.pre('save', async function (next) {
-  if (this.isNew) {
-    try {
-      const count = await this.constructor.countDocuments();
-      const date = new Date().toISOString().slice(2, 10).replace(/-/g, '');
-      this.bookingNumber = `BK${date}${String(count + 1).padStart(6, '0')}`;
-    } catch (error) {
-      return next(error);
-    }
-  }
-  next();
+  relations: {
+    user: 'User',
+    package: 'Package',
+  },
 });
 
-// Auto-populate user and package on find operations
-bookingSchema.pre(/^find/, function (next) {
-  if (this.options._recursive) {
-    return next();
-  }
-  this.populate({
-    path: 'user',
-    select: 'firstName lastName email phone',
-  }).populate({
-    path: 'package',
-    select: 'title destination price duration difficulty',
-  });
-  next();
-});
-
-// Calculate totals
-bookingSchema.pre('save', function (next) {
-  if (this.isModified('pricePerPerson') || this.isModified('numberOfTravelers')) {
-    this.totalPrice = this.pricePerPerson * this.numberOfTravelers;
-  }
-  next();
-});
-
-// Instance method: Check if booking can be cancelled
-bookingSchema.methods.canBeCancelled = function () {
-  return this.bookingStatus !== 'completed' && this.bookingStatus !== 'cancelled';
-};
-
-// Instance method: Get days until travel
-bookingSchema.methods.daysUntilTravel = function () {
-  const today = new Date();
-  const travelDate = new Date(this.travelDate);
-  const diffTime = travelDate - today;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
-};
-
-// Static method: Get bookings by date range
-bookingSchema.statics.getBookingsByDateRange = function (startDate, endDate) {
-  return this.find({
+Booking.getBookingsByDateRange = async function getBookingsByDateRange(startDate, endDate) {
+  return Booking.find({
     travelDate: {
       $gte: startDate,
       $lte: endDate,
@@ -216,4 +72,4 @@ bookingSchema.statics.getBookingsByDateRange = function (startDate, endDate) {
   });
 };
 
-module.exports = mongoose.model('Booking', bookingSchema);
+module.exports = Booking;

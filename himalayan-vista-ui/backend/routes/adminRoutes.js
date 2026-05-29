@@ -7,7 +7,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.get('/dashboard/stats', protect, authorize('admin'), async (req, res, next) => {
   try {
-    const User = require('../models/User');
+    const User = require('../models/UserPg');
     const Package = require('../models/Package');
     const Booking = require('../models/Booking');
     const Inquiry = require('../models/Inquiry');
@@ -39,7 +39,7 @@ router.get('/dashboard/stats', protect, authorize('admin'), async (req, res, nex
 // User Management Routes
 router.get('/users', protect, authorize('admin'), async (req, res, next) => {
   try {
-    const User = require('../models/User');
+    const User = require('../models/UserPg');
     const users = await User.find().select('-password').sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -54,7 +54,7 @@ router.get('/users', protect, authorize('admin'), async (req, res, next) => {
 
 router.put('/users/:id/role', protect, authorize('admin'), async (req, res, next) => {
   try {
-    const User = require('../models/User');
+    const User = require('../models/UserPg');
     const { role } = req.body;
 
     if (!['user', 'admin', 'vendor'].includes(role)) {

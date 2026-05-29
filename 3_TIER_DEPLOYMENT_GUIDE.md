@@ -6,27 +6,21 @@ This document outlines the professional deployment strategy for the Nomade proje
 
 - **Tier 1 (Presentation/Frontend):** React + Vite UI deployed on **Vercel**.
 - **Tier 2 (Logic/Backend):** Dedicated Express.js Server deployed on **Railway** or **Render**.
-- **Tier 3 (Data/Database):** MongoDB managed on **MongoDB Atlas**.
+- **Tier 3 (Data/Database):** PostgreSQL managed on **Neon**.
 
 ---
 
-## 1. Database Tier: MongoDB Atlas configuration
+## 1. Database Tier: Neon PostgreSQL configuration
 
 ### Step 1: Create a Production Cluster
-1. Log in to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-2. Create a new Project, then build a **Cluster** (e.g., AWS / M0 Sandbox for starting).
-3. Under **Database Access**, create a production user (e.g., `nomade_prod_user`) and auto-generate a secure password.
+1. Log in to [Neon](https://neon.tech/).
+2. Create a new project and database.
+3. Copy the connection string for the `DATABASE_URL` environment variable.
 
-### Step 2: Configure Network Access
-1. Go to **Network Access**.
-2. Click **Add IP Address**.
-3. Temporarily select **Allow Access from Anywhere** (`0.0.0.0/0`) since Render/Railway dynamic IPs will change. 
-4. *(Security Best Practice)* If your backend provider offers static egress IPs, restrict the Atlas IP whitelist to **only** those specific IPs.
-
-### Step 3: Get the Connection String
-1. Go to **Databases** -> **Connect** -> **Connect your application**.
-2. Copy the URI. It will look like this:
-   `mongodb+srv://<username>:<password>@cluster0.mongodb.net/nomade_prod?retryWrites=true&w=majority`
+### Step 2: Get the Connection String
+1. Copy the Neon connection string from the dashboard.
+2. Use it as `DATABASE_URL`.
+3. Ensure `sslmode=require` is enabled.
 
 ---
 
@@ -41,16 +35,15 @@ You will need to input these variables into the dashboard of your chosen provide
 NODE_ENV=production
 PORT=5000
 FRONTEND_URL=https://himalayan-vista.vercel.app  # Replace with actual Vercel URL
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.../nomade?retryWrites=true&w=majority
+DATABASE_URL=postgresql://<user>:<password>@<host>/<db>?sslmode=require&channel_binding=require
 JWT_SECRET=your_hyper_secure_jwt_secret_here
 JWT_EXPIRE=30d
-COOKIE_SECRET=your_secure_cookie_secret
 ```
 
 ### Security & CORS configuration (Already in `app.js`)
 The backend relies on the following configurations for security:
 - **Helmet**: Adds essential HTTP headers to block common vulnerabilities.
-- **CORS**: Strictly permits origins mapped to `encodeURI(process.env.FRONTEND_URL)`. Prevents cross-origin requests from malicious domains.
+- **CORS**: Strictly permits origins mapped to `process.env.FRONTEND_URL`. Prevents cross-origin requests from malicious domains.
 - **Express-Rate-Limit**: Guards the REST API against brute-force/DDoS attacks.
 
 ### Option A: Deployment on Render
@@ -71,7 +64,7 @@ Render treats this as a **Web Service**.
 
 ## 3. Presentation Tier: React + Vite Frontend (Vercel)
 
-The frontend communicates with the backend exclusively through HTTP REST calls to the backend's provided URL. The frontend never touches MongoDB directly.
+The frontend communicates with the backend exclusively through HTTP REST calls to the backend's provided URL. The frontend never touches the database directly.
 
 ### Environment Variables (`.env.production`)
 ```env
@@ -96,8 +89,8 @@ To ensure the 3-tier architecture is preserved:
 1. **Client Browser** loads static JS/CSS from Vercel CDN.
 2. **React App** triggers `axios.get(VITE_API_BASE_URL + '/packages')`.
 3. The request hits the **Dedicated Render/Railway Node.js Server**.
-4. The Node.js server authenticates the JWT, applies rate limits, and uses Mongoose to hit **MongoDB Atlas** over a persistent TCP socket.
-5. MongoDB replies with data to the backend.
+4. The Node.js server authenticates the JWT, applies rate limits, and uses `pg` to hit **Neon PostgreSQL**.
+5. Neon replies with data to the backend.
 6. The backend formats it as JSON and responds to the Vercel-hosted client. 
 
 ## Important Production Reminders

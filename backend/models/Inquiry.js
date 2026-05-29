@@ -1,78 +1,32 @@
-const mongoose = require('mongoose');
+const { createModel } = require('../lib/postgresModel');
+const { AppError } = require('../utils/errorHandler');
 
-const inquirySchema = new mongoose.Schema(
-  {
-    firstName: {
-      type: String,
-      required: [true, 'Please provide a first name'],
-      trim: true,
-    },
-    lastName: {
-      type: String,
-      required: [true, 'Please provide a last name'],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, 'Please provide an email'],
-      match: [
-        /^'w+(['.-]?'w+)*@'w+(['.-]?'w+)*('.'w{2,3})+$/,
-        'Please provide a valid email',
-      ],
-    },
-    phone: {
-      type: String,
-      required: [true, 'Please provide a phone number'],
-    },
-    subject: {
-      type: String,
-      required: [true, 'Please provide an inquiry subject'],
-    },
-    inquiryType: {
-      type: String,
-      enum: ['general', 'booking', 'complaint', 'partnership', 'feedback'],
-      required: [true, 'Please provide an inquiry type'],
-    },
-    package: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Package',
-    },
-    message: {
-      type: String,
-      required: [true, 'Please provide a message'],
-      minlength: [10, 'Message must be at least 10 characters'],
-    },
-    preferredContact: {
-      type: String,
-      enum: ['email', 'phone', 'whatsapp'],
-      default: 'email',
-    },
-    status: {
-      type: String,
-      enum: ['new', 'in-progress', 'resolved', 'closed'],
-      default: 'new',
-    },
-    priority: {
-      type: String,
-      enum: ['low', 'medium', 'high'],
-      default: 'medium',
-    },
-    assignedTo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    response: {
-      message: String,
-      respondedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-      respondedAt: Date,
-    },
-    notes: String,
-    attachments: [String],
+const Inquiry = createModel('Inquiry', {
+  defaults: {
+    status: 'new',
+    priority: 'medium',
+    preferredContact: 'email',
   },
-  { timestamps: true }
-);
+  validate: async (doc) => {
+    if (!doc.firstName) throw new AppError('Please provide a first name', 400);
+    if (!doc.lastName) throw new AppError('Please provide a last name', 400);
+    if (!doc.email) throw new AppError('Please provide an email', 400);
+    if (!doc.phone) throw new AppError('Please provide a phone number', 400);
+    if (!doc.subject) throw new AppError('Please provide an inquiry subject', 400);
+    if (!doc.inquiryType) throw new AppError('Please provide an inquiry type', 400);
+    if (!doc.message) throw new AppError('Please provide a message', 400);
+    if (String(doc.message).length < 10) throw new AppError('Message must be at least 10 characters', 400);
+  },
+  beforeSave: async (doc) => {
+    if (doc.email) {
+      doc.email = String(doc.email).toLowerCase();
+    }
+  },
+  relations: {
+    package: 'Package',
+    assignedTo: 'User',
+    'response.respondedBy': 'User',
+  },
+});
 
-module.exports = mongoose.model('Inquiry', inquirySchema);
+module.exports = Inquiry;

@@ -16,7 +16,7 @@ All files have been created and configured for a complete, production-ready back
 - ✅ `.env.example` - Example configuration
 
 ### Configuration
-- ✅ `config/db.js` - MongoDB connection with logging
+- ✅ `config/db.js` - PostgreSQL connection with logging
 
 ### Controllers (Business Logic Layer)
 - ✅ `controllers/authController.js` - Authentication (register, login, password reset, etc.)
@@ -477,7 +477,7 @@ Example test commands provided in API_DOCUMENTATION.md
 ## NEXT STEPS
 
 1. ✅ Review all files created
-2. ✅ Update MongoDB Atlas connection string
+2. ✅ Update Neon PostgreSQL connection string
 3. ✅ Change JWT_SECRET to strong random string
 4. ✅ Test authentication flow
 5. ✅ Test CRUD operations

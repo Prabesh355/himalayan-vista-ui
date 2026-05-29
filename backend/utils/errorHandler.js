@@ -16,14 +16,14 @@ const errorHandler = (err, req, res, next) => {
 
   logger.error(`Error: ${err.message} | Status: ${err.statusCode}`);
 
-  // Wrong MongoDB ID error
-  if (err.name === 'CastError') {
-    const message = `Resource not found. Invalid: ${err.path}`;
+  // Invalid identifier / lookup error
+  if (err.name === 'CastError' || err.code === '22P02') {
+    const message = `Resource not found. Invalid: ${err.path || 'identifier'}`;
     err = new AppError(message, 400);
   }
 
-  // Mongoose Duplicate Key error
-  if (err.code === 11000) {
+  // Duplicate key error (Mongo or Postgres)
+  if (err.code === 11000 || err.code === '23505') {
     const field = Object.keys(err.keyValue)[0];
     const message = `${field} already exists`;
     err = new AppError(message, 400);

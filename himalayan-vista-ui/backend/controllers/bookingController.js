@@ -1,7 +1,7 @@
 const Booking = require('../models/Booking');
 const Package = require('../models/Package');
-const User = require('../models/User');
-const AppError = require('../utils/errorHandler');
+const User = require('../models/UserPg');
+const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 
 /**
