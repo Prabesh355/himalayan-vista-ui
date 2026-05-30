@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { destinations } from "@/services/mockData";
-import { DestinationCard } from "@/components/DestinationCard";
+import React from "react";
+import ReactMarkdown from "react-markdown";
 
 export const Route = createFileRoute("/packages")({
   head: () => ({
@@ -23,13 +24,27 @@ function PackagesIndex() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {destinations.map((d, i) => (
-          <div key={d.id}>
-            <a href={`/packages/${d.slug}`}>
-              <DestinationCard d={d} index={i} />
-            </a>
-          </div>
+      <div className="space-y-12">
+        {destinations.map((d) => (
+          <article key={d.id} className="glass rounded-2xl p-6">
+            <header>
+              <h2 className="text-2xl font-semibold">{d.title}</h2>
+              {d.tagline && <p className="mt-1 text-muted-foreground">{d.tagline}</p>}
+              <p className="mt-2 text-sm text-muted-foreground">{d.region} · {d.duration || "—"} · {d.difficulty || "—"}</p>
+            </header>
+
+            <section className="mt-6 prose prose-invert">
+              {d.itinerary ? (
+                <ReactMarkdown>{d.itinerary}</ReactMarkdown>
+              ) : (
+                <p className="text-muted-foreground">No itinerary available for this package.</p>
+              )}
+            </section>
+
+            <div className="mt-6">
+              <a className="text-accent" href={`#/packages/${d.slug}`}>View condensed card / booking →</a>
+            </div>
+          </article>
         ))}
       </div>
     </section>
