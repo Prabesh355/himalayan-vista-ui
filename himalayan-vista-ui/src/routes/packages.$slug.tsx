@@ -30,7 +30,7 @@ function PackageDetails() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-20">
+    <section className="mx-auto max-w-4xl px-4 py-20">
       <header className="mb-8">
         <h1 className="text-4xl font-semibold">{pkg.name}</h1>
         {pkg.tagline && <p className="mt-2 text-muted-foreground">{pkg.tagline}</p>}
@@ -78,6 +78,6 @@ function PackageDetails() {
       <div className="mt-12">
         <Link to="/packages" className="text-accent">← Back to all trekking packages</Link>
       </div>
-    </main>
+    </section>
   );
 }

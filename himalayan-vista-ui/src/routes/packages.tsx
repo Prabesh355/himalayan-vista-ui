@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Outlet, useLocation, Link } from "@tanstack/react-router";
 import { destinations } from "@/services/mockData";
 import React from "react";
-import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/packages")({
   head: () => ({
@@ -14,6 +14,13 @@ export const Route = createFileRoute("/packages")({
 });
 
 function PackagesIndex() {
+  const location = useLocation();
+  const isIndexPage = location.pathname === "/packages";
+
+  if (!isIndexPage) {
+    return <Outlet />;
+  }
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
       <div className="flex items-center justify-between mb-8">
