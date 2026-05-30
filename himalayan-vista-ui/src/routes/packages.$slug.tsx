@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useParams, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { destinations } from "@/services/mockData";
 import React from "react";
 import ReactMarkdown from "react-markdown";
@@ -16,8 +16,7 @@ export const Route = createFileRoute("/packages/$slug")({
 });
 
 function PackageDetails() {
-  const params = useParams();
-  const slug = (params as any).slug as string | undefined;
+  const { slug } = Route.useParams();
   const pkg = destinations.find((d) => d.slug === slug);
 
   if (!pkg) {
@@ -30,7 +29,7 @@ function PackageDetails() {
   }
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-20">
+    <section className="mx-auto mt-16 max-w-4xl rounded-3xl bg-background/60 px-4 py-12">
       <header className="mb-8">
         <h1 className="text-4xl font-semibold">{pkg.name}</h1>
         {pkg.tagline && <p className="mt-2 text-muted-foreground">{pkg.tagline}</p>}
