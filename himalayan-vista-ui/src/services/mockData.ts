@@ -77,29 +77,30 @@ export const destinations: Destination[] = [
     tagline: "Highest ski descent in Nepal",
     description:
       "Combine trekking and skiing in one adventure. Ascend Mera Peak and ski down the pristine slopes of the Himalayas.",
-    itinerary: `
-### Mera Peak Ski Expedition — 18 Days
+    itinerary: `## Mera Peak Ski Expedition — 18 Days
 
-Day 01: Arrival in Kathmandu (1,400m) — airport pickup, expedition briefing.
-Day 02: Kathmandu preparation — permits, gear checks, guide meeting.
-Day 03: Fly to Lukla & trek to Paiya (5–6 hrs).
-Day 04: Trek to Panggom (5–6 hrs).
-Day 05: Trek to Ningsow (5–6 hrs).
-Day 06: Trek to Chhatra Khola (6–7 hrs).
-Day 07: Trek to Kothe via Hinku Valley (6–7 hrs).
-Day 08: Trek to Thangnak (4–5 hrs).
-Day 09: Acclimatization and ski drills.
-Day 10: Trek to Khare (4–5 hrs) — Mera base settlement.
-Day 11: Ski training & climbing practice (ropework, crampons, glacier travel).
-Day 12: Trek to High Camp (5–6 hrs) — glacier approach.
-Day 13: Summit Mera Peak (6,476m) & ski descent (8–10 hrs).
-Day 14: Trek to Kothe (5–6 hrs).
-Day 15: Trek to Thuli Kharka (6–7 hrs).
-Day 16: Trek to Lukla via Zatrwa La Pass (6–8 hrs).
-Day 17: Fly back to Kathmandu — farewell dinner.
-Day 18: Final departure.
+  A technical ski-mountaineering itinerary for experienced backcountry skiers, combining trekking, alpine skills training and a summit/ski descent from Mera Peak (6,476 m).
 
-Notes: Designed for experienced backcountry skiers. Includes guide support, technical training, and proper acclimatization.`,
+  1. **Day 1 — Arrival in Kathmandu (1,400 m):** Airport pickup and expedition briefing. Final gear checks and permit administration.
+  2. **Day 2 — Kathmandu preparations:** Permit collection, equipment fitting, and group briefing with lead guide.
+  3. **Day 3 — Fly to Lukla; trek to Paiya (5–6 hrs):** Short flight into the Khumbu and the start of the trek.
+  4. **Day 4 — Paiya to Panggom (5–6 hrs):** Gradual ascent through alpine villages and scenic valleys.
+  5. **Day 5 — Panggom to Ningsow (5–6 hrs):** Trekking through high meadows and river crossings.
+  6. **Day 6 — Ningsow to Chhatra Khola (6–7 hrs):** Entering the Hinku Valley; steady altitude gain.
+  7. **Day 7 — Chhatra Khola to Kothe (6–7 hrs):** Approaching the Mera base area; campsite or teahouse accommodation.
+  8. **Day 8 — Kothe to Thangnak (4–5 hrs):** Lodging in the high valley and final approach preparations.
+  9. **Day 9 — Acclimatization & ski drills:** Glacier travel techniques, ropework, and avalanche awareness sessions.
+  10. **Day 10 — Thangnak to Khare (4–5 hrs):** Move to Mera base settlement and continue technical rehearsals.
+  11. **Day 11 — Ski training & climbing practice:** Focused skills training with guides (crevasse rescue, crampon work).
+  12. **Day 12 — Trek to High Camp (5–6 hrs):** Final alpine approach onto the glacier; prepare for summit push.
+  13. **Day 13 — Summit push & ski descent (8–10 hrs):** Early start to summit Mera Peak (6,476 m) and ski descent back to high camp/base.
+  14. **Day 14 — High Camp to Kothe (5–6 hrs):** Descend off the glacier and retrace to lower camps.
+  15. **Day 15 — Kothe to Thuli Kharka (6–7 hrs):** Easier trekking day; recovery and celebration.
+  16. **Day 16 — Thuli Kharka to Lukla via Zatrwa La (6–8 hrs):** Long day crossing the pass and returning toward Lukla.
+  17. **Day 17 — Fly to Kathmandu:** Return flight and farewell dinner in Kathmandu.
+  18. **Day 18 — Departure:** Transfer to the airport for onward travel.
+
+  **Notes:** Designed for experienced backcountry skiers. Includes certified guide support, technical training, and a conservative acclimatization schedule.`,
     image: meraSki,
     altitude: "6,476 m",
     bestSeason: "Mar–May",
@@ -118,26 +119,28 @@ Notes: Designed for experienced backcountry skiers. Includes guide support, tech
     tagline: "Conquer Nepal's most accessible 6000m peak",
     description:
       "A thrilling climbing expedition to Mera Peak. Experience high-altitude mountaineering with stunning Himalayan views.",
-    itinerary: `
-### Mera Peak Expedition — 16 days (climbing-focused)
+    itinerary: `## Mera Peak Expedition — 16 Days (Climbing-focused)
 
-Day 01: Arrival Kathmandu — briefing and hotel.
-Day 02: Preparation day — permits & gear check.
-Day 03: Fly to Lukla & trek to Paiya (5–6 hrs).
-Day 04: Trek to Panggom (5–6 hrs).
-Day 05: Trek to Ningsow (5–6 hrs).
-Day 06: Trek to Chhatra Khola (6–7 hrs).
-Day 07: Trek to Kothe (6–7 hrs) — enter Hinku Valley.
-Day 08: Trek to Thangnak (4–5 hrs).
-Day 09: Acclimatization day — short hikes and skills.
-Day 10: Trek to Khare (4–5 hrs).
-Day 11: Climbing practice — ropework, crampons, glacier travel.
-Day 12: Trek to High Camp (5–6 hrs).
-Day 13: Summit push to Mera Peak (6,476m) & descend (8–10 hrs).
-Day 14: Trek to Kothe (5–6 hrs).
-Day 15: Trek to Lukla (6–8 hrs).
-Day 16: Fly to Kathmandu — departure or extra night.
-`,
+  A progressive climbing itinerary geared for climbers aiming to summit Mera Peak (6,476 m). The program balances trekking days with technical skills and conservative acclimatization.
+
+  1. **Day 1 — Arrival Kathmandu:** Welcome, expedition briefing and hotel accommodation.
+  2. **Day 2 — Preparation & permits:** Gear checks, permit processing and final briefing.
+  3. **Day 3 — Fly to Lukla; trek to Paiya (5–6 hrs):** Begin trek into the Hinku Valley.
+  4. **Day 4 — Paiya to Panggom (5–6 hrs):** Scenic ascent through mountain villages.
+  5. **Day 5 — Panggom to Ningsow (5–6 hrs):** Continued high-valley trekking.
+  6. **Day 6 — Ningsow to Chhatra Khola (6–7 hrs):** Approach to the upper valley.
+  7. **Day 7 — Chhatra Khola to Kothe (6–7 hrs):** Enter Mera base region and settle into the team rhythm.
+  8. **Day 8 — Kothe to Thangnak (4–5 hrs):** Short day with time for recovery.
+  9. **Day 9 — Acclimatization & short hikes:** Skills refresh and light hikes to aid acclimatization.
+  10. **Day 10 — Trek to Khare (4–5 hrs):** Reach the primary base for technical training.
+  11. **Day 11 — Climbing practice:** Ropework, crampon technique and glacier travel drills.
+  12. **Day 12 — Trek to High Camp (5–6 hrs):** Final approach to the glacier high camp.
+  13. **Day 13 — Summit push & descend (8–10 hrs):** Summit attempt on Mera Peak and return to high camp or lower camp.
+  14. **Day 14 — High Camp to Kothe (5–6 hrs):** Descend off the glacier and begin trek out.
+  15. **Day 15 — Kothe to Lukla (6–8 hrs):** Final trekking day to Lukla.
+  16. **Day 16 — Fly to Kathmandu / departure:** Return flight and transfer to your hotel or onward travel.
+
+  **Notes:** Suitable for climbers with previous high-altitude trekking experience. Includes technical coaching and glacier safety instruction.`,
     image: mera,
     altitude: "6,476 m",
     bestSeason: "Mar–May · Sep–Oct",
@@ -156,22 +159,22 @@ Day 16: Fly to Kathmandu — departure or extra night.
     tagline: "Sacred peaks and remote wilderness",
     description:
       "Trek around the eighth-highest mountain in the world. Experience remote valleys, monasteries, and pristine alpine landscapes.",
-    itinerary: `
-### Manaslu Circuit (with optional Tsum Valley) — typical 13–18 days
+    itinerary: `## Manaslu Circuit (with optional Tsum Valley) — 13–18 Days
 
-Overview: The Manaslu Circuit winds through the Budi Gandaki gorge and Larkya La (5,167m). The route is remote, varied and less crowded than other classic treks.
+  The Manaslu Circuit is a remote, cultural and high-pass trek that traverses deep gorges, high alpine meadows and the Larkya La (5,167 m). An optional extension into the Tsum Valley adds cultural and spiritual highlights.
 
-Sample itinerary (13 days core; extend to 18 days with Tsum Valley):
-Day 1: Arrival Kathmandu — trek briefing.
-Day 2: Drive to Soti Khola / Macha Khola — start trek.
-Day 3–6: Trek through terraced lowlands, waterfalls and forests to Namrung / Samagaon.
-Day 7: Acclimatization — short hikes and monastery visits.
-Day 8–9: Trek toward Samdo and Dharmasala (approach to Larkya La).
-Day 10: Early start — cross Larkya La (5,167 m) and descend to Bimthang.
-Day 11–12: Continue descent to Dharapani / Jagat and drive out to Besishar.
-Day 13: Return to Kathmandu or extend via Tsum Valley for 4–5 extra days exploring remote monasteries and valleys.
+  **Sample itinerary (13 days core; extend to 18 days for Tsum Valley):**
 
-Notes: Challenging terrain with high passes; micro crampons recommended on icy sections. Permit and restricted-area requirements apply.`,
+  1. **Day 1 — Arrival Kathmandu:** Trek briefing and preparation.
+  2. **Day 2 — Drive to Soti Khola / Macha Khola:** Road transfer and start of trek.
+  3. **Days 3–6 — Trek to Namrung / Samagaon:** Pass through terraced farmland, forests and river valley settlements.
+  4. **Day 7 — Acclimatization:** Short hikes, monastery visits and rest.
+  5. **Days 8–9 — Trek toward Samdo and Dharmasala:** Remote valley trekking as you approach the high pass.
+  6. **Day 10 — Cross Larkya La (5,167 m):** Early start for the pass crossing and descent to Bimthang.
+  7. **Days 11–12 — Descend to Dharapani / Jagat:** Continue descent and trek out toward Besishar.
+  8. **Day 13 — Return to Kathmandu or extend:** Optionally continue into the Tsum Valley for 4–5 additional days.
+
+  **Notes:** Challenging terrain with high passes; appropriate equipment and permits are required. Micro-spikes or crampons may be recommended in icy conditions.`,
     image: manaslu,
     altitude: "5,160 m",
     bestSeason: "Sep–Nov · Mar–May",
@@ -208,29 +211,30 @@ Notes: Challenging terrain with high passes; micro crampons recommended on icy s
     tagline: "Alpine climbing with Everest views",
     description:
       "Combine trekking to Everest Base Camp with a thrilling climb to Lobuche East, with spectacular mountain panoramas.",
-    itinerary: `
-### Lobuche East Expedition — 18 Days (sample)
+    itinerary: `## Lobuche East Expedition — 18 Days (Sample)
 
-Day 01: Arrival Kathmandu (1,400m) — briefing and hotel.
-Day 02: Preparation day — permits & gear check.
-Day 03: Fly to Lukla & trek to Phakding (3–4 hrs).
-Day 04: Trek to Namche Bazaar (6–7 hrs).
-Day 05: Acclimatization day at Namche Bazaar.
-Day 06: Trek to Tengboche (5–6 hrs).
-Day 07: Trek to Dingboche (5–6 hrs).
-Day 08: Acclimatization at Dingboche.
-Day 09: Trek to Lobuche (5–6 hrs).
-Day 10: Trek to Everest Base Camp & return to Gorak Shep (7–8 hrs).
-Day 11: Sunrise hike to Kala Patthar (5,545m) & return to Lobuche.
-Day 12: Trek to Lobuche High Camp (prepare for summit).
-Day 13: Summit Lobuche East (6,119m) & descend to Pheriche (8–10 hrs).
-Day 14: Contingency/rest day.
-Day 15: Trek to Namche Bazaar (6–7 hrs).
-Day 16: Trek to Lukla (6–7 hrs).
-Day 17: Fly to Kathmandu & farewell dinner.
-Day 18: Final departure.
+  A classic alpine objective in the Everest region, combining high-altitude trekking with a technical summit attempt on Lobuche East (6,119 m). This itinerary includes acclimatization days and technical preparation.
 
-Notes: Fixed rope sections and alpine climbing techniques are used on summit day.`,
+  1. **Day 1 — Arrival Kathmandu:** Expedition briefing and hotel accommodation.
+  2. **Day 2 — Preparation & permits:** Final gear checks and permit processing.
+  3. **Day 3 — Fly to Lukla; trek to Phakding (3–4 hrs):** Begin the ascent into the Khumbu.
+  4. **Day 4 — Phakding to Namche Bazaar (6–7 hrs):** Enter Sherpa country; market town of Namche.
+  5. **Day 5 — Acclimatization at Namche Bazaar:** Short hikes and acclimatization activities.
+  6. **Day 6 — Namche to Tengboche (5–6 hrs):** Visit the famous Tengboche Monastery.
+  7. **Day 7 — Tengboche to Dingboche (5–6 hrs):** Continue the gradual ascent.
+  8. **Day 8 — Acclimatization at Dingboche:** Rest day to acclimatize and prepare.
+  9. **Day 9 — Dingboche to Lobuche (5–6 hrs):** Trek toward the base of the technical features.
+  10. **Day 10 — Trek to Everest Base Camp & Gorak Shep (7–8 hrs):** Optional side trip to EBC; return to Lobuche area.
+  11. **Day 11 — Sunrise to Kala Patthar (5,545 m):** Panoramic views and return to Lobuche.
+  12. **Day 12 — Lobuche to High Camp:** Final approach and summit preparation.
+  13. **Day 13 — Summit Lobuche East (6,119 m) & descend to Pheriche (8–10 hrs):** Summit day with alpine techniques; descent to lower camp.
+  14. **Day 14 — Contingency / rest day:** Flexible day for weather or recovery.
+  15. **Day 15 — Trek to Namche Bazaar (6–7 hrs):** Begin the trek out.
+  16. **Day 16 — Namche to Lukla (6–7 hrs):** Final trek segment to Lukla.
+  17. **Day 17 — Fly to Kathmandu & farewell dinner:** Return to the capital.
+  18. **Day 18 — Departure:** Transfer to airport for onward travel.
+
+  **Notes:** Summit day may require fixed ropes and alpine climbing techniques. Guides will assess conditions and determine timing for summit attempts.`,
     image: lobucheEast,
     altitude: "6,119 m",
     bestSeason: "Mar–May · Sep–Oct",
@@ -249,26 +253,27 @@ Notes: Fixed rope sections and alpine climbing techniques are used on summit day
     tagline: "A journey through every climate zone",
     description:
       "From subtropical forests to the Thorong La pass at 5,416m — the most diverse trek in the Himalayas. Walk through all seasons.",
-    itinerary: `
-### Annapurna Circuit via Tilicho Lake — 15 Days
+    itinerary: `## Annapurna Circuit via Tilicho Lake — 15 Days
 
-Day 1: Arrival Kathmandu (1,400m) — airport pickup and briefing.
-Day 2: Drive Kathmandu to Chame (2,670m) — 8–10 hrs.
-Day 3: Trek Chame to Upper Pisang (3,300m) — 5–6 hrs.
-Day 4: Trek Upper Pisang to Manang (3,540m) — 6–7 hrs.
-Day 5: Acclimatization in Manang — optional hikes.
-Day 6: Trek Manang to Shree Kharka (4,060m) — 4–5 hrs.
-Day 7: Trek Shree Kharka to Tilicho Base Camp (4,150m) — 5–6 hrs.
-Day 8: Visit Tilicho Lake (4,919m) & return to Shree Kharka — 7–8 hrs.
-Day 9: Trek Shree Kharka to Yak Kharka (4,050m) — 5–6 hrs.
-Day 10: Trek Yak Kharka to Thorong Phedi (4,525m) — 4–5 hrs.
-Day 11: Cross Thorong La Pass (5,416m) to Muktinath (3,800m) — 8–10 hrs.
-Day 12: Trek/drive Muktinath to Jomsom (2,720m) — 5–6 hrs.
-Day 13: Fly/drive Jomsom to Pokhara — rest and relaxation.
-Day 14: Transfer Pokhara to Kathmandu — hotel night.
-Day 15: Final departure.
+  A varied circuit passing through alpine meadows and the Thorong La (5,416 m). This route includes an optional visit to Tilicho Lake and offers diverse landscapes and cultural encounters.
 
-Notes: Best seasons are Spring and Autumn. Tilicho Lake is a high-altitude highlight; Thorong La is the most challenging day.`,
+  1. **Day 1 — Arrival Kathmandu (1,400 m):** Airport transfer and trek briefing.
+  2. **Day 2 — Drive to Chame (2,670 m):** Long scenic drive into the Annapurna foothills (8–10 hrs).
+  3. **Day 3 — Chame to Upper Pisang (3,300 m):** Trek with panoramic mountain views (5–6 hrs).
+  4. **Day 4 — Upper Pisang to Manang (3,540 m):** Continue to the high plateau (6–7 hrs).
+  5. **Day 5 — Acclimatization in Manang:** Optional hikes and acclimatization day.
+  6. **Day 6 — Manang to Shree Kharka (4,060 m):** Gradual ascent toward Tilicho (4–5 hrs).
+  7. **Day 7 — Shree Kharka to Tilicho Base Camp (4,150 m):** Approach to Tilicho region (5–6 hrs).
+  8. **Day 8 — Tilicho Lake visit (4,919 m) & return:** Day trip to the lake and return to Shree Kharka (7–8 hrs).
+  9. **Day 9 — Shree Kharka to Yak Kharka (4,050 m):** Trek toward Thorong area (5–6 hrs).
+  10. **Day 10 — Yak Kharka to Thorong Phedi (4,525 m):** Short day preparing for the pass (4–5 hrs).
+  11. **Day 11 — Cross Thorong La (5,416 m) to Muktinath (3,800 m):** Long, rewarding day over the pass (8–10 hrs).
+  12. **Day 12 — Muktinath to Jomsom (2,720 m):** Trek or drive to Jomsom and rest (5–6 hrs).
+  13. **Day 13 — Jomsom to Pokhara:** Fly or drive to Pokhara for relaxation.
+  14. **Day 14 — Pokhara to Kathmandu:** Transfer back to Kathmandu and overnight.
+  15. **Day 15 — Departure:** Transfer to the airport for onward travel.
+
+  **Notes:** Best seasons are Spring and Autumn. The Thorong La crossing is the most challenging day; proper acclimatization is essential.`,
     image: annapurnaCircuit,
     altitude: "5,416 m",
     bestSeason: "Oct–Nov · Mar–Apr",
