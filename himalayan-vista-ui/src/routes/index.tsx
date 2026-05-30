@@ -132,6 +132,10 @@ function Stats() {
 }
 
 function FeaturedDestinations() {
+  const contactEmail = "nomadsnavigatenepal5@gmail.com";
+  const whatsappNumber = "977981234567";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20want%20to%20book%20a%20trek.`;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
@@ -144,21 +148,31 @@ function FeaturedDestinations() {
             Six signature regions, hundreds of itineraries. Hover a card to start dreaming.
           </p>
         </div>
-        <Link
-          to="/destinations"
-          className="group inline-flex items-center gap-2 self-start rounded-full glass px-5 py-2.5 text-sm font-semibold transition hover:shadow-glow"
-        >
-          View all
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </Link>
+        <div className="flex flex-wrap items-end gap-3">
+          <Link
+            to="/destinations"
+            className="group inline-flex items-center gap-2 rounded-full glass px-5 py-2.5 text-sm font-semibold transition hover:shadow-glow"
+          >
+            View all
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-5 py-2.5 text-sm font-semibold text-white shadow-glow hover:opacity-95"
+          >
+            Book via WhatsApp
+          </a>
+        </div>
       </div>
 
-          <div className="relative">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-muted-foreground">Scroll horizontally to view all treks</p>
-            </div>
-            <HorizontalScroller destinations={destinations} />
-          </div>
+      <div className="relative">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm text-muted-foreground">Scroll horizontally to view all treks</p>
+        </div>
+        <HorizontalScroller destinations={destinations} />
+      </div>
     </section>
   );
 }

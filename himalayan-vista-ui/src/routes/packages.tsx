@@ -14,6 +14,10 @@ export const Route = createFileRoute("/packages")({
 });
 
 function PackagesIndex() {
+  const contactEmail = "nomadsnavigatenepal5@gmail.com";
+  const whatsappNumber = "977981234567";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20booking%20a%20trek.`;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
       <div className="flex items-center justify-between mb-8">
@@ -23,6 +27,28 @@ function PackagesIndex() {
           <p className="mt-2 text-muted-foreground">Hand-crafted trekking itineraries across Nepal — click a trek to view full details.</p>
         </div>
       </div>
+
+      <div className="mb-10 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <p className="text-sm font-semibold text-foreground">Book now or send a quick enquiry</p>
+        <p className="mt-2 text-sm text-muted-foreground max-w-2xl">Instantly reach us by email or WhatsApp from the trekking packages section.</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <a
+            href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20Nepal%20Trek&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20would%20like%20more%20information%20about%20your%20trekking%20packages.%20Please%20contact%20me%20with%20availability%20and%20pricing.%0A%0AThank%20you.`}
+            className="inline-flex items-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95"
+          >
+            Email enquiry
+          </a>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+          >
+            WhatsApp booking
+          </a>
+        </div>
+      </div>
+
       <div className="space-y-10">
         {destinations.map((d) => (
           <article key={d.id} className="glass rounded-2xl p-6">
@@ -47,10 +73,21 @@ function PackagesIndex() {
                   <span>from <strong>${d.priceFrom}</strong></span>
                 </div>
 
-                <div className="mt-4">
-                  <Link to={`/packages/${d.slug}`} className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-sm font-semibold text-white">
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Link
+                    to="/packages/$slug"
+                    params={{ slug: d.slug }}
+                    hash="package-details"
+                    className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-sm font-semibold text-white"
+                  >
                     View More
                   </Link>
+                  <a
+                    href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(d.name)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(d.name)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    Book Now
+                  </a>
                 </div>
               </div>
             </div>
