@@ -59,6 +59,10 @@ export function DestinationCard({ d, index = 0 }: { d: Destination; index?: numb
             <h3 className="mt-1 text-xl font-semibold tracking-tight">{d.name}</h3>
             <p className="mt-1 text-sm text-white/80 line-clamp-2">{d.tagline}</p>
 
+            {d.itinerary ? (
+              <p className="mt-2 text-sm text-white/70 line-clamp-3">{extractItinerarySnippet(d.itinerary)}</p>
+            ) : null}
+
             <div className="mt-4 flex items-center justify-between gap-2 text-xs text-white/85">
               <span className="inline-flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5" /> {d.duration}
@@ -75,4 +79,13 @@ export function DestinationCard({ d, index = 0 }: { d: Destination; index?: numb
       </Link>
     </motion.article>
   );
+}
+
+function extractItinerarySnippet(itinerary: string) {
+  // Take first few non-empty lines and join into a short snippet
+  const lines = itinerary
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0 && !l.startsWith('#'));
+  return lines.slice(0, 3).join(' ');
 }
