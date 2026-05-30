@@ -21,6 +21,7 @@ import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PackagesSlugRouteImport } from './routes/packages.$slug'
 
 const TeamsRoute = TeamsRouteImport.update({
   id: '/teams',
@@ -82,6 +83,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PackagesSlugRoute = PackagesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PackagesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -92,10 +98,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/destinations': typeof DestinationsRoute
   '/login': typeof LoginRoute
-  '/packages': typeof PackagesRoute
+  '/packages': typeof PackagesRouteWithChildren
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/packages/$slug': typeof PackagesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -106,10 +113,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/destinations': typeof DestinationsRoute
   '/login': typeof LoginRoute
-  '/packages': typeof PackagesRoute
+  '/packages': typeof PackagesRouteWithChildren
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/packages/$slug': typeof PackagesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -121,10 +129,11 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/destinations': typeof DestinationsRoute
   '/login': typeof LoginRoute
-  '/packages': typeof PackagesRoute
+  '/packages': typeof PackagesRouteWithChildren
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/packages/$slug': typeof PackagesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/packages/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/packages/$slug'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/packages/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -180,7 +192,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DestinationsRoute: typeof DestinationsRoute
   LoginRoute: typeof LoginRoute
-  PackagesRoute: typeof PackagesRoute
+  PackagesRoute: typeof PackagesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   ShopRoute: typeof ShopRoute
   TeamsRoute: typeof TeamsRoute
@@ -272,8 +284,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/packages/$slug': {
+      id: '/packages/$slug'
+      path: '/$slug'
+      fullPath: '/packages/$slug'
+      preLoaderRoute: typeof PackagesSlugRouteImport
+      parentRoute: typeof PackagesRoute
+    }
   }
 }
+
+interface PackagesRouteChildren {
+  PackagesSlugRoute: typeof PackagesSlugRoute
+}
+
+const PackagesRouteChildren: PackagesRouteChildren = {
+  PackagesSlugRoute: PackagesSlugRoute,
+}
+
+const PackagesRouteWithChildren = PackagesRoute._addFileChildren(
+  PackagesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -284,7 +315,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DestinationsRoute: DestinationsRoute,
   LoginRoute: LoginRoute,
-  PackagesRoute: PackagesRoute,
+  PackagesRoute: PackagesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   ShopRoute: ShopRoute,
   TeamsRoute: TeamsRoute,

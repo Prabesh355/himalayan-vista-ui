@@ -3,6 +3,7 @@ import { useParams, Link } from "@tanstack/react-router";
 import { destinations } from "@/services/mockData";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const Route = createFileRoute("/packages/$slug")({
   head: () => ({
@@ -50,7 +51,7 @@ function PackageDetails() {
             <>
               <h2 className="mt-8 text-2xl font-semibold">Detailed Itinerary</h2>
               <div className="mt-4">
-                <ReactMarkdown>{pkg.itinerary}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{pkg.itinerary}</ReactMarkdown>
               </div>
             </>
           ) : (
