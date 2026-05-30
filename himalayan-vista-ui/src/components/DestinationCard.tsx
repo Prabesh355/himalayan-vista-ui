@@ -19,11 +19,7 @@ export function DestinationCard({ d, index = 0 }: { d: Destination; index?: numb
       transition={{ duration: 0.6, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
       className="group relative overflow-hidden rounded-3xl glass shadow-soft transition-all hover:shadow-elegant hover:-translate-y-1"
     >
-      <Link
-        to="/destinations"
-        className="block"
-        aria-label={d.name}
-      >
+      <Link to={`/packages/${d.slug}`} className="block" aria-label={d.name}>
         <div className="relative aspect-[4/5] overflow-hidden">
           <img
             src={d.image}
@@ -59,9 +55,7 @@ export function DestinationCard({ d, index = 0 }: { d: Destination; index?: numb
             <h3 className="mt-1 text-xl font-semibold tracking-tight">{d.name}</h3>
             <p className="mt-1 text-sm text-white/80 line-clamp-2">{d.tagline}</p>
 
-            {d.itinerary ? (
-              <p className="mt-2 text-sm text-white/70 line-clamp-3">{extractItinerarySnippet(d.itinerary)}</p>
-            ) : null}
+            {/* Intentionally hide itinerary snippet on flashcards; full details shown on Trekking detail pages */}
 
             <div className="mt-4 flex items-center justify-between gap-2 text-xs text-white/85">
               <span className="inline-flex items-center gap-1.5">
@@ -80,12 +74,4 @@ export function DestinationCard({ d, index = 0 }: { d: Destination; index?: numb
     </motion.article>
   );
 }
-
-function extractItinerarySnippet(itinerary: string) {
-  // Take first few non-empty lines and join into a short snippet
-  const lines = itinerary
-    .split('\n')
-    .map((l) => l.trim())
-    .filter((l) => l.length > 0 && !l.startsWith('#'));
-  return lines.slice(0, 3).join(' ');
-}
+// No inline itinerary snippet here — cards are concise and link to full package pages.
