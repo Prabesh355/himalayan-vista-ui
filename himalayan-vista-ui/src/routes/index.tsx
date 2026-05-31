@@ -52,30 +52,30 @@ function Hero() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl"
         >
-          <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-white border border-white/20">
-            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-            Spring 2026 departures open · save 15%
+          <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-foreground border border-white/8">
+            <Sparkles className="h-3.5 w-3.5 text-gradient-sunset" />
+            Small group sizes · Expert Nepali guides
           </span>
-          <h1 className="mt-6 text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight text-white leading-[1.02]">
-            <span className="text-gradient-sunset">NOMADS NAVIGATE NEPAL</span>
+          <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-display tracking-tight text-foreground leading-[1.02]">
+            Explore Nepal Beyond The Map
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-white/85 leading-relaxed">
-            Explore Nepal, Beyond Maps !!
+          <p className="mt-6 max-w-xl text-lg text-foreground/90 leading-relaxed">
+            Discover authentic Himalayan adventures, hidden trails, and unforgettable journeys.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/destinations"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-6 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5"
+              to="/packages"
+              className="group inline-flex items-center gap-2 rounded-full bg-gradient-summit px-6 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5"
             >
-              Explore destinations
+              Explore Treks
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-full glass px-6 py-3.5 text-sm font-semibold text-white border border-white/25 hover:bg-white/20"
+              className="inline-flex items-center gap-2 rounded-full glass px-6 py-3.5 text-sm font-semibold text-foreground border border-border hover:bg-white/5"
             >
-              Talk to a guide
+              Plan Your Trip
             </Link>
           </div>
         </motion.div>

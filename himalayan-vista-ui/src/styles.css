@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;600;700&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -62,50 +63,46 @@
 }
 
 :root {
-  /* Nomads Navigate Nepal — Himalayan tourism design system
-     Light mode: glacier white + alpine blue + sunset ember accent */
   --radius: 1rem;
-  --background: oklch(0.985 0.005 220);
-  --foreground: oklch(0.18 0.04 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.04 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.04 250);
-  --primary: oklch(0.42 0.12 245);
-  --primary-foreground: oklch(0.99 0.005 220);
-  --secondary: oklch(0.94 0.02 220);
-  --secondary-foreground: oklch(0.22 0.05 250);
-  --muted: oklch(0.95 0.012 220);
-  --muted-foreground: oklch(0.48 0.03 245);
-  --accent: oklch(0.72 0.18 55);
-  --accent-foreground: oklch(0.16 0.04 60);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.015 230);
-  --input: oklch(0.9 0.015 230);
-  --ring: oklch(0.55 0.14 240);
+  --background: #F7F5F2; /* Warm White */
+  --foreground: #1D1D1D; /* Text */
+  --card: #FFFFFF;
+  --card-foreground: #1D1D1D;
+  --popover: #FFFFFF;
+  --popover-foreground: #1D1D1D;
+  --primary: #4A0B05; /* Deep Mountain Brown */
+  --primary-foreground: #FFFFFF;
+  --secondary: #F4AA42; /* Sunrise Orange */
+  --secondary-foreground: #1D1D1D;
+  --muted: #F1EFE9;
+  --muted-foreground: #6B6B6B;
+  --accent: #D97706; /* Accent */
+  --accent-foreground: #FFFFFF;
+  --destructive: #b91c1c;
+  --destructive-foreground: #FFFFFF;
+  --border: #E8E2DB;
+  --input: #FFFFFF;
+  --ring: #D97706;
 
   /* Brand tokens */
-  --brand-summit: oklch(0.42 0.12 245);
-  --brand-glacier: oklch(0.78 0.09 200);
-  --brand-ember: oklch(0.72 0.18 55);
-  --brand-prayer-red: oklch(0.6 0.21 28);
-  --brand-prayer-green: oklch(0.65 0.18 145);
+  --brand-mountain: #4A0B05;
+  --brand-sunrise: #F4AA42;
+  --brand-accent: #D97706;
 
   /* Gradients */
-  --gradient-summit: linear-gradient(135deg, oklch(0.42 0.12 245) 0%, oklch(0.62 0.14 230) 60%, oklch(0.78 0.09 200) 100%);
-  --gradient-sunset: linear-gradient(135deg, oklch(0.72 0.18 55) 0%, oklch(0.65 0.22 25) 100%);
-  --gradient-aurora: linear-gradient(135deg, oklch(0.42 0.12 245) 0%, oklch(0.55 0.18 290) 50%, oklch(0.72 0.18 55) 100%);
+  --gradient-summit: linear-gradient(135deg, #4A0B05 0%, #7a2b1f 60%, #d97706 100%);
+  --gradient-sunset: linear-gradient(135deg, #F4AA42 0%, #D97706 100%);
+  --gradient-aurora: linear-gradient(135deg, #4A0B05 0%, #F4AA42 60%, #D97706 100%);
 
   /* Glassmorphism */
-  --glass-bg: color-mix(in oklab, white 70%, transparent);
-  --glass-border: color-mix(in oklab, white 50%, transparent);
-  --glass-shadow: 0 10px 40px -10px oklch(0.42 0.12 245 / 0.25);
+  --glass-bg: rgba(255,255,255,0.6);
+  --glass-border: rgba(255,255,255,0.6);
+  --glass-shadow: 0 10px 40px -10px rgba(74,11,5,0.18);
 
   /* Elevation */
-  --shadow-soft: 0 4px 20px -8px oklch(0.2 0.04 250 / 0.15);
-  --shadow-elegant: 0 20px 60px -20px oklch(0.42 0.12 245 / 0.35);
-  --shadow-glow: 0 0 40px oklch(0.72 0.18 55 / 0.35);
+  --shadow-soft: 0 6px 30px rgba(29,29,29,0.06);
+  --shadow-elegant: 0 24px 80px rgba(74,11,5,0.12);
+  --shadow-glow: 0 8px 40px rgba(217,119,6,0.12);
 
   /* Motion */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -177,12 +174,16 @@
     color: var(--color-foreground);
     font-feature-settings: "ss01", "cv01";
     -webkit-font-smoothing: antialiased;
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   }
 
   html {
     scroll-behavior: smooth;
   }
 }
+
+/* Display font utility */
+.font-display { font-family: 'Cinzel', serif; }
 
 @layer utilities {
   .glass {
