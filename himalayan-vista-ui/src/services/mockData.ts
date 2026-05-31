@@ -92,28 +92,28 @@ export const destinations: Destination[] = [
         "Combine trekking and skiing in one adventure. Ascend Mera Peak and ski down the pristine slopes of the Himalayas.",
       itinerary: `## Mera Peak Ski Expedition — 18 Days
 
-  An exceptional ski-mountaineering itinerary for experienced backcountry skiers. This program combines the classic Mera Peak approach with structured alpine training, careful acclimatization, and a rewarding summit ski descent from Nepal’s highest trekking peak.
+    This exceptional ski-mountaineering journey is designed for experienced backcountry skiers. It combines the classic Mera Peak approach with structured alpine training, careful acclimatization, and a rewarding summit ski descent from Nepal’s highest trekking peak.
 
-  1. **Day 1 — Arrival in Kathmandu (1,400 m):** Airport transfer, expedition briefing, equipment review, and permit coordination.
-  2. **Day 2 — Kathmandu preparation day:** Final gear fitting, route briefing, and guidance from the expedition leader.
-  3. **Day 3 — Fly to Lukla; trek to Paiya (5–6 hrs):** Scenic mountain flight followed by a gradual trek into the Khumbu foothills.
-  4. **Day 4 — Paiya to Panggom (5–6 hrs):** Continue through forested trails and quiet Sherpa settlements.
-  5. **Day 5 — Panggom to Ningsow (5–6 hrs):** Traverse ridge lines and open valleys while gaining elevation steadily.
-  6. **Day 6 — Ningsow to Chhatra Khola (6–7 hrs):** Enter the Hinku Valley and settle into the expedition rhythm.
-  7. **Day 7 — Chhatra Khola to Kothe (6–7 hrs):** Move deeper into the valley toward the Mera approach route.
-  8. **Day 8 — Kothe to Thangnak (4–5 hrs):** A shorter trekking day with time for recovery and preparation.
-  9. **Day 9 — Acclimatization and ski technique session:** Glacier movement, rope systems, and avalanche awareness practice.
-  10. **Day 10 — Thangnak to Khare (4–5 hrs):** Reach the main staging point for ski and climbing preparation.
-  11. **Day 11 — Training day at Khare:** Guided practice on crampon use, rope travel, and crevasse rescue procedures.
-  12. **Day 12 — Trek to High Camp (5–6 hrs):** Move onto the upper glacier and prepare for summit day.
-  13. **Day 13 — Summit push and ski descent (8–10 hrs):** Early ascent to the summit of Mera Peak (6,476 m), followed by a controlled ski descent.
-  14. **Day 14 — High Camp to Kothe (5–6 hrs):** Descend safely back to lower elevations after the summit objective.
-  15. **Day 15 — Kothe to Thuli Kharka (6–7 hrs):** A steady return trek with time to unwind and recover.
-  16. **Day 16 — Thuli Kharka to Lukla via Zatrwa La (6–8 hrs):** Cross the pass and complete the final approach toward Lukla.
-  17. **Day 17 — Fly to Kathmandu:** Return to the capital for a farewell evening.
-  18. **Day 18 — Departure:** Airport transfer for onward travel.
+    - **Day 1 — Arrival in Kathmandu (1,400 m):** Airport transfer, expedition briefing, equipment review, and permit coordination.
+    - **Day 2 — Kathmandu preparation day:** Final gear fitting, route briefing, and guidance from the expedition leader.
+    - **Day 3 — Fly to Lukla; trek to Paiya (5–6 hrs):** Scenic mountain flight followed by a gradual trek into the Khumbu foothills.
+    - **Day 4 — Paiya to Panggom (5–6 hrs):** Continue through forested trails and quiet Sherpa settlements.
+    - **Day 5 — Panggom to Ningsow (5–6 hrs):** Traverse ridge lines and open valleys while gaining elevation steadily.
+    - **Day 6 — Ningsow to Chhatra Khola (6–7 hrs):** Enter the Hinku Valley and settle into the expedition rhythm.
+    - **Day 7 — Chhatra Khola to Kothe (6–7 hrs):** Move deeper into the valley toward the Mera approach route.
+    - **Day 8 — Kothe to Thangnak (4–5 hrs):** A shorter trekking day with time for recovery and preparation.
+    - **Day 9 — Acclimatization and ski technique session:** Glacier movement, rope systems, and avalanche awareness practice.
+    - **Day 10 — Thangnak to Khare (4–5 hrs):** Reach the main staging point for ski and climbing preparation.
+    - **Day 11 — Training day at Khare:** Guided practice on crampon use, rope travel, and crevasse rescue procedures.
+    - **Day 12 — Trek to High Camp (5–6 hrs):** Move onto the upper glacier and prepare for summit day.
+    - **Day 13 — Summit push and ski descent (8–10 hrs):** Early ascent to the summit of Mera Peak (6,476 m), followed by a controlled ski descent.
+    - **Day 14 — High Camp to Kothe (5–6 hrs):** Descend safely back to lower elevations after the summit objective.
+    - **Day 15 — Kothe to Thuli Kharka (6–7 hrs):** A steady return trek with time to unwind and recover.
+    - **Day 16 — Thuli Kharka to Lukla via Zatrwa La (6–8 hrs):** Cross the pass and complete the final approach toward Lukla.
+    - **Day 17 — Fly to Kathmandu:** Return to the capital for a farewell evening.
+    - **Day 18 — Departure:** Airport transfer for onward travel.
 
-  **Notes:** This itinerary is recommended for experienced skiers with prior high-altitude exposure. It includes professional guide support, structured technical training, and a conservative acclimatization profile.`,
+    **Trip notes:** Recommended for experienced skiers with prior high-altitude exposure. Includes professional guide support, technical training, and a conservative acclimatization profile.`,
       image: meraSki,
       altitude: "6,476 m",
       bestSeason: "Mar–May",

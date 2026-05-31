@@ -13,7 +13,7 @@ function extractItinerarySteps(markdown: string): { summary: string; highlights:
   const summaryLines: string[] = [];
   const highlights: string[] = [];
   const steps: ItineraryStep[] = [];
-  let mode: "summary" | "steps" | "highlights" = "summary";
+  let mode: "summary" | "steps" | "highlights" | "notes" = "summary";
 
   for (const line of lines) {
     if (!line || line === "---" || line.startsWith("#")) continue;
@@ -26,11 +26,13 @@ function extractItinerarySteps(markdown: string): { summary: string; highlights:
     }
 
     const mdStep = line.match(/^\d+\.\s+\*\*(.+?)\*\*:\s*(.+)$/);
+    const bulletStep = line.match(/^[-*]\s+\*\*(.+?)\*\*:\s*(.+)$/);
     const plainDay = line.match(/^(?:###\s*)?Day\s*\d+[:\-]\s*(.+?)(?:\s*[–-]\s*(.+))?$/i);
 
-    if (mdStep) {
+    if (mdStep || bulletStep) {
       mode = "steps";
-      steps.push({ title: mdStep[1], detail: mdStep[2] });
+      const match = mdStep ?? bulletStep!;
+      steps.push({ title: match[1], detail: match[2] });
       continue;
     }
 
@@ -43,7 +45,13 @@ function extractItinerarySteps(markdown: string): { summary: string; highlights:
       continue;
     }
 
-    if (mode === "summary") summaryLines.push(line);
+    if (/^\*\*Trip notes:\*\*/i.test(line) || /^\*\*Notes:\*\*/i.test(line)) {
+      mode = "notes";
+      summaryLines.push(line.replace(/^\*\*Trip notes:\*\*\s*/i, "").replace(/^\*\*Notes:\*\*\s*/i, ""));
+      continue;
+    }
+
+    if (mode === "summary") summaryLines.push(line.replace(/^[-*]\s+/, ""));
     else if (mode === "highlights") highlights.push(line);
   }
 

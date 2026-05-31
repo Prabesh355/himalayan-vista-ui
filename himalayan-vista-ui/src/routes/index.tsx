@@ -57,10 +57,10 @@ function Hero() {
             Small group sizes · Expert Nepali guides
           </span>
           <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-display tracking-tight text-foreground leading-[1.02]">
-            Explore Nepal Beyond The Map
+            NOMADS NAVIGATE NEPAL
           </h1>
           <p className="mt-6 max-w-xl text-lg text-foreground/90 leading-relaxed">
-            Discover authentic Himalayan adventures, hidden trails, and unforgettable journeys.
+            Explore Nepal, Beyond Maps
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
