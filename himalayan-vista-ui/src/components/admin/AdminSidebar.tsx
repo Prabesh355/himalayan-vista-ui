@@ -13,7 +13,7 @@ import {
   LogOut,
   MountainSnow
 } from 'lucide-react';
-import { Link, useLocation } from '@tanstack/react-router';
+import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { cn } from '@/lib/utils';
 
 interface SidebarItemProps {
@@ -53,6 +53,7 @@ const SidebarItem = ({ icon: Icon, label, to, isExpanded, isActive }: SidebarIte
 export const AdminSidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const navigate = useNavigate();
   
   // Note: Adjust the import strategy or active checking based on Tanstack Router's matchRoute or useLocation
   const location = useLocation();
@@ -158,7 +159,17 @@ export const AdminSidebar = () => {
             isExpanded={isExpanded}
             isActive={location.pathname === '/admin/settings'}
           />
-          <button className="w-full flex items-center gap-3 px-3 py-2 mt-1 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors">
+          <button
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.localStorage.removeItem('token');
+                window.localStorage.removeItem('authToken');
+                window.localStorage.removeItem('user');
+              }
+              navigate({ to: '/login' });
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2 mt-1 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+          >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             <AnimatePresence mode='wait'>
               {isExpanded && (

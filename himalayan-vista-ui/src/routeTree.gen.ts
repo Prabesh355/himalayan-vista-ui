@@ -21,7 +21,14 @@ import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PackagesSlugRouteImport } from './routes/packages.$slug'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
+import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
+import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
+import { Route as AdminBlogsRouteImport } from './routes/admin.blogs'
 
 const TeamsRoute = TeamsRouteImport.update({
   id: '/teams',
@@ -83,16 +90,51 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const PackagesSlugRoute = PackagesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => PackagesRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPackagesRoute = AdminPackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInquiriesRoute = AdminInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBookingsRoute = AdminBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogsRoute = AdminBlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -102,12 +144,18 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/admin/blogs': typeof AdminBlogsRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/packages': typeof AdminPackagesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -117,13 +165,20 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/admin/blogs': typeof AdminBlogsRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/packages': typeof AdminPackagesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -133,7 +188,14 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/admin/blogs': typeof AdminBlogsRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/inquiries': typeof AdminInquiriesRoute
+  '/admin/packages': typeof AdminPackagesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,12 +212,18 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/admin/blogs'
+    | '/admin/bookings'
+    | '/admin/inquiries'
+    | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/users'
     | '/packages/$slug'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/blogs'
     | '/contact'
     | '/dashboard'
@@ -165,7 +233,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/admin/blogs'
+    | '/admin/bookings'
+    | '/admin/inquiries'
+    | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/users'
     | '/packages/$slug'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -180,13 +255,20 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/admin/blogs'
+    | '/admin/bookings'
+    | '/admin/inquiries'
+    | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/users'
     | '/packages/$slug'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   BlogsRoute: typeof BlogsRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
@@ -284,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/packages/$slug': {
       id: '/packages/$slug'
       path: '/$slug'
@@ -291,8 +380,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PackagesSlugRouteImport
       parentRoute: typeof PackagesRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/packages': {
+      id: '/admin/packages'
+      path: '/packages'
+      fullPath: '/admin/packages'
+      preLoaderRoute: typeof AdminPackagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inquiries': {
+      id: '/admin/inquiries'
+      path: '/inquiries'
+      fullPath: '/admin/inquiries'
+      preLoaderRoute: typeof AdminInquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bookings': {
+      id: '/admin/bookings'
+      path: '/bookings'
+      fullPath: '/admin/bookings'
+      preLoaderRoute: typeof AdminBookingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blogs': {
+      id: '/admin/blogs'
+      path: '/blogs'
+      fullPath: '/admin/blogs'
+      preLoaderRoute: typeof AdminBlogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminBlogsRoute: typeof AdminBlogsRoute
+  AdminBookingsRoute: typeof AdminBookingsRoute
+  AdminInquiriesRoute: typeof AdminInquiriesRoute
+  AdminPackagesRoute: typeof AdminPackagesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBlogsRoute: AdminBlogsRoute,
+  AdminBookingsRoute: AdminBookingsRoute,
+  AdminInquiriesRoute: AdminInquiriesRoute,
+  AdminPackagesRoute: AdminPackagesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface PackagesRouteChildren {
   PackagesSlugRoute: typeof PackagesSlugRoute
@@ -309,7 +462,7 @@ const PackagesRouteWithChildren = PackagesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   BlogsRoute: BlogsRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,

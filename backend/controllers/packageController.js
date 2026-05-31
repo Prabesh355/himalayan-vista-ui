@@ -79,6 +79,70 @@ exports.getAllPackages = async (req, res, next) => {
   }
 };
 
+// @desc Get all packages for admin dashboard (includes inactive/drafts)
+// @route GET /api/packages/admin/all
+// @access Private/Admin or Vendor
+exports.getAllPackagesAdmin = async (req, res, next) => {
+  try {
+    const { search, destination, minPrice, maxPrice, difficulty, category, featured, sort, page = 1, limit = 100 } = req.query;
+
+    const filter = {};
+
+    if (search) {
+      filter.$text = { $search: search };
+    }
+
+    if (destination) {
+      filter.destination = { $regex: destination, $options: 'i' };
+    }
+
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    if (difficulty) {
+      filter.difficulty = difficulty;
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (featured === 'true') {
+      filter.featured = true;
+    }
+
+    const pageNum = Math.max(1, Number(page));
+    const limitNum = Math.min(100, Math.max(1, Number(limit)));
+    const skip = (pageNum - 1) * limitNum;
+
+    let query = Package.find(filter).skip(skip).limit(limitNum);
+
+    if (sort) {
+      query = query.sort(sort.split(',').join(' '));
+    } else {
+      query = query.sort('-createdAt');
+    }
+
+    const packages = await query.exec();
+    const total = await Package.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      count: packages.length,
+      total,
+      pages: Math.ceil(total / limitNum),
+      currentPage: pageNum,
+      data: packages,
+    });
+  } catch (error) {
+    logger.error(`Get admin packages error: ${error.message}`);
+    next(error);
+  }
+};
+
 // @desc Get single package by ID
 // @route GET /api/packages/:id
 // @access Public

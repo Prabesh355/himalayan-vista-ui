@@ -1,64 +1,109 @@
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { DataTable } from './DataTable';
 import { Eye, CheckCircle, XCircle } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-
-const mockBookings = [
-  { id: 'B-1001', customer: 'John Doe', package: 'Everest Base Camp', date: '2026-06-15', status: 'Pending', amount: '$1200' },
-  { id: 'B-1002', customer: 'Jane Smith', package: 'Annapurna Circuit', date: '2026-06-20', status: 'Confirmed', amount: '$1400' },
-  { id: 'B-1003', customer: 'Alice Johnson', package: 'Langtang Valley', date: '2026-07-05', status: 'Cancelled', amount: '$900' },
-];
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { adminService, BookingRow } from '@/services/adminService';
 
 export const BookingManagement = () => {
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking, setSelectedBooking] = useState<BookingRow | null>(null);
+  const [bookingStatus, setBookingStatus] = useState('pending');
+  const [paymentStatus, setPaymentStatus] = useState('pending');
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['admin-bookings'],
+    queryFn: () => adminService.getBookings({ limit: 100, sort: '-createdAt' }),
+  });
+
+  const updateBookingMutation = useMutation({
+    mutationFn: ({ bookingId, payload }: { bookingId: string; payload: { bookingStatus: string; paymentStatus: string } }) =>
+      adminService.updateBookingStatus(bookingId, payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-bookings'] });
+      setSelectedBooking(null);
+    },
+  });
+
+  const bookings = data?.data || [];
+
+  const filteredData = useMemo(() => {
+    return bookings.filter((booking) => {
+      const userName = typeof booking.user === 'string'
+        ? booking.user
+        : `${booking.user?.firstName || ''} ${booking.user?.lastName || ''}`;
+      const packageTitle = typeof booking.package === 'string' ? booking.package : booking.package?.title || '';
+      const term = searchTerm.toLowerCase();
+
+      return (
+        (booking.bookingNumber || booking._id).toLowerCase().includes(term) ||
+        userName.toLowerCase().includes(term) ||
+        packageTitle.toLowerCase().includes(term)
+      );
+    });
+  }, [bookings, searchTerm]);
 
   const columns = [
-    { key: 'id', header: 'Booking ID' },
-    { key: 'customer', header: 'Customer' },
-    { key: 'package', header: 'Package' },
-    { key: 'date', header: 'Date' },
-    { 
-      key: 'status', 
+    { key: 'bookingNumber', header: 'Booking ID' },
+    {
+      key: 'customer',
+      header: 'Customer',
+      render: (item: BookingRow) =>
+        typeof item.user === 'string' ? item.user : `${item.user?.firstName || ''} ${item.user?.lastName || ''}`.trim() || item.user?.email || 'Unknown',
+    },
+    {
+      key: 'package',
+      header: 'Package',
+      render: (item: BookingRow) => (typeof item.package === 'string' ? item.package : item.package?.title || 'Unknown'),
+    },
+    {
+      key: 'travelDate',
+      header: 'Travel Date',
+      render: (item: BookingRow) => item.travelDate ? new Date(item.travelDate).toLocaleDateString() : '—',
+    },
+    {
+      key: 'status',
       header: 'Status',
-      render: (item: any) => {
+      render: (item: BookingRow) => {
+        const status = item.bookingStatus || 'pending';
         let color = 'bg-gray-100 text-gray-700';
-        if (item.status === 'Confirmed') color = 'bg-emerald-100 text-emerald-700';
-        if (item.status === 'Pending') color = 'bg-amber-100 text-amber-700';
-        if (item.status === 'Cancelled') color = 'bg-rose-100 text-rose-700';
-        
-        return (
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
-            {item.status}
-          </span>
-        );
-      }
+        if (status === 'confirmed') color = 'bg-emerald-100 text-emerald-700';
+        if (status === 'pending') color = 'bg-amber-100 text-amber-700';
+        if (status === 'cancelled') color = 'bg-rose-100 text-rose-700';
+        if (status === 'completed') color = 'bg-sky-100 text-sky-700';
+
+        return <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>{status}</span>;
+      },
+    },
+    {
+      key: 'paymentStatus',
+      header: 'Payment',
+      render: (item: BookingRow) => item.paymentStatus || 'pending',
     },
   ];
 
-  const actions = (item: any) => (
+  const actions = (item: BookingRow) => (
     <div className="flex justify-end gap-2 text-muted-foreground">
-      <button 
-        onClick={() => setSelectedBooking(item)}
+      <button
+        onClick={() => {
+          setSelectedBooking(item);
+          setBookingStatus(item.bookingStatus || 'pending');
+          setPaymentStatus(item.paymentStatus || 'pending');
+        }}
         className="p-1 hover:text-primary transition-colors"
         title="View Details"
       >
         <Eye className="w-4 h-4" />
       </button>
-      <button className="p-1 hover:text-emerald-500 transition-colors" title="Confirm"><CheckCircle className="w-4 h-4" /></button>
-      <button className="p-1 hover:text-rose-500 transition-colors" title="Cancel"><XCircle className="w-4 h-4" /></button>
+      <button className="p-1 hover:text-emerald-500 transition-colors" title="Confirm">
+        <CheckCircle className="w-4 h-4" />
+      </button>
+      <button className="p-1 hover:text-rose-500 transition-colors" title="Cancel">
+        <XCircle className="w-4 h-4" />
+      </button>
     </div>
-  );
-
-  const filteredData = mockBookings.filter(b => 
-    b.customer.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    b.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -70,59 +115,75 @@ export const BookingManagement = () => {
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+      {error && <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-700">Unable to load bookings: {error instanceof Error ? error.message : 'Please try again.'}</div>}
+
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <DataTable
           data={filteredData}
           columns={columns}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id || item.id || item.bookingNumber || ''}
           onSearch={setSearchTerm}
-          searchPlaceholder="Search by ID or customer..."
+          searchPlaceholder="Search by booking ID, customer, or package..."
           actions={actions}
+          isLoading={isLoading}
         />
       </motion.div>
 
-      {/* Booking Details Modal */}
       <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[560px]">
           <DialogHeader>
-            <DialogTitle>Booking Details - {selectedBooking?.id}</DialogTitle>
+            <DialogTitle>Booking Details - {selectedBooking?.bookingNumber || selectedBooking?._id}</DialogTitle>
           </DialogHeader>
           {selectedBooking && (
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Customer Name</p>
-                  <p className="font-semibold">{selectedBooking.customer}</p>
+                  <p className="text-sm text-muted-foreground font-medium">Customer</p>
+                  <p className="font-semibold">
+                    {typeof selectedBooking.user === 'string'
+                      ? selectedBooking.user
+                      : `${selectedBooking.user?.firstName || ''} ${selectedBooking.user?.lastName || ''}`.trim() || selectedBooking.user?.email || 'Unknown'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground font-medium">Package</p>
-                  <p className="font-semibold">{selectedBooking.package}</p>
+                  <p className="font-semibold">{typeof selectedBooking.package === 'string' ? selectedBooking.package : selectedBooking.package?.title || 'Unknown'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Date</p>
-                  <p className="font-semibold">{selectedBooking.date}</p>
+                  <p className="text-sm text-muted-foreground font-medium">Travel Date</p>
+                  <p className="font-semibold">{selectedBooking.travelDate ? new Date(selectedBooking.travelDate).toLocaleDateString() : '—'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground font-medium">Amount</p>
-                  <p className="font-semibold">{selectedBooking.amount}</p>
+                  <p className="font-semibold">${selectedBooking.totalPrice?.toLocaleString() || 0}</p>
                 </div>
-                <div className="col-span-2 mt-4">
-                   <label className="text-sm font-medium">Update Status</label>
-                   <select className="flex h-10 w-full mt-2 rounded-md border border-input bg-background px-3 py-2 text-sm">
-                      <option value="pending" selected={selectedBooking.status === 'Pending'}>Pending</option>
-                      <option value="confirmed" selected={selectedBooking.status === 'Confirmed'}>Confirmed</option>
-                      <option value="cancelled" selected={selectedBooking.status === 'Cancelled'}>Cancelled</option>
-                   </select>
+                <div className="col-span-2 grid gap-3 mt-4">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">Booking Status</label>
+                    <select value={bookingStatus} onChange={(e) => setBookingStatus(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">Payment Status</label>
+                    <select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                      <option value="pending">Pending</option>
+                      <option value="partial">Partial</option>
+                      <option value="paid">Paid</option>
+                      <option value="refunded">Refunded</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setSelectedBooking(null)}
-                className="mt-4 bg-primary text-primary-foreground h-10 rounded-md font-medium"
+              <button
+                onClick={() => updateBookingMutation.mutate({ bookingId: selectedBooking._id || selectedBooking.id || '', payload: { bookingStatus, paymentStatus } })}
+                className="mt-4 bg-primary text-primary-foreground h-10 rounded-md font-medium disabled:opacity-50"
+                disabled={updateBookingMutation.isPending}
               >
-                Save Changes
+                {updateBookingMutation.isPending ? 'Saving…' : 'Save Changes'}
               </button>
             </div>
           )}

@@ -20,7 +20,25 @@ exports.getAllInquiries = async (req, res, next) => {
 
 exports.getInquiryStats = async (req, res, next) => {
   try {
-    res.status(200).json({ success: true, data: { status: 'mock stats' } });
+    const total = await Inquiry.countDocuments();
+    const byStatus = await Inquiry.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const byPriority = await Inquiry.aggregate([
+      { $group: { _id: '$priority', count: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        total,
+        byStatus,
+        byPriority,
+      },
+    });
   } catch (err) {
     next(err);
   }

@@ -9,6 +9,7 @@ router.get('/search', packageController.searchPackages);
 router.get('/featured', packageController.getFeaturedPackages);
 router.get('/destination/:destination', packageController.getPackagesByDestination);
 router.get('/', packageController.getAllPackages);
+router.get('/admin/all', protect, authorize('admin', 'vendor'), packageController.getAllPackagesAdmin);
 router.get('/:id', packageController.getPackage);
 
 // Private Routes (Admin/Vendor)
