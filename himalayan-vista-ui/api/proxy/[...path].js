@@ -1,6 +1,14 @@
-// Simple proxy for Vercel: forwards requests to the real backend to avoid CORS
+// Secure proxy for Vercel: forwards requests to the real backend to avoid CORS
 // Place this at /api/proxy/<...path> and call it from the frontend as /api/proxy
 const BACKEND = 'https://himalayan-vista-backend.onrender.com';
+
+// Allowed origins for browser requests to this proxy. Add any frontend domains you use.
+const ALLOWED_ORIGINS = new Set([
+  'https://nomadsnavigatenepal.com',
+  'https://www.nomadsnavigatenepal.com',
+  'http://localhost:5173',
+  'http://localhost:3000',
+]);
 
 function streamToBuffer(stream) {
   return new Promise((resolve, reject) => {
@@ -13,6 +21,18 @@ function streamToBuffer(stream) {
 
 export default async function handler(req, res) {
   try {
+    // enforce origin allowlist for browser requests
+    const origin = req.headers.origin;
+    if (origin) {
+      if (!ALLOWED_ORIGINS.has(origin)) {
+        console.warn('Blocked proxy request from disallowed origin:', origin);
+        res.statusCode = 403;
+        res.setHeader('content-type', 'application/json');
+        res.end(JSON.stringify({ error: 'Forbidden origin' }));
+        return;
+      }
+    }
+
     // build target URL
     const pathParts = req.query.path || [];
     const path = Array.isArray(pathParts) ? pathParts.join('/') : String(pathParts);
@@ -24,9 +44,11 @@ export default async function handler(req, res) {
       body = await streamToBuffer(req);
     }
 
-    // forward headers but avoid host
+    // forward headers but avoid host and connection-specific headers
     const headers = { ...req.headers };
     delete headers.host;
+    delete headers.connection;
+
     // perform fetch
     const resp = await fetch(targetUrl, {
       method: req.method,
@@ -42,12 +64,14 @@ export default async function handler(req, res) {
       res.setHeader(key, val);
     });
 
+    // For same-origin clients, we don't need to add CORS headers.
     res.statusCode = resp.status;
     const arrayBuffer = await resp.arrayBuffer();
     res.end(Buffer.from(arrayBuffer));
   } catch (err) {
     console.error('Proxy error:', err);
     res.statusCode = 502;
+    res.setHeader('content-type', 'application/json');
     res.end(JSON.stringify({ error: 'Bad gateway', details: String(err) }));
   }
 }
