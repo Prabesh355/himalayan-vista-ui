@@ -1,11 +1,12 @@
 const Review = require('../models/Review');
+const Package = require('../models/Package');
 
 // @desc    Get all reviews
 // @route   GET /api/reviews
 // @access  Public
 exports.getAllReviews = async (req, res, next) => {
   try {
-    const reviews = await Review.find().populate('user', 'name');
+    const reviews = await Review.find({ status: 'approved' }).populate('user', 'name');
     res.status(200).json({ success: true, data: reviews });
   } catch (err) {
     next(err);
@@ -17,8 +18,29 @@ exports.getAllReviews = async (req, res, next) => {
 // @access  Public
 exports.getPackageReviews = async (req, res, next) => {
   try {
-    const reviews = await Review.find({ package: req.params.packageId }).populate('user', 'name');
+    const reviews = await Review.find({ package: req.params.packageId, status: 'approved' }).populate('user', 'name');
     res.status(200).json({ success: true, data: reviews });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get approved reviews for a package by slug
+// @route   GET /api/reviews/package-slug/:slug
+// @access  Public
+exports.getPackageReviewsBySlug = async (req, res, next) => {
+  try {
+    const pkg = await Package.findOne({ slug: req.params.slug });
+
+    if (!pkg) {
+      return res.status(404).json({ success: false, message: 'Package not found' });
+    }
+
+    const reviews = await Review.find({ package: pkg.id, status: 'approved' })
+      .populate('user', 'firstName lastName email')
+      .populate('package', 'title slug destination');
+
+    res.status(200).json({ success: true, package: pkg, data: reviews });
   } catch (err) {
     next(err);
   }

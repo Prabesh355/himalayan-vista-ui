@@ -7,6 +7,7 @@ import {
   Users, 
   FileText, 
   MessageSquare, 
+  Star,
   Menu,
   X,
   Settings,
@@ -65,6 +66,7 @@ export const AdminSidebar = () => {
     { icon: Users, label: 'Users', to: '/admin/users' },
     { icon: FileText, label: 'Blogs', to: '/admin/blogs' },
     { icon: MessageSquare, label: 'Inquiries', to: '/admin/inquiries' },
+    { icon: Star, label: 'Reviews', to: '/admin/reviews' },
   ];
 
   return (

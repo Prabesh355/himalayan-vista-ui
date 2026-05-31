@@ -125,12 +125,15 @@ export interface ReviewItem {
   rating?: number;
   status?: string;
   user?: {
+    _id?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
   } | string;
   package?: {
+    _id?: string;
     title?: string;
+    destination?: string;
   } | string;
   createdAt?: string;
 }
@@ -155,6 +158,7 @@ export const adminService = {
   updateInquiry: async (inquiryId: string, payload: Record<string, unknown>) => (await api.put(`/inquiries/${inquiryId}`, payload)).data,
   respondToInquiry: async (inquiryId: string, response: string) => (await api.post(`/inquiries/${inquiryId}/respond`, { response })).data,
   deleteInquiry: async (inquiryId: string) => (await api.delete(`/inquiries/${inquiryId}`)).data,
-  getReviews: async () => (await api.get<{ success: boolean; data: ReviewItem[] }>("/reviews")).data,
-  approveReview: async (reviewId: string) => (await api.put(`/reviews/${reviewId}/approve`, {})).data,
+  getReviews: async () => (await api.get<{ success: boolean; count: number; reviews: ReviewItem[] }>("/admin/reviews")).data,
+  approveReview: async (reviewId: string) => (await api.put(`/admin/reviews/${reviewId}/approve`, {})).data,
+  deleteReview: async (reviewId: string) => (await api.delete(`/admin/reviews/${reviewId}`)).data,
 };

@@ -25,6 +25,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PackagesSlugRouteImport } from './routes/packages.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
@@ -110,6 +111,11 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPackagesRoute = AdminPackagesRouteImport.update({
   id: '/packages',
   path: '/packages',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
   '/admin/packages': typeof AdminPackagesRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/packages/$slug': typeof PackagesSlugRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
   '/admin/packages': typeof AdminPackagesRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/packages/$slug': typeof PackagesSlugRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
   '/admin/packages': typeof AdminPackagesRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/packages/$slug': typeof PackagesSlugRoute
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/inquiries'
     | '/admin/packages'
+    | '/admin/reviews'
     | '/admin/settings'
     | '/admin/users'
     | '/packages/$slug'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/inquiries'
     | '/admin/packages'
+    | '/admin/reviews'
     | '/admin/settings'
     | '/admin/users'
     | '/packages/$slug'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/inquiries'
     | '/admin/packages'
+    | '/admin/reviews'
     | '/admin/settings'
     | '/admin/users'
     | '/packages/$slug'
@@ -394,6 +406,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/packages': {
       id: '/admin/packages'
       path: '/packages'
@@ -430,6 +449,7 @@ interface AdminRouteChildren {
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminInquiriesRoute: typeof AdminInquiriesRoute
   AdminPackagesRoute: typeof AdminPackagesRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -440,6 +460,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBookingsRoute: AdminBookingsRoute,
   AdminInquiriesRoute: AdminInquiriesRoute,
   AdminPackagesRoute: AdminPackagesRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,

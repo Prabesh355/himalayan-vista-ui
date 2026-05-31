@@ -6,6 +6,7 @@ const { protect, authorize } = require('../middleware/auth');
 // Public Routes
 router.get('/', reviewController.getAllReviews);
 router.get('/package/:packageId', reviewController.getPackageReviews);
+router.get('/package-slug/:slug', reviewController.getPackageReviewsBySlug);
 
 // Private Routes (Users)
 router.post('/', protect, reviewController.createReview);

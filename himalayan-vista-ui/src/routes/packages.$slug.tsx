@@ -1,24 +1,26 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
-import { destinations } from "@/services/mockData";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { type ComponentType, useEffect, useMemo, useRef } from "react";
 import {
-  Check,
-  CirclePlus,
-  Minus,
-  ShieldCheck,
-  Sparkles,
-  Clock3,
-  MapPin,
+  BadgeCheck,
   BedDouble,
   BusFront,
+  Check,
+  CirclePlus,
+  Clock3,
+  Minus,
+  Plane,
+  ShieldCheck,
+  Sparkles,
   Ticket,
   Users,
   UtensilsCrossed,
-  Plane,
-  BadgeCheck,
 } from "lucide-react";
+
+import { ReviewsSection, type Review as ReviewCard } from "@/components/ReviewsSection";
+import api from "@/services/api";
+import { destinations } from "@/services/mockData";
 
 type ItineraryDay = {
   day: number;
@@ -47,6 +49,20 @@ type DayDraft = {
   meta: string[];
   highlights: string[];
   activeSection: string | null;
+};
+
+type ReviewApiItem = {
+  _id: string;
+  title?: string;
+  comment?: string;
+  rating?: number;
+  verifiedPurchase?: boolean;
+  createdAt?: string;
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+  } | string;
 };
 
 const includedCosts: PriceItem[] = [
@@ -105,32 +121,32 @@ function extractItinerary(markdown: string): ParsedItinerary {
     .replace(/\s+/g, " ")
     .trim();
 
-  const addToCurrent = (value: string) => {
-    if (!currentDay) return;
+  const addToCurrent = (day: DayDraft, value: string) => {
     const cleaned = clean(value);
     if (!cleaned) return;
 
-    if (currentDay.activeSection === "highlights") {
-      currentDay.highlights.push(cleaned);
+    if (day.activeSection === "highlights") {
+      day.highlights.push(cleaned);
       return;
     }
 
-    if (currentDay.activeSection === "activities") {
-      currentDay.meta.push(cleaned);
+    if (day.activeSection === "activities") {
+      day.meta.push(cleaned);
       return;
     }
 
-    if (currentDay.activeSection === "optional hikes") {
-      currentDay.meta.push(`Optional: ${cleaned}`);
+    if (day.activeSection === "optional hikes") {
+      day.meta.push(`Optional: ${cleaned}`);
       return;
     }
 
-    currentDay.detailParts.push(cleaned);
+    day.detailParts.push(cleaned);
   };
 
   const sectionHeader = (line: string) => {
     const match = line.match(/^(?:#{1,3}\s*|\*\*)?(Accommodation|Duration|Highlights|Activities|Optional hikes|Best time to trek|Why Choose This Trek\?|Trek Overview|Trip Highlights|Detailed Day-by-Day Itinerary|Detailed Itinerary|Trek Duration|Maximum Elevation|Trek Difficulty|Starting Point|Ending Point)\b\*?\s*:?\s*(.*)$/i);
     if (!match) return null;
+
     return {
       label: match[1].toLowerCase(),
       value: clean(match[2]),
@@ -139,47 +155,44 @@ function extractItinerary(markdown: string): ParsedItinerary {
 
   for (const line of lines) {
     if (!line || line === "---") {
-      if (currentDay) currentDay.activeSection = null;
+      if (currentDay) { const activeDay = currentDay as DayDraft; activeDay.activeSection = null; }
       continue;
     }
 
-    // Simplified day heading detection to handle many markdown variants robustly.
     const dayNumberMatch = line.match(/Day\s*(\d+)/i);
     if (dayNumberMatch) {
       const dayNum = Number(dayNumberMatch[1]);
-
-      // Find a dash/em-dash/– following the day number to split title/detail
       const afterDayIndex = line.search(/Day\s*\d+/i);
-      const dashIndex = Math.max(line.indexOf('—', afterDayIndex), line.indexOf('–', afterDayIndex), line.indexOf('-', afterDayIndex));
-      let title = '';
-      let detailPart = '';
+      const dashIndex = Math.max(
+        line.indexOf("—", afterDayIndex),
+        line.indexOf("–", afterDayIndex),
+        line.indexOf("-", afterDayIndex),
+      );
+
+      let title = "";
+      let detailPart = "";
 
       if (dashIndex > -1) {
-        // look for first ':' after dash to separate a short title from the detail
-        const colonIndex = line.indexOf(':', dashIndex + 1);
+        const colonIndex = line.indexOf(":", dashIndex + 1);
         if (colonIndex > -1) {
           title = clean(line.slice(dashIndex + 1, colonIndex));
           detailPart = line.slice(colonIndex + 1);
         } else {
           title = clean(line.slice(dashIndex + 1));
-          detailPart = '';
         }
       } else {
-        // fallback: take remainder of the line after the day token
         const after = line.slice(afterDayIndex + dayNumberMatch[0].length).trim();
-        // if there's a ':' inside, split it
-        const colonIndex = after.indexOf(':');
+        const colonIndex = after.indexOf(":");
         if (colonIndex > -1) {
           title = clean(after.slice(0, colonIndex));
           detailPart = after.slice(colonIndex + 1);
         } else {
           title = clean(after);
-          detailPart = '';
         }
       }
 
       startDay(dayNum, title || `Day ${dayNum}`);
-      if (detailPart) addToCurrent(detailPart);
+      if (detailPart && currentDay) addToCurrent(currentDay, detailPart);
       continue;
     }
 
@@ -206,65 +219,81 @@ function extractItinerary(markdown: string): ParsedItinerary {
 
     const section = sectionHeader(line);
     if (section && currentDay) {
-      currentDay.activeSection = section.label;
+      const activeDay = currentDay as DayDraft;
+      activeDay.activeSection = section.label;
+
       if (section.value) {
         if (section.label === "highlights") {
-          section.value.split(/[,•|]/).map((item) => clean(item)).filter(Boolean).forEach((item) => currentDay!.highlights.push(item));
+          section.value
+            .split(/[,•|]/)
+            .map((item) => clean(item))
+            .filter(Boolean)
+            .forEach((item) => activeDay.highlights.push(item));
         } else if (section.label === "activities") {
-          currentDay.meta.push(section.value);
+          activeDay.meta.push(section.value);
         } else if (section.label === "duration") {
-          currentDay.meta.push(`Duration: ${section.value}`);
+          activeDay.meta.push(`Duration: ${section.value}`);
         } else if (section.label === "accommodation") {
-          currentDay.meta.push(`Accommodation: ${section.value}`);
-        } else if (section.label === "starting point" || section.label === "ending point" || section.label === "trek duration" || section.label === "maximum elevation" || section.label === "trek difficulty") {
-          currentDay.meta.push(`${section.label.replace(/\b\w/g, (ch) => ch.toUpperCase())}: ${section.value}`);
+          activeDay.meta.push(`Accommodation: ${section.value}`);
+        } else if (
+          section.label === "starting point" ||
+          section.label === "ending point" ||
+          section.label === "trek duration" ||
+          section.label === "maximum elevation" ||
+          section.label === "trek difficulty"
+        ) {
+          activeDay.meta.push(`${section.label.replace(/\b\w/g, (ch) => ch.toUpperCase())}: ${section.value}`);
         } else {
-          currentDay.detailParts.push(section.value);
+          activeDay.detailParts.push(section.value);
         }
       }
+
       continue;
     }
 
     const numberedDay = line.match(/^\d+\.\s+(?:\*\*)?Day\s*(\d+)\s*[—–-]\s*(.+?)(?:\*\*)?[:\-]?(?:\s*(.+))?$/i);
     if (numberedDay) {
       startDay(Number(numberedDay[1]), clean(numberedDay[2]));
-      if (numberedDay[3]) addToCurrent(numberedDay[3]);
+      if (numberedDay[3] && currentDay) addToCurrent(currentDay, numberedDay[3]);
       continue;
     }
 
     const bulletDay = line.match(/^[-*]\s+(?:\*\*)?Day\s*(\d+)\s*[—–-]\s*(.+?)(?:\*\*)?[:\-]?(?:\s*(.+))?$/i);
     if (bulletDay) {
       startDay(Number(bulletDay[1]), clean(bulletDay[2]));
-      if (bulletDay[3]) addToCurrent(bulletDay[3]);
+      if (bulletDay[3] && currentDay) addToCurrent(currentDay, bulletDay[3]);
       continue;
     }
 
     if (line.startsWith("|") && line.endsWith("|")) {
-      // Ignore markdown tables in itinerary content; price cards handle costs separately.
       continue;
     }
 
     if (currentDay) {
+      const activeDay = currentDay as DayDraft;
+
       if (/^\*\*Highlights:\*\*/i.test(line)) {
-        currentDay.activeSection = "highlights";
+        activeDay.activeSection = "highlights";
         continue;
       }
+
       if (/^\*\*Activities:\*\*/i.test(line)) {
-        currentDay.activeSection = "activities";
+        activeDay.activeSection = "activities";
         continue;
       }
+
       if (/^\*\*(Accommodation|Duration)\:/i.test(line)) {
         const compact = clean(line.replace(/^\*\*/, "").replace(/\*\*$/, ""));
-        currentDay.meta.push(compact);
+        activeDay.meta.push(compact);
         continue;
       }
 
       if (/^[-*•]\s+/.test(line)) {
-        addToCurrent(line);
+        addToCurrent(activeDay, line);
         continue;
       }
 
-      addToCurrent(line);
+      addToCurrent(activeDay, line);
       continue;
     }
 
@@ -346,12 +375,7 @@ function PriceSummary({ price }: { price: number }) {
       </div>
 
       <div className="mt-6 grid gap-2 text-sm text-white/90 sm:grid-cols-2">
-        {[
-          "Accommodation",
-          "Transportation",
-          "Permits",
-          "Guide",
-        ].map((item) => (
+        {["Accommodation", "Transportation", "Permits", "Guide"].map((item) => (
           <div key={item} className="flex items-center gap-2 rounded-2xl bg-white/8 px-4 py-3 backdrop-blur-md">
             <Check className="h-4 w-4 text-secondary" />
             <span>{item}</span>
@@ -377,9 +401,43 @@ function PackageDetails() {
   const detailsRef = useRef<HTMLElement | null>(null);
   const pkg = destinations.find((d) => d.slug === slug);
   const itinerary = useMemo(() => (pkg?.itinerary ? extractItinerary(pkg.itinerary) : null), [pkg]);
+  const reviewsQuery = useQuery({
+    queryKey: ["package-reviews", slug],
+    queryFn: async () => (await api.get<{ success: boolean; data: ReviewApiItem[] }>(`/reviews/package-slug/${slug}`)).data,
+    enabled: !!pkg,
+  });
+
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "977981234567";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.name || "trek")}%20package.`;
+
+  const reviewCards: ReviewCard[] = useMemo(() => {
+    const items = reviewsQuery.data?.data || [];
+
+    return items.map((review, index) => {
+      const author = typeof review.user === "string"
+        ? review.user
+        : [review.user?.firstName, review.user?.lastName].filter(Boolean).join(" ").trim() || review.user?.email || "Guest Traveler";
+
+      return {
+        id: review._id || String(index),
+        author,
+        rating: review.rating || 0,
+        date: review.createdAt
+          ? new Date(review.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+          : "Recently",
+        title: review.title || `Rated ${review.rating || 0}/5`,
+        content: review.comment || "",
+        verified: Boolean(review.verifiedPurchase),
+      };
+    });
+  }, [reviewsQuery.data?.data]);
+
+  const averageRating = useMemo(() => {
+    if (!reviewCards.length) return 0;
+    const total = reviewCards.reduce((sum, review) => sum + review.rating, 0);
+    return total / reviewCards.length;
+  }, [reviewCards]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -393,7 +451,9 @@ function PackageDetails() {
     return (
       <section className="mx-auto max-w-4xl px-4 py-20">
         <h2 className="text-2xl font-semibold">Package not found</h2>
-        <p className="mt-4">We couldn't locate that trek. <Link to="/packages" className="text-accent">Back to packages</Link>.</p>
+        <p className="mt-4">
+          We couldn&apos;t locate that trek. <Link to="/packages" className="text-accent">Back to packages</Link>.
+        </p>
       </section>
     );
   }
@@ -527,6 +587,31 @@ function PackageDetails() {
               </div>
             </section>
           ) : null}
+
+          <section className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-soft">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">Traveler feedback</p>
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Reviews</h2>
+              </div>
+            </div>
+
+            {reviewsQuery.isLoading ? (
+              <p className="mt-6 text-sm text-muted-foreground">Loading approved reviews…</p>
+            ) : reviewsQuery.isError ? (
+              <p className="mt-6 text-sm text-red-600">We couldn’t load reviews right now.</p>
+            ) : reviewCards.length > 0 ? (
+              <div className="mt-6">
+                <ReviewsSection
+                  reviews={reviewCards}
+                  averageRating={averageRating}
+                  totalReviews={reviewCards.length}
+                />
+              </div>
+            ) : (
+              <p className="mt-6 text-sm text-muted-foreground">No approved reviews yet for this package.</p>
+            )}
+          </section>
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
@@ -537,7 +622,9 @@ function PackageDetails() {
 
           <div className="rounded-[2rem] border border-white/10 bg-muted/70 p-6 shadow-soft">
             <h3 className="text-lg font-semibold text-foreground">Plan your booking</h3>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">Need a custom route, private departure, or luxury upgrade? We can tailor the package to your dates and comfort level.</p>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              Need a custom route, private departure, or luxury upgrade? We can tailor the package to your dates and comfort level.
+            </p>
             <div className="mt-6 grid gap-3">
               <a
                 href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.name)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.name)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}

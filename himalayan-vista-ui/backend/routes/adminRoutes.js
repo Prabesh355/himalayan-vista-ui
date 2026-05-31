@@ -73,6 +73,54 @@ router.put('/users/:id/role', protect, authorize('admin'), async (req, res, next
   }
 });
 
+router.get('/reviews', protect, authorize('admin'), async (req, res, next) => {
+  try {
+    const Review = require('../models/Review');
+    const reviews = await Review.find().populate('user', 'firstName lastName email').populate('package', 'title destination').sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: reviews.length,
+      reviews,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/reviews/:id/approve', protect, authorize('admin'), async (req, res, next) => {
+  try {
+    const Review = require('../models/Review');
+    const review = await Review.findByIdAndUpdate(req.params.id, { status: 'approved' }, { new: true });
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: 'Review not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Review approved',
+      review,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/reviews/:id', protect, authorize('admin'), async (req, res, next) => {
+  try {
+    const Review = require('../models/Review');
+    await Review.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Review deleted',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // System Logs Route (Placeholder)
 router.get('/logs', protect, authorize('admin'), (req, res) => {
   res.status(200).json({
