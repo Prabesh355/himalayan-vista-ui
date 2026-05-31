@@ -8,9 +8,9 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="Nomads Navigate Nepal" className="h-10 w-10" />
-              <span className="font-semibold tracking-tight">
+            <Link to="/" className="flex items-center gap-3">
+              <img src={logo} alt="Nomads Navigate Nepal" className="h-12 w-14 shrink-0 object-contain" />
+              <span className="whitespace-nowrap font-semibold tracking-tight">
                 Nomads <span className="text-gradient-sunset">Navigate Nepal</span>
               </span>
             </Link>

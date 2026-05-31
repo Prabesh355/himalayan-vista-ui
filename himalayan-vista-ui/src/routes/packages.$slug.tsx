@@ -2,8 +2,57 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { destinations } from "@/services/mockData";
 import React, { useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+
+type ItineraryStep = {
+  title: string;
+  detail: string;
+};
+
+function extractItinerarySteps(markdown: string): { summary: string; highlights: string[]; steps: ItineraryStep[] } {
+  const lines = markdown.split(/\r?\n/).map((line) => line.trim());
+  const summaryLines: string[] = [];
+  const highlights: string[] = [];
+  const steps: ItineraryStep[] = [];
+  let mode: "summary" | "steps" | "highlights" = "summary";
+
+  for (const line of lines) {
+    if (!line || line === "---" || line.startsWith("#")) continue;
+
+    if (/^\*\*Highlights:\*\*/i.test(line) || /^# Trip Highlights/i.test(line)) {
+      mode = "highlights";
+      const inline = line.replace(/^\*\*Highlights:\*\*\s*/i, "").replace(/^# Trip Highlights\s*/i, "");
+      if (inline) highlights.push(inline.replace(/^:\s*/, ""));
+      continue;
+    }
+
+    const mdStep = line.match(/^\d+\.\s+\*\*(.+?)\*\*:\s*(.+)$/);
+    const plainDay = line.match(/^(?:###\s*)?Day\s*\d+[:\-]\s*(.+?)(?:\s*[–-]\s*(.+))?$/i);
+
+    if (mdStep) {
+      mode = "steps";
+      steps.push({ title: mdStep[1], detail: mdStep[2] });
+      continue;
+    }
+
+    if (plainDay) {
+      mode = "steps";
+      steps.push({
+        title: plainDay[1],
+        detail: plainDay[2] ?? "",
+      });
+      continue;
+    }
+
+    if (mode === "summary") summaryLines.push(line);
+    else if (mode === "highlights") highlights.push(line);
+  }
+
+  return {
+    summary: summaryLines.join(" ").replace(/\s+/g, " ").trim(),
+    highlights,
+    steps,
+  };
+}
 
 export const Route = createFileRoute("/packages/$slug")({
   head: () => ({
@@ -96,12 +145,60 @@ function PackageDetails() {
           </div>
 
           {pkg.itinerary ? (
-            <>
-              <h2 className="mt-8 text-2xl font-semibold">Detailed Itinerary</h2>
-              <div className="mt-4 rounded-3xl border border-white/10 bg-muted p-6">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{pkg.itinerary}</ReactMarkdown>
-              </div>
-            </>
+            (() => {
+              const itinerary = extractItinerarySteps(pkg.itinerary);
+
+              return (
+                <>
+                  <h2 className="mt-8 text-2xl font-semibold">Detailed Itinerary</h2>
+                  <div className="mt-4 rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
+                    {itinerary.summary && (
+                      <p className="max-w-3xl text-sm leading-7 text-muted-foreground md:text-base">
+                        {itinerary.summary}
+                      </p>
+                    )}
+
+                    {itinerary.highlights.length > 0 && (
+                      <div className="mt-6 rounded-2xl bg-secondary/15 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">Trip highlights</p>
+                        <ul className="mt-3 grid gap-2 text-sm text-foreground sm:grid-cols-2">
+                          {itinerary.highlights
+                            .join(" ")
+                            .split(/\*|\n|\.|•/)
+                            .map((item) => item.trim())
+                            .filter(Boolean)
+                            .slice(0, 6)
+                            .map((item) => (
+                              <li key={item} className="flex gap-2">
+                                <span className="mt-1 h-2 w-2 rounded-full bg-accent" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {itinerary.steps.length > 0 && (
+                      <div className="mt-8 grid gap-4">
+                        {itinerary.steps.map((step, index) => (
+                          <article key={`${step.title}-${index}`} className="rounded-2xl border border-border/70 bg-background p-5 transition-shadow hover:shadow-elegant">
+                            <div className="flex items-start gap-4">
+                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-sunset text-sm font-bold text-white shadow-soft">
+                                {String(index + 1).padStart(2, "0")}
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="text-base font-semibold text-foreground md:text-lg">{step.title}</h3>
+                                {step.detail && <p className="mt-1 text-sm leading-7 text-muted-foreground md:text-[15px]">{step.detail}</p>}
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              );
+            })()
           ) : (
             <div className="mt-8 rounded-3xl border border-white/10 bg-muted p-6">
               <h2 className="text-2xl font-semibold">Detailed itinerary</h2>

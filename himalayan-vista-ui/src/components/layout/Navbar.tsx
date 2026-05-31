@@ -57,9 +57,9 @@ export function Navbar() {
             scrolled ? "glass shadow-elegant" : "bg-transparent"
           }`}
         >
-          <Link to="/" className="flex items-center gap-2 group">
-            <img src={logo} alt="Nomads Navigate Nepal" className="h-10 w-10 transition-transform group-hover:rotate-6" />
-            <span className="font-semibold tracking-tight text-foreground hidden sm:inline">
+          <Link to="/" className="flex items-center gap-3 group">
+            <img src={logo} alt="Nomads Navigate Nepal" className="h-12 w-14 shrink-0 object-contain transition-transform group-hover:rotate-3 md:h-14 md:w-16" />
+            <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground sm:inline md:text-base">
               Nomads <span className="text-gradient-sunset">Navigate Nepal</span>
             </span>
           </Link>
