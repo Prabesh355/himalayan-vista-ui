@@ -109,6 +109,7 @@ function LoginPage() {
       setSuccess(true);
 
       if (data.token) {
+        localStorage.setItem("token", data.token);
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
       }

@@ -13,7 +13,7 @@ export const api = axios.create({
 // Request Interceptor: Attach JWT Token automatically
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = window.localStorage.getItem("token");
+    const token = window.localStorage.getItem("token") || window.localStorage.getItem("authToken");
     if (token) config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -30,6 +30,7 @@ api.interceptors.response.use(
       console.warn('Unauthorized. Logging out...');
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem('token');
+        window.localStorage.removeItem('authToken');
       }
     }
     
