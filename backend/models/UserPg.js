@@ -6,6 +6,24 @@ const { AppError } = require('../utils/errorHandler');
 
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 
+function getJwtExpiresIn() {
+  const raw = String(process.env.JWT_EXPIRE || '').trim();
+
+  if (!raw) {
+    return '30d';
+  }
+
+  if (/^\d+$/.test(raw)) {
+    return Number(raw);
+  }
+
+  if (/^\d+(ms|s|m|h|d|w|y)$/.test(raw)) {
+    return raw;
+  }
+
+  return '30d';
+}
+
 const User = createModel('User', {
   defaults: {
     role: 'user',
@@ -41,7 +59,7 @@ const User = createModel('User', {
     },
     getSignedJwtToken() {
       return jwt.sign({ id: this.id, role: this.role }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
+        expiresIn: getJwtExpiresIn(),
       });
     },
     getResetPasswordToken() {
