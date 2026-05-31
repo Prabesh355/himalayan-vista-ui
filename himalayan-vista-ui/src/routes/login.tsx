@@ -1,7 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Mail, Lock, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { AlertCircle, CheckCircle, Loader2, Lock, Mail } from "lucide-react";
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 export const Route = createFileRoute("/login")({
@@ -28,6 +27,7 @@ interface ApiResponse {
     firstName: string;
     lastName: string;
     email: string;
+    role?: string;
   };
 }
 
@@ -42,7 +42,6 @@ function LoginPage() {
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Email validation regex
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -54,7 +53,7 @@ function LoginPage() {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
+
     if (error) setError(null);
   };
 
@@ -63,7 +62,6 @@ function LoginPage() {
     setError(null);
     setSuccess(false);
 
-    // Validation
     if (!formData.email) {
       setError("Email is required");
       return;
@@ -87,7 +85,6 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      // Get the backend API URL from environment or use default
       const apiUrl = getApiBaseUrl();
       console.debug("Login: using API URL:", apiUrl);
 
@@ -100,7 +97,7 @@ function LoginPage() {
           email: formData.email.toLowerCase(),
           password: formData.password,
         }),
-        credentials: "include", // Include cookies
+        credentials: "include",
       });
 
       const data: ApiResponse = await response.json();
@@ -109,22 +106,20 @@ function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
 
-      // Success!
       setSuccess(true);
 
-      // Store token in localStorage
       if (data.token) {
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
-      // Show success message briefly then redirect
       setTimeout(() => {
-        navigate({ to: "/dashboard" });
+        const isAdmin = data.user?.role === "admin";
+        navigate({ to: isAdmin ? "/admin" : "/dashboard" });
       }, 1500);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Login failed. Please try again.";
-      // Common cause: network/CORS issue (browser shows "Failed to fetch").
+
       if (errorMessage === "Failed to fetch") {
         setError(
           "Network error: unable to reach the API. This is usually a backend or CORS issue — check the API url and server CORS settings."
@@ -132,6 +127,7 @@ function LoginPage() {
       } else {
         setError(errorMessage);
       }
+
       console.error("Login error (apiUrl=%s):", getApiBaseUrl(), err);
     } finally {
       setLoading(false);
@@ -141,32 +137,24 @@ function LoginPage() {
   return (
     <div className="min-h-screen pt-32 pb-16 flex items-center justify-center">
       <div className="w-full max-w-md px-4">
-        {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-muted-foreground">
-            Login to your Nomads Navigate Nepal account
-          </p>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">Welcome Back</h1>
+          <p className="text-muted-foreground">Login to your Nomads Navigate Nepal account</p>
         </div>
 
-        {/* Login Form */}
         <div className="rounded-2xl glass border border-border/50 p-8">
-          {/* Success Message */}
           {success && (
             <div className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-green-600">Login Successful!</p>
                 <p className="text-sm text-green-600 opacity-75">
-                  Welcome back! Redirecting to your dashboard...
+                  Welcome back! Redirecting to your {formData.email.toLowerCase().includes("nomadsnavigate5") || formData.email.toLowerCase().includes("prabeshmsb76") ? "admin panel" : "dashboard"}...
                 </p>
               </div>
             </div>
           )}
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -178,7 +166,6 @@ function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                 Email Address
@@ -198,7 +185,6 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                 Password
@@ -226,17 +212,12 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Forgot Password Link */}
             <div className="text-right">
-              <Link
-                to="/contact"
-                className="text-sm text-gradient-sunset hover:opacity-80 transition-opacity"
-              >
+              <Link to="/contact" className="text-sm text-gradient-sunset hover:opacity-80 transition-opacity">
                 Forgot password?
               </Link>
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
@@ -247,14 +228,12 @@ function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="my-6 flex items-center gap-3">
             <div className="flex-1 h-px bg-border/50" />
             <span className="text-sm text-muted-foreground">or</span>
             <div className="flex-1 h-px bg-border/50" />
           </div>
 
-          {/* Register Link */}
           <p className="text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
             <Link to="/register" className="text-gradient-sunset hover:opacity-80 transition-opacity font-semibold">
@@ -263,7 +242,6 @@ function LoginPage() {
           </p>
         </div>
 
-        {/* Info Section */}
         <div className="mt-8 p-6 rounded-2xl glass border border-border/50">
           <h3 className="font-semibold text-foreground mb-3">Demo Credentials</h3>
           <p className="text-sm text-muted-foreground mb-2">

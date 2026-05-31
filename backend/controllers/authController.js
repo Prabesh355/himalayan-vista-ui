@@ -2,6 +2,16 @@ const User = require('../models/UserPg');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 
+function getAdminEmailSet() {
+  const raw = process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || 'nomadsnavigatenepal5@gmail.com';
+  return new Set(
+    raw
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
 // @desc Register a user
 // @route POST /api/auth/register
 // @access Public
@@ -69,6 +79,14 @@ exports.login = async (req, res, next) => {
 
     if (!isMatch) {
       return next(new AppError('Invalid credentials', 401));
+    }
+
+    // Promote configured admin emails to admin role automatically.
+    // This keeps the role in sync even if the record was created before the admin env list was updated.
+    const adminEmails = getAdminEmailSet();
+    if (adminEmails.has(user.email) && user.role !== 'admin') {
+      user.role = 'admin';
+      await user.save();
     }
 
     // Update last login
