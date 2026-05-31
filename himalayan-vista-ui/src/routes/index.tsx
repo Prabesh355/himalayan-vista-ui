@@ -57,13 +57,10 @@ function Hero() {
             Spring 2026 departures open · save 15%
           </span>
           <h1 className="mt-6 text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight text-white leading-[1.02]">
-            Breathe in the
-            <br />
-            <span className="text-gradient-sunset">roof of the world.</span>
+            <span className="text-gradient-sunset">NOMADS NAVIGATE NEPAL</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-white/85 leading-relaxed">
-            Hand-crafted Himalayan journeys led by the people who grew up on these trails.
-            From the Everest icefall to lakeside Pokhara — Nepal, your way.
+            Explore Nepal, Beyond Maps !!
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
