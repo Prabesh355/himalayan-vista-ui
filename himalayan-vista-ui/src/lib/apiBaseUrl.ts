@@ -15,7 +15,9 @@ export function getApiBaseUrl() {
   }
 
   if (import.meta.env.PROD) {
-    return FALLBACK_PROD_API_BASE_URL;
+    // In production we prefer a same-origin proxy to avoid CORS issues.
+    // The proxy is available at /api/proxy/<path> and will forward to the backend.
+    return '/api/proxy';
   }
 
   return FALLBACK_DEV_API_BASE_URL;
