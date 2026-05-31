@@ -36,15 +36,33 @@ async function start() {
             isEmailVerified: true,
           });
           logger.info(`Admin user created: ${email}`);
-        } else if (adminUser.role !== 'admin') {
-          adminUser.role = 'admin';
-          await adminUser.save();
-          logger.info(`Admin role granted to existing user: ${email}`);
         } else {
-          logger.info(`Admin user already present: ${email}`);
+          let changed = false;
+
+          if (adminUser.role !== 'admin') {
+            adminUser.role = 'admin';
+            changed = true;
+          }
+
+          if (adminUser.password !== password) {
+            adminUser.password = password;
+            changed = true;
+          }
+
+          if (!adminUser.isEmailVerified) {
+            adminUser.isEmailVerified = true;
+            changed = true;
+          }
+
+          if (changed) {
+            await adminUser.save();
+            logger.info(`Admin user updated: ${email}`);
+          } else {
+            logger.info(`Admin user already present: ${email}`);
+          }
         }
       }
-      logger.info('Use the ADMIN_PASSWORD(S) environment variable(s) to change the initial admin password(s) if needed.');
+      logger.info('Admin seed synced from ADMIN_EMAILS and ADMIN_PASSWORDS.');
     } catch (error) {
       logger.error(`Admin seeding error: ${error.message}`);
     }
