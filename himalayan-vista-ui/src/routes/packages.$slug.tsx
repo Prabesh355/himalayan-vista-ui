@@ -1,65 +1,188 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { destinations } from "@/services/mockData";
-import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { type ComponentType, useEffect, useMemo, useRef } from "react";
+import {
+  Check,
+  CirclePlus,
+  Minus,
+  ShieldCheck,
+  Sparkles,
+  Clock3,
+  MapPin,
+  BedDouble,
+  BusFront,
+  Ticket,
+  Users,
+  UtensilsCrossed,
+  Plane,
+  BadgeCheck,
+} from "lucide-react";
 
-type ItineraryStep = {
+type ItineraryDay = {
+  day: number;
   title: string;
   detail: string;
 };
 
-function extractItinerarySteps(markdown: string): { summary: string; highlights: string[]; steps: ItineraryStep[] } {
+type PriceItem = {
+  label: string;
+  detail: string;
+  icon: ComponentType<{ className?: string }>;
+};
+
+type ParsedItinerary = {
+  summary: string;
+  highlights: string[];
+  days: ItineraryDay[];
+};
+
+const includedCosts: PriceItem[] = [
+  { label: "Accommodation", detail: "Tea houses and selected hotels", icon: BedDouble },
+  { label: "Transportation", detail: "Kathmandu → Pokhara and local transfers", icon: BusFront },
+  { label: "Permits", detail: "ACAP Permit and TIMS Card", icon: Ticket },
+  { label: "Guide Services", detail: "Licensed guide and porter support", icon: Users },
+  { label: "Meals", detail: "Breakfast, lunch, and dinner on trek days", icon: UtensilsCrossed },
+];
+
+const excludedCosts: PriceItem[] = [
+  { label: "International flights", detail: "Flights to and from Nepal", icon: Plane },
+  { label: "Travel insurance", detail: "Mandatory high-altitude coverage", icon: ShieldCheck },
+  { label: "Personal expenses", detail: "Drinks, tips, laundry, and snacks", icon: Minus },
+  { label: "Gear rental", detail: "Optional technical equipment hire", icon: BadgeCheck },
+];
+
+const optionalAddOns: PriceItem[] = [
+  { label: "Private transfers", detail: "Door-to-door premium vehicle service", icon: CirclePlus },
+  { label: "Extra hotel nights", detail: "Before or after the trek in Kathmandu", icon: Sparkles },
+  { label: "Equipment rental", detail: "Sleeping bags, poles, jackets, and boots", icon: CirclePlus },
+  { label: "Helicopter return", detail: "Fast-track exit for selected routes", icon: CirclePlus },
+];
+
+function extractItinerary(markdown: string): ParsedItinerary {
   const lines = markdown.split(/\r?\n/).map((line) => line.trim());
-  const summaryLines: string[] = [];
+  const summaryParts: string[] = [];
   const highlights: string[] = [];
-  const steps: ItineraryStep[] = [];
-  let mode: "summary" | "steps" | "highlights" | "notes" = "summary";
+  const days: ItineraryDay[] = [];
+  let hasSeenDays = false;
 
   for (const line of lines) {
     if (!line || line === "---" || line.startsWith("#")) continue;
 
-    if (/^\*\*Highlights:\*\*/i.test(line) || /^# Trip Highlights/i.test(line)) {
-      mode = "highlights";
-      const inline = line.replace(/^\*\*Highlights:\*\*\s*/i, "").replace(/^# Trip Highlights\s*/i, "");
-      if (inline) highlights.push(inline.replace(/^:\s*/, ""));
+    if (/^\*\*Trip notes:\*\*/i.test(line) || /^\*\*Notes:\*\*/i.test(line)) {
       continue;
     }
 
-    const mdStep = line.match(/^\d+\.\s+\*\*(.+?)\*\*:\s*(.+)$/);
-    const bulletStep = line.match(/^[-*]\s+\*\*(.+?)\*\*:\s*(.+)$/);
-    const plainDay = line.match(/^(?:###\s*)?Day\s*\d+[:\-]\s*(.+?)(?:\s*[–-]\s*(.+))?$/i);
-
-    if (mdStep || bulletStep) {
-      mode = "steps";
-      const match = mdStep ?? bulletStep!;
-      steps.push({ title: match[1], detail: match[2] });
+    const highlightMatch = line.match(/^\*\*Highlights:\*\*\s*(.+)$/i);
+    if (highlightMatch) {
+      highlights.push(
+        ...highlightMatch[1]
+          .split(/[,•|]/)
+          .map((item) => item.trim())
+          .filter(Boolean),
+      );
       continue;
     }
 
-    if (plainDay) {
-      mode = "steps";
-      steps.push({
-        title: plainDay[1],
-        detail: plainDay[2] ?? "",
+    const lineStep = line.match(/^(?:[-*]\s+|\d+\.\s+)?\*\*?Day\s*(\d+)\s*[—–-]\s*(.+?)\*\*?:\s*(.+)$/i);
+    const bulletDay = line.match(/^[-*]\s+Day\s*(\d+)\s*[—–-]\s*(.+?):\s*(.+)$/i);
+    const mdStep = line.match(/^\d+\.\s+\*\*Day\s*(\d+)\s*[—–-]\s*(.+?)\*\*:\s*(.+)$/i);
+    const plainDay = line.match(/^Day\s*(\d+)\s*[—–-]\s*(.+?)\s*[—–-]\s*(.+)$/i);
+
+    const match = lineStep ?? bulletDay ?? mdStep ?? plainDay;
+    if (match) {
+      hasSeenDays = true;
+      days.push({
+        day: Number(match[1]),
+        title: match[2].replace(/\s*\(.*?\)\s*$/, "").trim(),
+        detail: match[3].trim(),
       });
       continue;
     }
 
-    if (/^\*\*Trip notes:\*\*/i.test(line) || /^\*\*Notes:\*\*/i.test(line)) {
-      mode = "notes";
-      summaryLines.push(line.replace(/^\*\*Trip notes:\*\*\s*/i, "").replace(/^\*\*Notes:\*\*\s*/i, ""));
-      continue;
+    if (!hasSeenDays) {
+      summaryParts.push(line.replace(/^[-*]\s+/, ""));
     }
-
-    if (mode === "summary") summaryLines.push(line.replace(/^[-*]\s+/, ""));
-    else if (mode === "highlights") highlights.push(line);
   }
 
   return {
-    summary: summaryLines.join(" ").replace(/\s+/g, " ").trim(),
+    summary: summaryParts.join(" ").replace(/\s+/g, " ").trim(),
     highlights,
-    steps,
+    days: days.sort((a, b) => a.day - b.day),
   };
+}
+
+function CostCard({ title, items, accent, icon: Icon }: { title: string; items: PriceItem[]; accent: string; icon: ComponentType<{ className?: string }> }) {
+  return (
+    <motion.section
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2 }}
+      className="rounded-3xl border border-border/70 bg-card p-5 shadow-soft backdrop-blur-xl"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`grid h-11 w-11 place-items-center rounded-2xl ${accent}`}>
+          <Icon className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Premium travel summary</p>
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        {items.map((item) => {
+          const ItemIcon = item.icon;
+
+          return (
+            <div key={item.label} className="flex gap-3 rounded-2xl border border-border/60 bg-background px-4 py-3 transition-colors hover:border-accent/40 hover:bg-secondary/10">
+              <div className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full ${accent}`}>
+                <ItemIcon className="h-4 w-4 text-white" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-foreground">{item.label}</p>
+                <p className="text-sm text-muted-foreground">{item.detail}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </motion.section>
+  );
+}
+
+function PriceSummary({ price }: { price: number }) {
+  return (
+    <motion.section
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.2 }}
+      className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-primary via-primary to-foreground p-6 text-white shadow-elegant"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.35em] text-white/65">Package Price</p>
+          <p className="mt-2 text-4xl font-semibold">${price}</p>
+        </div>
+        <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/10">
+          <Ticket className="h-7 w-7 text-secondary" />
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-2 text-sm text-white/90 sm:grid-cols-2">
+        {[
+          "Accommodation",
+          "Transportation",
+          "Permits",
+          "Guide",
+        ].map((item) => (
+          <div key={item} className="flex items-center gap-2 rounded-2xl bg-white/8 px-4 py-3 backdrop-blur-md">
+            <Check className="h-4 w-4 text-secondary" />
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
+    </motion.section>
+  );
 }
 
 export const Route = createFileRoute("/packages/$slug")({
@@ -76,6 +199,7 @@ function PackageDetails() {
   const { slug } = Route.useParams();
   const detailsRef = useRef<HTMLElement | null>(null);
   const pkg = destinations.find((d) => d.slug === slug);
+  const itinerary = useMemo(() => (pkg?.itinerary ? extractItinerary(pkg.itinerary) : null), [pkg]);
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "977981234567";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.name || "trek")}%20package.`;
@@ -127,122 +251,105 @@ function PackageDetails() {
         </div>
       </header>
 
-      <section className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 prose prose-invert">
-          <div className="rounded-3xl border border-white/10 bg-muted p-6">
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="space-y-8">
+          <div className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-soft">
             <h2 className="text-2xl font-semibold">Overview</h2>
-            <p className="mt-4 text-muted-foreground">{pkg.description}</p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-background p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Altitude</p>
-                <p className="mt-2 text-lg font-semibold">{pkg.altitude}</p>
-              </div>
-              <div className="rounded-2xl bg-background p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Best season</p>
-                <p className="mt-2 text-lg font-semibold">{pkg.bestSeason}</p>
-              </div>
-              <div className="rounded-2xl bg-background p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Price from</p>
-                <p className="mt-2 text-lg font-semibold">${pkg.priceFrom} USD</p>
-              </div>
-              <div className="rounded-2xl bg-background p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Group size</p>
-                <p className="mt-2 text-lg font-semibold">1–12 people</p>
-              </div>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground md:text-base">{pkg.description}</p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {[
+                { label: "Altitude", value: pkg.altitude },
+                { label: "Best season", value: pkg.bestSeason },
+                { label: "Duration", value: pkg.duration },
+                { label: "Group size", value: "1–12 people" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-border/60 bg-background p-4">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">{item.label}</p>
+                  <p className="mt-2 text-base font-semibold text-foreground">{item.value}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          {pkg.itinerary ? (
-            (() => {
-              const itinerary = extractItinerarySteps(pkg.itinerary);
+          {itinerary ? (
+            <section className="rounded-[2rem] border border-border/70 bg-gradient-to-b from-card to-muted/30 p-6 shadow-elegant">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">Journey plan</p>
+                  <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Detailed Itinerary</h2>
+                </div>
+                <div className="rounded-full border border-accent/20 bg-secondary/10 px-4 py-2 text-sm font-medium text-foreground">
+                  {itinerary.days.length}+ days · scroll through the route
+                </div>
+              </div>
 
-              return (
-                <>
-                  <h2 className="mt-8 text-2xl font-semibold">Detailed Itinerary</h2>
-                  <div className="mt-4 rounded-3xl border border-border/70 bg-card p-6 shadow-soft">
-                    {itinerary.summary && (
-                      <p className="max-w-3xl text-sm leading-7 text-muted-foreground md:text-base">
-                        {itinerary.summary}
-                      </p>
-                    )}
+              {itinerary.summary && (
+                <p className="mt-5 max-w-4xl text-sm leading-7 text-muted-foreground md:text-base">{itinerary.summary}</p>
+              )}
 
-                    {itinerary.highlights.length > 0 && (
-                      <div className="mt-6 rounded-2xl bg-secondary/15 p-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">Trip highlights</p>
-                        <ul className="mt-3 grid gap-2 text-sm text-foreground sm:grid-cols-2">
-                          {itinerary.highlights
-                            .join(" ")
-                            .split(/\*|\n|\.|•/)
-                            .map((item) => item.trim())
-                            .filter(Boolean)
-                            .slice(0, 6)
-                            .map((item) => (
-                              <li key={item} className="flex gap-2">
-                                <span className="mt-1 h-2 w-2 rounded-full bg-accent" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {itinerary.steps.length > 0 && (
-                      <div className="mt-8 grid gap-4">
-                        {itinerary.steps.map((step, index) => (
-                          <article key={`${step.title}-${index}`} className="rounded-2xl border border-border/70 bg-background p-5 transition-shadow hover:shadow-elegant">
-                            <div className="flex items-start gap-4">
-                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-sunset text-sm font-bold text-white shadow-soft">
-                                {String(index + 1).padStart(2, "0")}
-                              </div>
-                              <div className="min-w-0">
-                                <h3 className="text-base font-semibold text-foreground md:text-lg">{step.title}</h3>
-                                {step.detail && <p className="mt-1 text-sm leading-7 text-muted-foreground md:text-[15px]">{step.detail}</p>}
-                              </div>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    )}
+              {itinerary.highlights.length > 0 && (
+                <div className="mt-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">Trip highlights</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {itinerary.highlights.map((item) => (
+                      <span key={item} className="inline-flex items-center rounded-full border border-accent/20 bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
+                        {item}
+                      </span>
+                    ))}
                   </div>
-                </>
-              );
-            })()
-          ) : (
-            <div className="mt-8 rounded-3xl border border-white/10 bg-muted p-6">
-              <h2 className="text-2xl font-semibold">Detailed itinerary</h2>
-              <p className="mt-4 text-muted-foreground">A full day-by-day itinerary for this package is coming soon. In the meantime, email or WhatsApp us for the latest schedule and pricing.</p>
-            </div>
-          )}
+                </div>
+              )}
+
+              <div className="relative mt-8 pl-3 sm:pl-6">
+                <div className="absolute left-4 top-0 h-full w-px bg-gradient-to-b from-accent via-border to-transparent sm:left-6" />
+                <div className="space-y-5">
+                  {itinerary.days.map((day, index) => (
+                    <motion.article
+                      key={`${day.day}-${day.title}`}
+                      initial={{ opacity: 0, y: 18 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.25 }}
+                      transition={{ duration: 0.35, delay: index * 0.03 }}
+                      whileHover={{ y: -3 }}
+                      className="relative rounded-[1.75rem] border border-border/70 bg-background/95 p-5 pl-5 shadow-soft backdrop-blur-md sm:p-6 sm:pl-6"
+                    >
+                      <span className="absolute -left-1 top-6 grid h-8 w-8 place-items-center rounded-full border-4 border-background bg-gradient-sunset text-xs font-bold text-white shadow-glow sm:-left-2 sm:h-10 sm:w-10">
+                        {day.day}
+                      </span>
+
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">Day {day.day}</p>
+                          <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">{day.title}</h3>
+                        </div>
+                        <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground">
+                          <Clock3 className="h-3.5 w-3.5 text-accent" />
+                          <span>Structured trek day</span>
+                        </div>
+                      </div>
+
+                      <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">{day.detail}</p>
+                    </motion.article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          ) : null}
         </div>
 
-        <aside className="md:col-span-1">
-          <div className="sticky top-24 rounded-3xl border border-white/10 bg-muted p-6">
-            <h3 className="text-lg font-semibold">Price & booking</h3>
-            <p className="mt-3 text-sm text-muted-foreground">Starting price is per person in USD and includes core trek services.</p>
-            <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <div>
-                <p className="font-semibold text-foreground">Included</p>
-                <ul className="mt-2 list-inside list-disc">
-                  <li>Permits & park fees</li>
-                  <li>Accommodation during the trek</li>
-                  <li>Local guide and support staff</li>
-                  <li>All meals on trek days</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-foreground">Not included</p>
-                <ul className="mt-2 list-inside list-disc">
-                  <li>International flights</li>
-                  <li>Personal travel insurance</li>
-                  <li>Private gear rental</li>
-                  <li>Optional sightseeing in Kathmandu</li>
-                </ul>
-              </div>
-            </div>
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <PriceSummary price={pkg.priceFrom} />
+          <CostCard title="Included Costs" items={includedCosts} accent="bg-gradient-sunset" icon={Check} />
+          <CostCard title="Excluded Costs" items={excludedCosts} accent="bg-gradient-to-br from-rose-500 to-red-700" icon={Minus} />
+          <CostCard title="Optional Add-ons" items={optionalAddOns} accent="bg-gradient-to-br from-primary to-accent" icon={CirclePlus} />
+
+          <div className="rounded-[2rem] border border-white/10 bg-muted/70 p-6 shadow-soft">
+            <h3 className="text-lg font-semibold text-foreground">Plan your booking</h3>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">Need a custom route, private departure, or luxury upgrade? We can tailor the package to your dates and comfort level.</p>
             <div className="mt-6 grid gap-3">
               <a
                 href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.name)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.name)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
-                className="block rounded-full bg-gradient-sunset px-4 py-3 text-center text-sm font-semibold text-white shadow-glow hover:opacity-95"
+                className="inline-flex items-center justify-center rounded-full bg-gradient-sunset px-4 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95"
               >
                 Email enquiry
               </a>
@@ -250,7 +357,7 @@ function PackageDetails() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="block rounded-full border border-white/20 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-full border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground hover:bg-secondary/10"
               >
                 WhatsApp booking
               </a>
