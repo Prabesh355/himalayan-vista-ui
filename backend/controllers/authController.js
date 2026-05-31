@@ -12,6 +12,17 @@ function getAdminEmailSet() {
   );
 }
 
+function getJwtCookieMaxAge() {
+  const raw = String(process.env.JWT_COOKIE_EXPIRE || '').trim();
+  const days = Number.parseInt(raw, 10);
+
+  if (Number.isFinite(days) && days > 0) {
+    return days * 24 * 60 * 60 * 1000;
+  }
+
+  return 7 * 24 * 60 * 60 * 1000;
+}
+
 // @desc Register a user
 // @route POST /api/auth/register
 // @access Public
@@ -100,7 +111,7 @@ exports.login = async (req, res, next) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: parseInt(process.env.JWT_COOKIE_EXPIRE) * 24 * 60 * 60 * 1000,
+      maxAge: getJwtCookieMaxAge(),
     });
 
     res.status(200).json({
