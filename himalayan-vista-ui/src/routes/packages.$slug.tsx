@@ -143,9 +143,43 @@ function extractItinerary(markdown: string): ParsedItinerary {
       continue;
     }
 
-    const dayHeading = line.match(/^(?:#{1,3}\s*)?(?:\*\*)?Day\s*(\d+)\s*[:\-–—]\s*(.+?)(?:\*\*)?$/i);
-    if (dayHeading) {
-      startDay(Number(dayHeading[1]), clean(dayHeading[2]));
+    // Simplified day heading detection to handle many markdown variants robustly.
+    const dayNumberMatch = line.match(/Day\s*(\d+)/i);
+    if (dayNumberMatch) {
+      const dayNum = Number(dayNumberMatch[1]);
+
+      // Find a dash/em-dash/– following the day number to split title/detail
+      const afterDayIndex = line.search(/Day\s*\d+/i);
+      const dashIndex = Math.max(line.indexOf('—', afterDayIndex), line.indexOf('–', afterDayIndex), line.indexOf('-', afterDayIndex));
+      let title = '';
+      let detailPart = '';
+
+      if (dashIndex > -1) {
+        // look for first ':' after dash to separate a short title from the detail
+        const colonIndex = line.indexOf(':', dashIndex + 1);
+        if (colonIndex > -1) {
+          title = clean(line.slice(dashIndex + 1, colonIndex));
+          detailPart = line.slice(colonIndex + 1);
+        } else {
+          title = clean(line.slice(dashIndex + 1));
+          detailPart = '';
+        }
+      } else {
+        // fallback: take remainder of the line after the day token
+        const after = line.slice(afterDayIndex + dayNumberMatch[0].length).trim();
+        // if there's a ':' inside, split it
+        const colonIndex = after.indexOf(':');
+        if (colonIndex > -1) {
+          title = clean(after.slice(0, colonIndex));
+          detailPart = after.slice(colonIndex + 1);
+        } else {
+          title = clean(after);
+          detailPart = '';
+        }
+      }
+
+      startDay(dayNum, title || `Day ${dayNum}`);
+      if (detailPart) addToCurrent(detailPart);
       continue;
     }
 
