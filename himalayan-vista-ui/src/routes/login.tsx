@@ -89,6 +89,7 @@ function LoginPage() {
     try {
       // Get the backend API URL from environment or use default
       const apiUrl = getApiBaseUrl();
+      console.debug("Login: using API URL:", apiUrl);
 
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
@@ -123,8 +124,15 @@ function LoginPage() {
       }, 1500);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Login failed. Please try again.";
-      setError(errorMessage);
-      console.error("Login error:", err);
+      // Common cause: network/CORS issue (browser shows "Failed to fetch").
+      if (errorMessage === "Failed to fetch") {
+        setError(
+          "Network error: unable to reach the API. This is usually a backend or CORS issue — check the API url and server CORS settings."
+        );
+      } else {
+        setError(errorMessage);
+      }
+      console.error("Login error (apiUrl=%s):", getApiBaseUrl(), err);
     } finally {
       setLoading(false);
     }
