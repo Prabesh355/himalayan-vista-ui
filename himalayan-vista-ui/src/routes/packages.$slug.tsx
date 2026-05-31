@@ -24,6 +24,8 @@ type ItineraryDay = {
   day: number;
   title: string;
   detail: string;
+  meta: string[];
+  highlights: string[];
 };
 
 type PriceItem = {
@@ -36,6 +38,15 @@ type ParsedItinerary = {
   summary: string;
   highlights: string[];
   days: ItineraryDay[];
+};
+
+type DayDraft = {
+  day: number;
+  title: string;
+  detailParts: string[];
+  meta: string[];
+  highlights: string[];
+  activeSection: string | null;
 };
 
 const includedCosts: PriceItem[] = [
@@ -64,11 +75,85 @@ function extractItinerary(markdown: string): ParsedItinerary {
   const lines = markdown.split(/\r?\n/).map((line) => line.trim());
   const summaryParts: string[] = [];
   const highlights: string[] = [];
-  const days: ItineraryDay[] = [];
+  const days: DayDraft[] = [];
+  let currentDay: DayDraft | null = null;
   let hasSeenDays = false;
 
+  const pushDay = () => {
+    if (!currentDay) return;
+    days.push(currentDay);
+    currentDay = null;
+  };
+
+  const startDay = (day: number, title: string) => {
+    pushDay();
+    currentDay = {
+      day,
+      title,
+      detailParts: [],
+      meta: [],
+      highlights: [],
+      activeSection: null,
+    };
+    hasSeenDays = true;
+  };
+
+  const clean = (value: string) => value
+    .replace(/^[-*•]\s+/, "")
+    .replace(/^\*+/, "")
+    .replace(/\*+$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const addToCurrent = (value: string) => {
+    if (!currentDay) return;
+    const cleaned = clean(value);
+    if (!cleaned) return;
+
+    if (currentDay.activeSection === "highlights") {
+      currentDay.highlights.push(cleaned);
+      return;
+    }
+
+    if (currentDay.activeSection === "activities") {
+      currentDay.meta.push(cleaned);
+      return;
+    }
+
+    if (currentDay.activeSection === "optional hikes") {
+      currentDay.meta.push(`Optional: ${cleaned}`);
+      return;
+    }
+
+    currentDay.detailParts.push(cleaned);
+  };
+
+  const sectionHeader = (line: string) => {
+    const match = line.match(/^(?:#{1,3}\s*|\*\*)?(Accommodation|Duration|Highlights|Activities|Optional hikes|Best time to trek|Why Choose This Trek\?|Trek Overview|Trip Highlights|Detailed Day-by-Day Itinerary|Detailed Itinerary|Trek Duration|Maximum Elevation|Trek Difficulty|Starting Point|Ending Point)\b\*?\s*:?\s*(.*)$/i);
+    if (!match) return null;
+    return {
+      label: match[1].toLowerCase(),
+      value: clean(match[2]),
+    };
+  };
+
   for (const line of lines) {
-    if (!line || line === "---" || line.startsWith("#")) continue;
+    if (!line || line === "---") {
+      if (currentDay) currentDay.activeSection = null;
+      continue;
+    }
+
+    const dayHeading = line.match(/^(?:#{1,3}\s*)?(?:\*\*)?Day\s*(\d+)\s*[:\-–—]\s*(.+?)(?:\*\*)?$/i);
+    if (dayHeading) {
+      startDay(Number(dayHeading[1]), clean(dayHeading[2]));
+      continue;
+    }
+
+    if (line.startsWith("#") && !currentDay) {
+      const title = clean(line.replace(/^#+\s*/, ""));
+      if (title && summaryParts.length === 0) summaryParts.push(title);
+      continue;
+    }
 
     if (/^\*\*Trip notes:\*\*/i.test(line) || /^\*\*Notes:\*\*/i.test(line)) {
       continue;
@@ -85,31 +170,89 @@ function extractItinerary(markdown: string): ParsedItinerary {
       continue;
     }
 
-    const lineStep = line.match(/^(?:[-*]\s+|\d+\.\s+)?\*\*?Day\s*(\d+)\s*[—–-]\s*(.+?)\*\*?:\s*(.+)$/i);
-    const bulletDay = line.match(/^[-*]\s+Day\s*(\d+)\s*[—–-]\s*(.+?):\s*(.+)$/i);
-    const mdStep = line.match(/^\d+\.\s+\*\*Day\s*(\d+)\s*[—–-]\s*(.+?)\*\*:\s*(.+)$/i);
-    const plainDay = line.match(/^Day\s*(\d+)\s*[—–-]\s*(.+?)\s*[—–-]\s*(.+)$/i);
+    const section = sectionHeader(line);
+    if (section && currentDay) {
+      currentDay.activeSection = section.label;
+      if (section.value) {
+        if (section.label === "highlights") {
+          section.value.split(/[,•|]/).map((item) => clean(item)).filter(Boolean).forEach((item) => currentDay!.highlights.push(item));
+        } else if (section.label === "activities") {
+          currentDay.meta.push(section.value);
+        } else if (section.label === "duration") {
+          currentDay.meta.push(`Duration: ${section.value}`);
+        } else if (section.label === "accommodation") {
+          currentDay.meta.push(`Accommodation: ${section.value}`);
+        } else if (section.label === "starting point" || section.label === "ending point" || section.label === "trek duration" || section.label === "maximum elevation" || section.label === "trek difficulty") {
+          currentDay.meta.push(`${section.label.replace(/\b\w/g, (ch) => ch.toUpperCase())}: ${section.value}`);
+        } else {
+          currentDay.detailParts.push(section.value);
+        }
+      }
+      continue;
+    }
 
-    const match = lineStep ?? bulletDay ?? mdStep ?? plainDay;
-    if (match) {
-      hasSeenDays = true;
-      days.push({
-        day: Number(match[1]),
-        title: match[2].replace(/\s*\(.*?\)\s*$/, "").trim(),
-        detail: match[3].trim(),
-      });
+    const numberedDay = line.match(/^\d+\.\s+(?:\*\*)?Day\s*(\d+)\s*[—–-]\s*(.+?)(?:\*\*)?[:\-]?(?:\s*(.+))?$/i);
+    if (numberedDay) {
+      startDay(Number(numberedDay[1]), clean(numberedDay[2]));
+      if (numberedDay[3]) addToCurrent(numberedDay[3]);
+      continue;
+    }
+
+    const bulletDay = line.match(/^[-*]\s+(?:\*\*)?Day\s*(\d+)\s*[—–-]\s*(.+?)(?:\*\*)?[:\-]?(?:\s*(.+))?$/i);
+    if (bulletDay) {
+      startDay(Number(bulletDay[1]), clean(bulletDay[2]));
+      if (bulletDay[3]) addToCurrent(bulletDay[3]);
+      continue;
+    }
+
+    if (line.startsWith("|") && line.endsWith("|")) {
+      // Ignore markdown tables in itinerary content; price cards handle costs separately.
+      continue;
+    }
+
+    if (currentDay) {
+      if (/^\*\*Highlights:\*\*/i.test(line)) {
+        currentDay.activeSection = "highlights";
+        continue;
+      }
+      if (/^\*\*Activities:\*\*/i.test(line)) {
+        currentDay.activeSection = "activities";
+        continue;
+      }
+      if (/^\*\*(Accommodation|Duration)\:/i.test(line)) {
+        const compact = clean(line.replace(/^\*\*/, "").replace(/\*\*$/, ""));
+        currentDay.meta.push(compact);
+        continue;
+      }
+
+      if (/^[-*•]\s+/.test(line)) {
+        addToCurrent(line);
+        continue;
+      }
+
+      addToCurrent(line);
       continue;
     }
 
     if (!hasSeenDays) {
-      summaryParts.push(line.replace(/^[-*]\s+/, ""));
+      summaryParts.push(clean(line));
     }
   }
+
+  pushDay();
 
   return {
     summary: summaryParts.join(" ").replace(/\s+/g, " ").trim(),
     highlights,
-    days: days.sort((a, b) => a.day - b.day),
+    days: days
+      .sort((a, b) => a.day - b.day)
+      .map((day) => ({
+        day: day.day,
+        title: day.title,
+        detail: day.detailParts.join(" ").replace(/\s+/g, " ").trim(),
+        meta: Array.from(new Set(day.meta)).filter(Boolean),
+        highlights: Array.from(new Set(day.highlights)).filter(Boolean),
+      })),
   };
 }
 
@@ -327,6 +470,21 @@ function PackageDetails() {
                           <span>Structured trek day</span>
                         </div>
                       </div>
+
+                      {(day.meta.length > 0 || day.highlights.length > 0) && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {day.meta.slice(0, 4).map((item) => (
+                            <span key={item} className="inline-flex items-center rounded-full border border-border/70 bg-secondary/10 px-3 py-1 text-[11px] font-medium text-foreground">
+                              {item}
+                            </span>
+                          ))}
+                          {day.highlights.slice(0, 3).map((item) => (
+                            <span key={item} className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-foreground">
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      )}
 
                       <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">{day.detail}</p>
                     </motion.article>
