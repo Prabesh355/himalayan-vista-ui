@@ -53,7 +53,7 @@ function Hero() {
           className="max-w-3xl"
         >
           <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-foreground border border-white/8">
-            <Sparkles className="h-3.5 w-3.5 text-gradient-sunset" />
+            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
             Small group sizes · Expert Nepali guides
           </span>
           <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-display tracking-tight text-foreground leading-[1.02]">

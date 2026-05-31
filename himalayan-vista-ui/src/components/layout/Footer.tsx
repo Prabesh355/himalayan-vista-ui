@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Twitter, Youtube, Mail } from "lucide-react";
-import logo from "@/assets/Nomadslogo.jpeg";
+import logo from "@/assets/logo.svg";
 
 export function Footer() {
   return (
@@ -11,7 +11,7 @@ export function Footer() {
             <Link to="/" className="flex items-center gap-2">
               <img src={logo} alt="Nomads Navigate Nepal" className="h-10 w-10" />
               <span className="font-semibold tracking-tight">
-                Nomads <span className="text-gradient-sunset">Nepal</span>
+                Nomads <span className="text-gradient-sunset">Navigate Nepal</span>
               </span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">

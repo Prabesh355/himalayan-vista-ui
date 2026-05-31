@@ -1,43 +1,22 @@
-<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-  <!-- Sun -->
-  <circle cx="400" cy="120" r="80" fill="#FFA500" opacity="0.9"/>
-  
-  <!-- Mountain Range Background -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="64" viewBox="0 0 240 64" role="img" aria-label="Nomads Navigate Nepal logo">
+  <title>Nomads Navigate Nepal</title>
   <defs>
-    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#E8E8E8;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#D0D0D0;stop-opacity:1" />
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#F4AA42"/>
+      <stop offset="100%" stop-color="#D97706"/>
     </linearGradient>
   </defs>
-  
-  <!-- Mountain 1 (Left) -->
-  <polygon points="150,500 350,200 280,500" fill="url(#mountainGradient)" stroke="#5C4033" stroke-width="8" stroke-linejoin="round"/>
-  
-  <!-- Mountain 2 (Center) -->
-  <polygon points="300,550 500,150 700,550" fill="url(#mountainGradient)" stroke="#5C4033" stroke-width="10" stroke-linejoin="round"/>
-  
-  <!-- Mountain 3 (Right) -->
-  <polygon points="550,500 750,250 820,500" fill="url(#mountainGradient)" stroke="#5C4033" stroke-width="8" stroke-linejoin="round"/>
-  
-  <!-- Trekker -->
-  <g transform="translate(480, 280)">
-    <!-- Head -->
-    <circle cx="0" cy="-15" r="8" fill="#3D2817"/>
-    <!-- Body -->
-    <rect x="-4" y="-5" width="8" height="25" fill="#3D2817"/>
-    <!-- Legs -->
-    <line x1="-3" y1="20" x2="-6" y2="35" stroke="#3D2817" stroke-width="3" stroke-linecap="round"/>
-    <line x1="3" y1="20" x2="8" y2="35" stroke="#3D2817" stroke-width="3" stroke-linecap="round"/>
-    <!-- Arms raised -->
-    <line x1="-4" y1="5" x2="-15" y2="-5" stroke="#3D2817" stroke-width="3" stroke-linecap="round"/>
-    <line x1="4" y1="5" x2="15" y2="-5" stroke="#3D2817" stroke-width="3" stroke-linecap="round"/>
+  <!-- mountain mark -->
+  <g transform="translate(4,6)">
+    <path d="M12 40 L30 8 L48 40 Z" fill="#4A0B05" />
+    <path d="M36 40 L52 12 L72 40 Z" fill="#7a2b1f" />
+    <circle cx="84" cy="12" r="8" fill="url(#g1)" />
   </g>
-  
-  <!-- Text -->
-  <text x="400" y="680" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#3D2817" letter-spacing="2">
-    NOMADS NAVIGATE
-  </text>
-  <text x="400" y="740" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#3D2817" letter-spacing="2">
-    NEPAL
-  </text>
+  <!-- Brand text -->
+  <g transform="translate(100,44)">
+    <text x="0" y="-6" font-family="Cinzel, serif" font-size="18" fill="#4A0B05" font-weight="700">Nomads</text>
+    <text x="64" y="-6" font-family="Cinzel, serif" font-size="18" fill="url(#g1)" font-weight="700">Navigate</text>
+    <text x="140" y="-6" font-family="Cinzel, serif" font-size="18" fill="#4A0B05" font-weight="700">Nepal</text>
+  </g>
 </svg>

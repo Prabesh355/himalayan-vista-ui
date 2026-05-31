@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X, ShoppingCart, LogIn, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import logo from "@/assets/Nomadslogo.jpeg";
+import logo from "@/assets/logo.svg";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -60,7 +60,7 @@ export function Navbar() {
           <Link to="/" className="flex items-center gap-2 group">
             <img src={logo} alt="Nomads Navigate Nepal" className="h-10 w-10 transition-transform group-hover:rotate-6" />
             <span className="font-semibold tracking-tight text-foreground hidden sm:inline">
-              Nomads <span className="text-gradient-sunset">Nepal</span>
+              Nomads <span className="text-gradient-sunset">Navigate Nepal</span>
             </span>
           </Link>
 
