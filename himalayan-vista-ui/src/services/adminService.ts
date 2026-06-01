@@ -148,7 +148,11 @@ export const adminService = {
   deleteBlog: async (blogId: string) => (await api.delete(`/blogs/${blogId}`)).data,
   getInquiries: async () => (await api.get<{ success: boolean; data: InquiryItem[] }>("/inquiries")).data,
   getInquiryStats: async () => (await api.get<{ success: boolean; data: { total: number; byStatus: Array<{ _id: string; count: number }>; byPriority: Array<{ _id: string; count: number }> } }>("/inquiries/stats")).data,
-  updateInquiry: async (inquiryId: string, payload: Record<string, unknown>) => (await api.put(`/inquiries/${inquiryId}`, payload)).data,
+    updateInquiry: async (inquiryId: string, payload: Record<string, unknown>) => (await api.put(`/inquiries/${inquiryId}`, payload)).data,
+    uploadImage: async (formData: FormData) => {
+    const headers: Record<string, string> = { 'Content-Type': 'multipart/form-data' };
+    return (await api.post('/uploads', formData, { headers })).data;
+  },
   respondToInquiry: async (inquiryId: string, response: string) => (await api.post(`/inquiries/${inquiryId}/respond`, { response })).data,
   deleteInquiry: async (inquiryId: string) => (await api.delete(`/inquiries/${inquiryId}`)).data,
   getReviews: async () => (await api.get<{ success: boolean; count: number; reviews: ReviewItem[] }>("/admin/reviews")).data,

@@ -79,6 +79,14 @@ app.use('/api/blogs', require('./routes/blogRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+// File uploads (serve static uploads and upload endpoint)
+const path = require('path');
+const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+const isS3UploadsEnabled = Boolean(process.env.S3_BUCKET_NAME || process.env.AWS_S3_BUCKET);
+if (!isS3UploadsEnabled) {
+  app.use('/uploads', require('express').static(uploadDir));
+}
+app.use('/api/uploads', require('./routes/uploadRoutes'));
 
 // 404 handler
 app.use((req, res) => {

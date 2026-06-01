@@ -10,13 +10,17 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Configure storage
+const crypto = require('crypto');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    // Use a cryptographically strong random name and preserve extension
+    const ext = path.extname(file.originalname) || '';
+    const name = crypto.randomBytes(16).toString('hex');
+    const safeName = `${file.fieldname}-${name}${ext}`;
+    cb(null, safeName);
   },
 });
 

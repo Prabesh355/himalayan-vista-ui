@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/everest-base-camp.jpeg";
-import { destinations, stats, testimonials } from "@/services/mockData";
+import { stats, testimonials } from "@/services/uiData";
+import { packageService } from "@/services/packageService";
 import { DestinationCard } from "@/components/DestinationCard";
 
 export const Route = createFileRoute("/")({
@@ -133,6 +135,25 @@ function FeaturedDestinations() {
   const whatsappNumber = "977981234567";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20want%20to%20book%20a%20trek.`;
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["featured-packages"],
+    queryFn: () => packageService.getFeaturedPackages({ limit: 6 }),
+  });
+
+  const featuredPackages = data?.data || [];
+  const featuredDestinations = featuredPackages.map((pkg: any) => ({
+    slug: pkg.slug,
+    name: pkg.title,
+    tagline: pkg.tagline || pkg.description || "",
+    image: pkg.images?.[0] || "https://via.placeholder.com/640x800?text=No+Image",
+    region: pkg.destination,
+    duration: pkg.duration?.days ? `${pkg.duration.days} days` : pkg.duration || "Trek",
+    difficulty: pkg.difficulty,
+    priceFrom: pkg.price,
+    rating: pkg.rating ?? 0,
+    tags: pkg.tags || [],
+  }));
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
@@ -166,16 +187,18 @@ function FeaturedDestinations() {
 
       <div className="relative">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-muted-foreground">Scroll horizontally to view all treks</p>
+          <p className="text-sm text-muted-foreground">Scroll horizontally to view our most popular treks</p>
+          {isLoading && <p className="text-sm text-muted-foreground">Loading featured packages…</p>}
+          {isError && <p className="text-sm text-red-500">Unable to load featured packages.</p>}
         </div>
-        <HorizontalScroller destinations={destinations} />
+        <HorizontalScroller destinations={featuredDestinations} />
       </div>
     </section>
   );
 }
 
-    function HorizontalScroller({ destinations }: { destinations: typeof import("@/services/mockData").destinations }) {
-      const ref = useRef<HTMLDivElement | null>(null);
+function HorizontalScroller({ destinations }: { destinations: Array<{ slug: string; name: string; image: string; tagline?: string; region?: string; duration?: string; difficulty?: string; priceFrom?: number; price?: number; rating?: number; tags?: string[] }> }) {
+  const ref = useRef<HTMLDivElement | null>(null);
 
       const scroll = (dir: 'left' | 'right') => {
         const el = ref.current;
@@ -196,7 +219,7 @@ function FeaturedDestinations() {
 
           <div ref={ref} className="flex gap-6 overflow-x-auto pb-6 scroll-pl-6 snap-x snap-mandatory touch-pan-x">
             {destinations.map((d, i) => (
-              <div key={d.id} className="snap-start min-w-[260px] md:min-w-[300px]">
+              <div key={d.slug} className="snap-start min-w-[260px] md:min-w-[300px]">
                 <DestinationCard d={d} index={i} />
               </div>
             ))}

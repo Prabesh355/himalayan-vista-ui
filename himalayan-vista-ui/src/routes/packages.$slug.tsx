@@ -20,7 +20,6 @@ import {
 
 import { ReviewsSection, type Review as ReviewCard } from "@/components/ReviewsSection";
 import api from "@/services/api";
-import { destinations } from "@/services/mockData";
 
 type ItineraryDay = {
   day: number;

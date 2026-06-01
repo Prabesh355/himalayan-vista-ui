@@ -32,5 +32,10 @@ export const packageService = {
   deletePackage: async (id: string) => {
     const response = await api.delete(`/packages/${id}`);
     return response.data;
-  }
+  },
+
+  getFeaturedPackages: async (params?: any) => {
+    const response = await api.get('/packages/featured', { params });
+    return response.data;
+  },
 };

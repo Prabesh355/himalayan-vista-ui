@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Users } from "lucide-react";
-import { teamMembers } from "@/services/mockData";
+import { teamMembers } from "@/services/uiData";
 
 export const Route = createFileRoute("/teams")({
   head: () => ({

@@ -1,10 +1,13 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+const ReactMarkdown: any = require('react-markdown');
+const remarkGfm: any = require('remark-gfm');
 import { motion } from 'framer-motion';
 import { DataTable } from './DataTable';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { adminService, PackageItem } from '@/services/adminService';
+import { toast } from 'sonner';
 
 type PackageFormState = {
   title: string;
@@ -14,7 +17,7 @@ type PackageFormState = {
   discountPrice: string;
   durationDays: string;
   durationNights: string;
-  imageUrl: string;
+  images: string[];
   groupSizeMin: string;
   groupSizeMax: string;
   featured: boolean;
@@ -30,7 +33,7 @@ const emptyForm: PackageFormState = {
   discountPrice: '',
   durationDays: '1',
   durationNights: '0',
-  imageUrl: '',
+  images: [],
   groupSizeMin: '1',
   groupSizeMax: '10',
   featured: false,
@@ -47,7 +50,7 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
     discountPrice: String(pkg.discountPrice ?? ''),
     durationDays: String(pkg.duration?.days ?? 1),
     durationNights: String(pkg.duration?.nights ?? 0),
-    imageUrl: pkg.images?.[0] || '',
+    images: pkg.images || [],
     groupSizeMin: String(pkg.groupSize?.min ?? 1),
     groupSizeMax: String(pkg.groupSize?.max ?? 10),
     featured: Boolean(pkg.featured),
@@ -56,12 +59,14 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
   };
 }
 
-export const PackageManagement = () => {
+export const PackageManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
   const [form, setForm] = useState<PackageFormState>(emptyForm);
+  const [uploading, setUploading] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['admin-packages'],
@@ -76,15 +81,9 @@ export const PackageManagement = () => {
         destination: form.destination,
         price: Number(form.price),
         discountPrice: form.discountPrice ? Number(form.discountPrice) : undefined,
-        duration: {
-          days: Number(form.durationDays),
-          nights: Number(form.durationNights),
-        },
-        images: form.imageUrl ? [form.imageUrl] : [],
-        groupSize: {
-          min: Number(form.groupSizeMin),
-          max: Number(form.groupSizeMax),
-        },
+        duration: { days: Number(form.durationDays), nights: Number(form.durationNights) },
+        images: form.images || [],
+        groupSize: { min: Number(form.groupSizeMin), max: Number(form.groupSizeMax) },
         featured: form.featured,
         isActive: form.isActive,
         itinerary: form.itinerary,
@@ -99,6 +98,36 @@ export const PackageManagement = () => {
       setIsModalOpen(false);
       setSelectedPackage(null);
       setForm(emptyForm);
+    },
+    onError: (err: any) => {
+      console.error('Save error', err);
+      const fieldErrors = err?.response?.data?.fieldErrors as Array<{ field: string; message: string }> | undefined;
+      if (fieldErrors?.length) {
+        const mapped: Record<string, string> = {};
+        fieldErrors.forEach((fe) => {
+          switch (fe.field) {
+            case 'duration.days':
+              mapped.durationDays = fe.message;
+              break;
+            case 'duration.nights':
+              mapped.durationNights = fe.message;
+              break;
+            case 'groupSize.min':
+              mapped.groupSizeMin = fe.message;
+              break;
+            case 'groupSize.max':
+              mapped.groupSizeMax = fe.message;
+              break;
+            case 'images':
+              mapped.images = fe.message;
+              break;
+            default:
+              mapped[fe.field] = fe.message;
+          }
+        });
+        setFormErrors(mapped);
+      }
+      toast.error(err?.response?.data?.message || err?.message || 'Save failed');
     },
   });
 
@@ -124,16 +153,8 @@ export const PackageManagement = () => {
 
   const columns = [
     { key: 'title', header: 'Package Title' },
-    {
-      key: 'duration',
-      header: 'Duration',
-      render: (item: PackageItem) => `${item.duration?.days ?? '—'} Days / ${item.duration?.nights ?? '—'} Nights`,
-    },
-    {
-      key: 'price',
-      header: 'Price',
-      render: (item: PackageItem) => `$${Number(item.price || 0).toLocaleString()}`,
-    },
+    { key: 'duration', header: 'Duration', render: (item: PackageItem) => `${item.duration?.days ?? '—'} Days / ${item.duration?.nights ?? '—'} Nights` },
+    { key: 'price', header: 'Price', render: (item: PackageItem) => `$${Number(item.price || 0).toLocaleString()}` },
     {
       key: 'status',
       header: 'Status',
@@ -153,7 +174,43 @@ export const PackageManagement = () => {
       setSelectedPackage(null);
       setForm(emptyForm);
     }
+    setFormErrors({});
     setIsModalOpen(true);
+  };
+
+  // image helpers
+  const handleImageUrlKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Enter') return;
+    const target = e.target as HTMLInputElement;
+    const url = target.value.trim();
+    if (!url) return;
+    setForm(prev => ({ ...prev, images: [...prev.images, url] }));
+    target.value = '';
+  };
+
+  const handleFilesUpload = async (files: FileList | null) => {
+    const fileArray = Array.from(files || []);
+    if (!fileArray.length) return;
+    setUploading(true);
+    try {
+      for (const file of fileArray) {
+        const fd = new FormData();
+        fd.append('file', file);
+        if (selectedPackage && (selectedPackage._id || selectedPackage.id)) {
+          fd.append('packageId', String(selectedPackage._id || selectedPackage.id));
+        }
+        const res = await adminService.uploadImage(fd);
+        if (res && res.fileUrl) {
+          setForm((prev) => ({ ...prev, images: [...prev.images, res.fileUrl] }));
+        }
+      }
+      toast.success('Images uploaded');
+    } catch (err: any) {
+      console.error('Upload error', err);
+      toast.error(err?.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const actions = (item: PackageItem) => (
@@ -182,61 +239,104 @@ export const PackageManagement = () => {
               Add Package
             </button>
           </DialogTrigger>
+
           <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{selectedPackage ? 'Edit Package' : 'Create New Package'}</DialogTitle>
             </DialogHeader>
+
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Title</label>
                 <input value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="e.g. Everest Base Camp" />
+                {formErrors.title && <p className="text-sm text-red-600 mt-1">{formErrors.title}</p>}
               </div>
+
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Description</label>
                 <textarea value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Package description" />
+                {formErrors.description && <p className="text-sm text-red-600 mt-1">{formErrors.description}</p>}
               </div>
+
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Itinerary (Markdown Format)</label>
-                <textarea value={form.itinerary} onChange={(e) => setForm((prev) => ({ ...prev, itinerary: e.target.value }))} className="min-h-48 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono" placeholder="## Trek Title - 7 Days\n\n1. **Day 1 - Arrival:** Details...\n2. **Day 2 - Trek:** Details..." />
+                <label className="text-sm font-medium">Itinerary (Markdown)</label>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <textarea value={form.itinerary} onChange={(e) => setForm((prev) => ({ ...prev, itinerary: e.target.value }))} className="min-h-48 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono" placeholder={"## Trek Title - 7 Days\n\n1. **Day 1 - Arrival:** Details...\n2. **Day 2 - Trek:** Details..."} />
+                  <div className="min-h-48 w-full rounded-md border border-input bg-background px-3 py-2 text-sm overflow-auto">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose max-w-none">{form.itinerary || '*No itinerary provided*'}</ReactMarkdown>
+                  </div>
+                </div>
+                {formErrors.itinerary && <p className="text-sm text-red-600 mt-1">{formErrors.itinerary}</p>}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Images</label>
+                <div className="flex gap-2">
+                  <input placeholder="Paste image URL and press Enter" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" onKeyDown={handleImageUrlKeyDown} />
+                  <label className="flex items-center gap-2">
+                    <input type="file" accept="image/*" multiple onChange={(e) => handleFilesUpload(e.target.files)} />
+                    <span className="text-xs text-muted-foreground">Upload</span>
+                  </label>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {form.images.map((img, idx) => (
+                    <div key={img + idx} className="relative w-24 h-16 border rounded overflow-hidden">
+                      <img src={img} alt={`img-${idx}`} className="object-cover w-full h-full" />
+                      <button type="button" onClick={() => setForm(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }))} className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1">×</button>
+                      <div className="absolute left-0 bottom-0 flex gap-1">
+                        {idx > 0 && <button className="text-xs bg-black/50 text-white px-1" onClick={() => { setForm(prev => { const arr = [...prev.images]; [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]]; return { ...prev, images: arr }; }); }}>◀</button>}
+                        {idx < form.images.length - 1 && <button className="text-xs bg-black/50 text-white px-1" onClick={() => { setForm(prev => { const arr = [...prev.images]; [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]]; return { ...prev, images: arr }; }); }}>▶</button>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {formErrors.images && <p className="text-sm text-red-600 mt-1">{formErrors.images}</p>}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Destination</label>
                   <input value={form.destination} onChange={(e) => setForm((prev) => ({ ...prev, destination: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="e.g. Khumbu" />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium">Image URL</label>
-                  <input value={form.imageUrl} onChange={(e) => setForm((prev) => ({ ...prev, imageUrl: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="https://..." />
+                  {formErrors.destination && <p className="text-sm text-red-600 mt-1">{formErrors.destination}</p>}
                 </div>
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Price</label>
                   <input type="number" value={form.price} onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  {formErrors.price && <p className="text-sm text-red-600 mt-1">{formErrors.price}</p>}
                 </div>
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Discount Price</label>
                   <input type="number" value={form.discountPrice} onChange={(e) => setForm((prev) => ({ ...prev, discountPrice: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  {formErrors.discountPrice && <p className="text-sm text-red-600 mt-1">{formErrors.discountPrice}</p>}
                 </div>
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Days</label>
                   <input type="number" value={form.durationDays} onChange={(e) => setForm((prev) => ({ ...prev, durationDays: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  {formErrors.durationDays && <p className="text-sm text-red-600 mt-1">{formErrors.durationDays}</p>}
                 </div>
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Nights</label>
                   <input type="number" value={form.durationNights} onChange={(e) => setForm((prev) => ({ ...prev, durationNights: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  {formErrors.durationNights && <p className="text-sm text-red-600 mt-1">{formErrors.durationNights}</p>}
                 </div>
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Group Min</label>
                   <input type="number" value={form.groupSizeMin} onChange={(e) => setForm((prev) => ({ ...prev, groupSizeMin: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  {formErrors.groupSizeMin && <p className="text-sm text-red-600 mt-1">{formErrors.groupSizeMin}</p>}
                 </div>
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Group Max</label>
                   <input type="number" value={form.groupSizeMax} onChange={(e) => setForm((prev) => ({ ...prev, groupSizeMax: e.target.value }))} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  {formErrors.groupSizeMax && <p className="text-sm text-red-600 mt-1">{formErrors.groupSizeMax}</p>}
                 </div>
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="flex items-center gap-2 rounded-lg border p-3">
                   <input type="checkbox" checked={form.featured} onChange={(e) => setForm((prev) => ({ ...prev, featured: e.target.checked }))} />
@@ -247,11 +347,8 @@ export const PackageManagement = () => {
                   Active package
                 </label>
               </div>
-              <button
-                onClick={() => saveMutation.mutate()}
-                className="mt-4 bg-primary text-primary-foreground h-10 rounded-md font-medium disabled:opacity-50"
-                disabled={saveMutation.isPending}
-              >
+
+              <button onClick={() => saveMutation.mutate()} className="mt-4 bg-primary text-primary-foreground h-10 rounded-md font-medium disabled:opacity-50" disabled={saveMutation.isPending}>
                 {saveMutation.isPending ? 'Saving…' : selectedPackage ? 'Update Package' : 'Save Package'}
               </button>
             </div>
@@ -262,15 +359,7 @@ export const PackageManagement = () => {
       {error && <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-700">Unable to load packages: {error instanceof Error ? error.message : 'Please try again.'}</div>}
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <DataTable
-          data={filteredData}
-          columns={columns}
-          keyExtractor={(item) => item._id || item.id || item.title}
-          onSearch={setSearchTerm}
-          searchPlaceholder="Search packages..."
-          actions={actions}
-          isLoading={isLoading}
-        />
+        <DataTable data={filteredData} columns={columns} keyExtractor={(item) => item._id || item.id || item.title} onSearch={setSearchTerm} searchPlaceholder="Search packages..." actions={actions} isLoading={isLoading} />
       </motion.div>
     </div>
   );

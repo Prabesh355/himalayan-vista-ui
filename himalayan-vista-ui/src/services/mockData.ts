@@ -42,6 +42,14 @@ export interface Destination {
   tags: string[];
 }
 
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  bio?: string;
+  avatar?: string;
+}
+
 export const destinations: Destination[] = [
     {
       id: "1",

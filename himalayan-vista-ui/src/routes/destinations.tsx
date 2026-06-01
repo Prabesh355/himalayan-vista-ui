@@ -2,8 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { DestinationCard } from "@/components/DestinationCard";
-import { destinations, type Difficulty, type Region } from "@/services/mockData";
+import { packageService } from "@/services/packageService";
+
+type Region = "Everest" | "Annapurna" | "Langtang" | "Kathmandu Valley" | "Pokhara" | "Lowlands";
+type Difficulty = "Easy" | "Moderate" | "Challenging" | "Strenuous";
 
 export const Route = createFileRoute("/destinations")({
   head: () => ({
@@ -20,24 +24,48 @@ export const Route = createFileRoute("/destinations")({
 const regions: ("All" | Region)[] = ["All", "Everest", "Annapurna", "Langtang", "Kathmandu Valley", "Pokhara", "Lowlands"];
 const difficulties: ("All" | Difficulty)[] = ["All", "Easy", "Moderate", "Challenging", "Strenuous"];
 
+type PackagePreview = {
+  _id?: string;
+  id?: string;
+  slug: string;
+  title: string;
+  tagline?: string;
+  description?: string;
+  images?: string[];
+  destination?: string;
+  duration?: { days?: number; nights?: number } | string;
+  difficulty?: string;
+  price?: number;
+  rating?: number;
+  tags?: string[];
+};
+
 function DestinationsPage() {
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState<(typeof regions)[number]>("All");
   const [difficulty, setDifficulty] = useState<(typeof difficulties)[number]>("All");
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["packages", "destinations"],
+    queryFn: () => packageService.getAllPackages({ limit: 100 }),
+  });
+
+  const packages: PackagePreview[] = data?.data || [];
+
   const filtered = useMemo(() => {
-    return destinations.filter((d) => {
+    return packages.filter((d) => {
       const q = query.trim().toLowerCase();
       const matchesQ =
         !q ||
-        d.name.toLowerCase().includes(q) ||
-        d.tagline.toLowerCase().includes(q) ||
-        d.region.toLowerCase().includes(q);
-      const matchesR = region === "All" || d.region === region;
+        d.title.toLowerCase().includes(q) ||
+        (d.tagline?.toLowerCase().includes(q) ?? false) ||
+        (d.description?.toLowerCase().includes(q) ?? false) ||
+        (d.destination?.toLowerCase().includes(q) ?? false);
+      const matchesR = region === "All" || d.destination === region;
       const matchesD = difficulty === "All" || d.difficulty === difficulty;
       return matchesQ && matchesR && matchesD;
     });
-  }, [query, region, difficulty]);
+  }, [packages, query, region, difficulty]);
 
   return (
     <>
@@ -101,7 +129,22 @@ function DestinationsPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((d, i) => (
-              <DestinationCard key={d.id} d={d} index={i} />
+              <DestinationCard
+                key={d.slug}
+                index={i}
+                d={{
+                  slug: d.slug,
+                  name: d.title,
+                  image: d.images?.[0] || "https://via.placeholder.com/640x800?text=No+Image",
+                  tagline: d.tagline || d.description || "",
+                  destination: d.destination,
+                  duration: typeof d.duration === "string" ? d.duration : d.duration?.days ? `${d.duration.days} days` : undefined,
+                  difficulty: d.difficulty,
+                  price: d.price,
+                  rating: d.rating ?? 0,
+                  tags: d.tags,
+                }}
+              />
             ))}
           </div>
         )}

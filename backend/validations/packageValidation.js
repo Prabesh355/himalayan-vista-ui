@@ -9,7 +9,10 @@ const handleValidationErrors = (req, res, next) => {
       field: err.param,
       message: err.msg,
     }));
-    return next(new AppError(`Validation failed: ${errorMessages.map(e => e.message).join(', ')}`, 400));
+    const appErr = new AppError(`Validation failed: ${errorMessages.map(e => e.message).join(', ')}`, 400);
+    // attach structured field errors for clients to display inline
+    appErr.fieldErrors = errorMessages;
+    return next(appErr);
   }
   next();
 };
