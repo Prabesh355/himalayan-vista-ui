@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Outlet, Link } from "@tanstack/react-router";
-import { destinations } from "@/services/mockData";
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api";
 
 export const Route = createFileRoute("/packages")({
   head: () => ({
@@ -17,6 +18,16 @@ function PackagesIndex() {
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "977981234567";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20booking%20a%20trek.`;
+
+  const { data: response, isLoading, isError } = useQuery({
+    queryKey: ['packages', 'public'],
+    queryFn: async () => {
+      const res = await api.get<{ success: boolean; data: any[] }>('/packages');
+      return res.data;
+    }
+  });
+
+  const packages = response?.data || [];
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
@@ -50,27 +61,29 @@ function PackagesIndex() {
       </div>
 
       <div className="space-y-10">
-        {destinations.map((d) => (
-          <article key={d.id} className="glass rounded-2xl p-6">
+        {isLoading && <p>Loading packages...</p>}
+        {isError && <p>Error loading packages.</p>}
+        {packages.map((d) => (
+          <article key={d.id || d._id} className="glass rounded-2xl p-6">
             <div className="md:flex md:items-start md:gap-6">
               <div className="md:flex-shrink-0 md:w-44">
-                <img src={d.image} alt={d.name} className="w-full h-32 object-cover rounded-lg" />
+                <img src={d.images?.[0] || 'https://via.placeholder.com/300x200?text=No+Image'} alt={d.title} className="w-full h-32 object-cover rounded-lg" />
               </div>
 
-              <div className="mt-4 md:mt-0">
-                <h2 className="text-2xl font-semibold">{d.name}</h2>
-                {d.tagline && <p className="mt-1 text-muted-foreground">{d.tagline}</p>}
+              <div className="mt-4 md:mt-0 flex-1">
+                <h2 className="text-2xl font-semibold">{d.title}</h2>
+                {d.destination && <p className="mt-1 text-muted-foreground">{d.destination}</p>}
 
-                <p className="mt-3 text-sm text-muted-foreground max-w-3xl">{d.description}</p>
+                <p className="mt-3 text-sm text-muted-foreground max-w-3xl line-clamp-3">{d.description}</p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                  <span>{d.region}</span>
+                  <span>{d.destination}</span>
                   <span>·</span>
-                  <span>{d.duration}</span>
+                  <span>{d.duration?.days || 0} Days</span>
                   <span>·</span>
                   <span className="capitalize">{d.difficulty}</span>
                   <span>·</span>
-                  <span>from <strong>${d.priceFrom}</strong></span>
+                  <span>from <strong>${d.price}</strong></span>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -83,7 +96,7 @@ function PackagesIndex() {
                     View More
                   </Link>
                   <a
-                    href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(d.name)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(d.name)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
+                    href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(d.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(d.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
                     className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
                   >
                     Book Now

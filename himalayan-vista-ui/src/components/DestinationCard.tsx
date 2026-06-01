@@ -19,7 +19,7 @@ export function DestinationCard({ d, index = 0 }: { d: Destination; index?: numb
       transition={{ duration: 0.6, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
       className="group relative overflow-hidden rounded-3xl glass shadow-soft transition-all hover:shadow-elegant hover:-translate-y-1"
     >
-      <Link to={`/packages/${d.slug}`} className="block" aria-label={d.name}>
+      <Link to="/packages/$slug" params={{ slug: d.slug }} className="block" aria-label={d.name}>
         <div className="relative aspect-[4/5] overflow-hidden">
           <img
             src={d.image}

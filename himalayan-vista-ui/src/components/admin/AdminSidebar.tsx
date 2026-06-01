@@ -72,12 +72,12 @@ export const AdminSidebar = () => {
   return (
     <>
       {/* Mobile Menu Toggle */}
-      <div className="md:hidden fixed top-0 left-0 w-full bg-background border-b z-50 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 w-full bg-background/95 backdrop-blur-md border-b z-40 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <MountainSnow className="w-6 h-6 text-primary" />
-          <span className="font-bold">Admin CMS</span>
+          <span className="font-bold text-lg">Nomade Admin</span>
         </div>
-        <button onClick={() => setIsMobileOpen(true)} className="p-2">
+        <button onClick={() => setIsMobileOpen(true)} className="p-2 -mr-2 bg-secondary/50 rounded-md">
           <Menu className="w-6 h-6" />
         </button>
       </div>
@@ -87,10 +87,10 @@ export const AdminSidebar = () => {
         {isMobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
+            animate={{ opacity: 0.6 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMobileOpen(false)}
-            className="md:hidden fixed inset-0 bg-black z-40"
+            className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
           />
         )}
       </AnimatePresence>
@@ -103,8 +103,8 @@ export const AdminSidebar = () => {
           x: isMobileOpen ? 0 : 'auto',
         }}
         className={cn(
-          "fixed md:sticky top-0 h-screen bg-card border-r z-50 flex flex-col transition-all duration-300",
-          "max-md:w-[260px] max-md:absolute max-md:left-0",
+          "fixed md:sticky top-0 h-screen bg-card border-r z-50 flex flex-col transition-all duration-300 shadow-xl md:shadow-none",
+          "max-md:w-[280px] max-md:absolute max-md:left-0",
           !isMobileOpen && "max-md:-translate-x-full"
         )}
       >
@@ -134,23 +134,29 @@ export const AdminSidebar = () => {
           
           <button 
             onClick={() => setIsMobileOpen(false)} 
-            className="md:hidden p-1 hover:bg-secondary rounded-md"
+            className="md:hidden p-1.5 bg-secondary/80 hover:bg-secondary rounded-md"
           >
-            <X className="w-5 h-5 text-muted-foreground" />
+            <X className="w-5 h-5 text-foreground" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-          {navItems.map((item) => (
-            <SidebarItem
-              key={item.to}
-              icon={item.icon}
-              label={item.label}
-              to={item.to}
-              isExpanded={isExpanded}
-              isActive={location.pathname === item.to || location.pathname.startsWith(`${item.to}/`)}
-            />
-          ))}
+          {navItems.map((item) => {
+            const isActive = item.to === '/admin' 
+              ? location.pathname === '/admin'
+              : location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
+              
+            return (
+              <SidebarItem
+                key={item.to}
+                icon={item.icon}
+                label={item.label}
+                to={item.to}
+                isExpanded={isExpanded}
+                isActive={isActive}
+              />
+            );
+          })}
         </div>
 
         <div className="p-2 border-t mt-auto">

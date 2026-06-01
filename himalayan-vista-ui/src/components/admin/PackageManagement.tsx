@@ -19,6 +19,7 @@ type PackageFormState = {
   groupSizeMax: string;
   featured: boolean;
   isActive: boolean;
+  itinerary: string;
 };
 
 const emptyForm: PackageFormState = {
@@ -34,6 +35,7 @@ const emptyForm: PackageFormState = {
   groupSizeMax: '10',
   featured: false,
   isActive: true,
+  itinerary: '',
 };
 
 function mapPackageToForm(pkg: PackageItem): PackageFormState {
@@ -45,11 +47,12 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
     discountPrice: String(pkg.discountPrice ?? ''),
     durationDays: String(pkg.duration?.days ?? 1),
     durationNights: String(pkg.duration?.nights ?? 0),
-    imageUrl: '',
+    imageUrl: pkg.images?.[0] || '',
     groupSizeMin: String(pkg.groupSize?.min ?? 1),
     groupSizeMax: String(pkg.groupSize?.max ?? 10),
     featured: Boolean(pkg.featured),
     isActive: Boolean(pkg.isActive ?? true),
+    itinerary: pkg.itinerary || '',
   };
 }
 
@@ -84,6 +87,7 @@ export const PackageManagement = () => {
         },
         featured: form.featured,
         isActive: form.isActive,
+        itinerary: form.itinerary,
       };
 
       return selectedPackage
@@ -190,6 +194,10 @@ export const PackageManagement = () => {
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Description</label>
                 <textarea value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Package description" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm font-medium">Itinerary (Markdown Format)</label>
+                <textarea value={form.itinerary} onChange={(e) => setForm((prev) => ({ ...prev, itinerary: e.target.value }))} className="min-h-48 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono" placeholder="## Trek Title - 7 Days\n\n1. **Day 1 - Arrival:** Details...\n2. **Day 2 - Trek:** Details..." />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">

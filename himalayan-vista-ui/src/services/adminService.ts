@@ -63,9 +63,11 @@ export interface PackageItem {
   id?: string;
   title: string;
   description?: string;
+  itinerary?: string;
   destination?: string;
   price?: number;
   discountPrice?: number;
+  images?: string[];
   duration?: {
     days?: number;
     nights?: number;
@@ -124,17 +126,8 @@ export interface ReviewItem {
   comment?: string;
   rating?: number;
   status?: string;
-  user?: {
-    _id?: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  } | string;
-  package?: {
-    _id?: string;
-    title?: string;
-    destination?: string;
-  } | string;
+  user?: any;
+  package?: any;
   createdAt?: string;
 }
 

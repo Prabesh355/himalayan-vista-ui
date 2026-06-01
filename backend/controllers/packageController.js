@@ -164,6 +164,27 @@ exports.getPackage = async (req, res, next) => {
   }
 };
 
+// @desc Get single package by slug
+// @route GET /api/packages/slug/:slug
+// @access Public
+exports.getPackageBySlug = async (req, res, next) => {
+  try {
+    const packages = await Package.find({ slug: req.params.slug, isActive: true }).populate('createdBy', 'firstName lastName email');
+
+    if (!packages || packages.length === 0) {
+      return next(new AppError('Package not found', 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: packages[0],
+    });
+  } catch (error) {
+    logger.error(`Get package by slug error: ${error.message}`);
+    next(error);
+  }
+};
+
 // @desc Get featured packages
 // @route GET /api/packages/featured
 // @access Public

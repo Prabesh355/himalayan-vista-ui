@@ -112,14 +112,7 @@ exports.validatePackage = [
     .withMessage('Featured must be a boolean value'),
   
   body('itinerary')
-    .optional()
-    .isArray()
-    .withMessage('Itinerary must be an array')
-    .custom(itinerary => {
-      if (!Array.isArray(itinerary)) return true;
-      return itinerary.every(item => item.day && item.title);
-    })
-    .withMessage('Each itinerary item must have day and title'),
+    .optional(),
   
   body('highlights')
     .optional()
@@ -230,9 +223,7 @@ exports.validatePackageUpdate = [
     .withMessage('Featured must be a boolean value'),
   
   body('itinerary')
-    .optional()
-    .isArray()
-    .withMessage('Itinerary must be an array'),
+    .optional(),
   
   body('highlights')
     .optional()

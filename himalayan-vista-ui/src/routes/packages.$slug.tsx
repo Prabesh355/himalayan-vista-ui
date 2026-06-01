@@ -399,8 +399,19 @@ export const Route = createFileRoute("/packages/$slug")({
 function PackageDetails() {
   const { slug } = Route.useParams();
   const detailsRef = useRef<HTMLElement | null>(null);
-  const pkg = destinations.find((d) => d.slug === slug);
+
+  const packageQuery = useQuery({
+    queryKey: ["package", slug],
+    queryFn: async () => {
+      const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${slug}`);
+      return res.data;
+    },
+  });
+
+  const pkg = packageQuery.data?.data;
+
   const itinerary = useMemo(() => (pkg?.itinerary ? extractItinerary(pkg.itinerary) : null), [pkg]);
+  
   const reviewsQuery = useQuery({
     queryKey: ["package-reviews", slug],
     queryFn: async () => (await api.get<{ success: boolean; data: ReviewApiItem[] }>(`/reviews/package-slug/${slug}`)).data,
@@ -409,7 +420,7 @@ function PackageDetails() {
 
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "977981234567";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.name || "trek")}%20package.`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.title || "trek")}%20package.`;
 
   const reviewCards: ReviewCard[] = useMemo(() => {
     const items = reviewsQuery.data?.data || [];
@@ -461,18 +472,18 @@ function PackageDetails() {
   return (
     <section id="package-details" ref={detailsRef} className="mx-auto mt-16 max-w-4xl rounded-3xl bg-background/60 px-4 py-12">
       <header className="mb-8">
-        <h1 className="text-4xl font-semibold">{pkg.name}</h1>
+        <h1 className="text-4xl font-semibold">{pkg.title}</h1>
         {pkg.tagline && <p className="mt-2 text-muted-foreground">{pkg.tagline}</p>}
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          <span className="inline-flex items-center gap-2"><strong>Region:</strong> {pkg.region}</span>
-          <span className="inline-flex items-center gap-2"><strong>Duration:</strong> {pkg.duration}</span>
-          <span className="inline-flex items-center gap-2"><strong>Difficulty:</strong> {pkg.difficulty}</span>
-          <span className="inline-flex items-center gap-2"><strong>From:</strong> ${pkg.priceFrom}</span>
+          <span className="inline-flex items-center gap-2"><strong>Region:</strong> {pkg.destination}</span>
+          <span className="inline-flex items-center gap-2"><strong>Duration:</strong> {pkg.duration?.days || 0} Days</span>
+          <span className="inline-flex items-center gap-2"><strong>Difficulty:</strong> {pkg.difficulty || 'Moderate'}</span>
+          <span className="inline-flex items-center gap-2"><strong>Price:</strong> ${pkg.price}</span>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
           <a
-            href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.name)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.name)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
+            href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
             className="inline-flex items-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95"
           >
             Email enquiry
@@ -492,13 +503,13 @@ function PackageDetails() {
         <div className="space-y-8">
           <div className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-soft">
             <h2 className="text-2xl font-semibold">Overview</h2>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground md:text-base">{pkg.description}</p>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground md:text-base whitespace-pre-wrap">{pkg.description}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {[
-                { label: "Altitude", value: pkg.altitude },
-                { label: "Best season", value: pkg.bestSeason },
-                { label: "Duration", value: pkg.duration },
-                { label: "Group size", value: "1–12 people" },
+                { label: "Destination", value: pkg.destination },
+                { label: "Category", value: pkg.category || 'Trekking' },
+                { label: "Duration", value: `${pkg.duration?.days || 0} Days` },
+                { label: "Group size", value: `${pkg.groupSize?.min || 1}–${pkg.groupSize?.max || 12} people` },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-border/60 bg-background p-4">
                   <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">{item.label}</p>
@@ -615,7 +626,7 @@ function PackageDetails() {
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-          <PriceSummary price={pkg.priceFrom} />
+          <PriceSummary price={pkg.price} />
           <CostCard title="Included Costs" items={includedCosts} accent="bg-gradient-sunset" icon={Check} />
           <CostCard title="Excluded Costs" items={excludedCosts} accent="bg-gradient-to-br from-rose-500 to-red-700" icon={Minus} />
           <CostCard title="Optional Add-ons" items={optionalAddOns} accent="bg-gradient-to-br from-primary to-accent" icon={CirclePlus} />
@@ -627,7 +638,7 @@ function PackageDetails() {
             </p>
             <div className="mt-6 grid gap-3">
               <a
-                href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.name)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.name)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
+                href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
                 className="inline-flex items-center justify-center rounded-full bg-gradient-sunset px-4 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95"
               >
                 Email enquiry
