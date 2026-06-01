@@ -73,6 +73,27 @@ router.put('/users/:id/role', protect, authorize('admin'), async (req, res, next
   }
 });
 
+router.put('/users/:id/status', protect, authorize('admin'), async (req, res, next) => {
+  try {
+    const User = require('../models/UserPg');
+    const { isActive } = req.body;
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, { isActive }, { new: true });
+
+    res.status(200).json({
+      success: true,
+      message: 'User status updated',
+      user: user.toJSON(),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/reviews', protect, authorize('admin'), async (req, res, next) => {
   try {
     const Review = require('../models/Review');

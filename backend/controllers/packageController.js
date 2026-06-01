@@ -84,7 +84,7 @@ exports.getAllPackages = async (req, res, next) => {
 // @access Private/Admin or Vendor
 exports.getAllPackagesAdmin = async (req, res, next) => {
   try {
-    const { search, destination, minPrice, maxPrice, difficulty, category, featured, sort, page = 1, limit = 100 } = req.query;
+    const { search, destination, minPrice, maxPrice, difficulty, category, featured, isActive, sort, page = 1, limit = 100 } = req.query;
 
     const filter = {};
 
@@ -112,6 +112,12 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
 
     if (featured === 'true') {
       filter.featured = true;
+    }
+
+    if (isActive === 'true') {
+      filter.isActive = true;
+    } else if (isActive === 'false') {
+      filter.isActive = false;
     }
 
     const pageNum = Math.max(1, Number(page));

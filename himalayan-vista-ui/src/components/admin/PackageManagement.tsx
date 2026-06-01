@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const ReactMarkdown: any = require('react-markdown');
 const remarkGfm: any = require('remark-gfm');
@@ -62,15 +62,45 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
 export const PackageManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
+  const [destinationFilter, setDestinationFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'draft'>('all');
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
+  const [sortOption, setSortOption] = useState<'-createdAt' | 'title' | 'price' | 'destination'>('-createdAt');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
   const [form, setForm] = useState<PackageFormState>(emptyForm);
   const [uploading, setUploading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['admin-packages'],
-    queryFn: () => adminService.getPackages({ limit: 100, sort: '-createdAt' }),
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, destinationFilter, statusFilter, showFeaturedOnly, sortOption, pageSize]);
+
+  const { data, isLoading, error } = useQuery<{ success: boolean; count: number; total: number; pages: number; currentPage: number; data: PackageItem[] }, Error>({
+    queryKey: ['admin-packages', searchTerm, destinationFilter, statusFilter, showFeaturedOnly, sortOption, page, pageSize],
+    queryFn: () => {
+      const params: Record<string, unknown> = {
+        search: searchTerm || undefined,
+        destination: destinationFilter || undefined,
+        sort: sortOption,
+        page,
+        limit: pageSize,
+      };
+
+      if (showFeaturedOnly) {
+        params.featured = 'true';
+      }
+
+      if (statusFilter === 'active') {
+        params.isActive = 'true';
+      } else if (statusFilter === 'draft') {
+        params.isActive = 'false';
+      }
+
+      return adminService.getPackages(params);
+    },
   });
 
   const saveMutation = useMutation({
@@ -139,17 +169,6 @@ export const PackageManagement: React.FC = () => {
   });
 
   const packages = data?.data || [];
-
-  const filteredData = useMemo(() => {
-    const term = searchTerm.toLowerCase();
-    return packages.filter((pkg) => {
-      return (
-        pkg.title.toLowerCase().includes(term) ||
-        (pkg.destination || '').toLowerCase().includes(term) ||
-        String(pkg.price ?? '').includes(term)
-      );
-    });
-  }, [packages, searchTerm]);
 
   const columns = [
     { key: 'title', header: 'Package Title' },
@@ -356,10 +375,103 @@ export const PackageManagement: React.FC = () => {
         </Dialog>
       </div>
 
+      <div className="grid gap-3 rounded-xl border border-secondary/50 bg-secondary/10 p-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Destination</label>
+            <input
+              value={destinationFilter}
+              onChange={(e) => setDestinationFilter(e.target.value)}
+              placeholder="Search destination"
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Status</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'draft')}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="all">All packages</option>
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Sort</label>
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value as typeof sortOption)}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="-createdAt">Newest first</option>
+              <option value="createdAt">Oldest first</option>
+              <option value="title">Title</option>
+              <option value="price">Price</option>
+              <option value="destination">Destination</option>
+            </select>
+          </div>
+
+          <div className="grid gap-2">
+            <label className="text-sm font-medium">Featured only</label>
+            <div className="flex items-center gap-2 rounded-lg border border-input bg-background px-3">
+              <input
+                id="featured-only"
+                type="checkbox"
+                checked={showFeaturedOnly}
+                onChange={(e) => setShowFeaturedOnly(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="featured-only" className="text-sm">Filter featured packages</label>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[1fr_auto] items-end">
+          <div className="text-sm text-muted-foreground">
+            Showing {data?.count ?? 0} packages from {data?.total ?? 0} total.
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 text-sm">
+              <span>Page size</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="h-10 rounded-md border border-input bg-background px-2 text-sm"
+              >
+                {[10, 20, 50].map((size) => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+
       {error && <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-700">Unable to load packages: {error instanceof Error ? error.message : 'Please try again.'}</div>}
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <DataTable data={filteredData} columns={columns} keyExtractor={(item) => item._id || item.id || item.title} onSearch={setSearchTerm} searchPlaceholder="Search packages..." actions={actions} isLoading={isLoading} />
+        <DataTable
+          data={packages}
+          columns={columns}
+          keyExtractor={(item) => item._id || item.id || item.title}
+          onSearch={setSearchTerm}
+          searchPlaceholder="Search packages..."
+          actions={actions}
+          isLoading={isLoading}
+          pagination={{
+            currentPage: data?.currentPage ?? 1,
+            totalPages: data?.pages ?? 1,
+            totalItems: data?.total ?? packages.length,
+            pageSize,
+            pageSizeOptions: [10, 20, 50],
+            onPageChange: (next) => setPage(Math.max(1, Math.min(data?.pages ?? 1, next))),
+            onPageSizeChange: (size) => setPageSize(size),
+          }}
+        />
       </motion.div>
     </div>
   );

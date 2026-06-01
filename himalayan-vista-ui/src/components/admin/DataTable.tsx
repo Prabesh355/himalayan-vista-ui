@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, MoreHorizontal, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -10,6 +10,16 @@ export interface Column<T> {
   width?: string;
 }
 
+export interface TablePagination {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  pageSize: number;
+  pageSizeOptions?: number[];
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+}
+
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
@@ -18,6 +28,7 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   actions?: (item: T) => React.ReactNode;
   isLoading?: boolean;
+  pagination?: TablePagination;
 }
 
 export function DataTable<T>({
@@ -27,7 +38,8 @@ export function DataTable<T>({
   onSearch,
   searchPlaceholder = 'Search...',
   actions,
-  isLoading
+  isLoading,
+  pagination,
 }: DataTableProps<T>) {
   return (
     <div className="w-full bg-card rounded-xl border shadow-sm">
@@ -98,18 +110,61 @@ export function DataTable<T>({
         </table>
       </div>
 
-      <div className="p-4 flex items-center justify-between border-t text-sm text-muted-foreground">
+      <div className="p-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t text-sm text-muted-foreground">
         <div>
-          Showing {data.length > 0 ? 1 : 0} to {data.length} of {data.length} entries
+          {pagination ? (
+            <span>
+              Showing {pagination.totalItems === 0 ? 0 : (pagination.currentPage - 1) * pagination.pageSize + 1} to {Math.min(pagination.totalItems, pagination.currentPage * pagination.pageSize)} of {pagination.totalItems} entries
+            </span>
+          ) : (
+            <span>Showing {data.length > 0 ? 1 : 0} to {data.length} of {data.length} entries</span>
+          )}
         </div>
-        <div className="flex gap-2">
-          <button className="p-2 border rounded-md hover:bg-secondary disabled:opacity-50 transition-colors">
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button className="p-2 border rounded-md hover:bg-secondary disabled:opacity-50 transition-colors">
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+
+        {pagination ? (
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            {pagination.pageSizeOptions?.length ? (
+              <label className="flex items-center gap-2 text-sm">
+                <span>Rows</span>
+                <select
+                  value={pagination.pageSize}
+                  onChange={(e) => pagination.onPageSizeChange?.(Number(e.target.value))}
+                  className="rounded-md border border-input bg-background px-2 py-1 text-sm"
+                >
+                  {pagination.pageSizeOptions.map((size: number) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+
+            <div className="flex gap-2">
+              <button
+                className="p-2 border rounded-md hover:bg-secondary disabled:opacity-50 transition-colors"
+                onClick={() => pagination.onPageChange?.(pagination.currentPage - 1)}
+                disabled={!pagination.onPageChange || pagination.currentPage <= 1}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                className="p-2 border rounded-md hover:bg-secondary disabled:opacity-50 transition-colors"
+                onClick={() => pagination.onPageChange?.(pagination.currentPage + 1)}
+                disabled={!pagination.onPageChange || pagination.currentPage >= pagination.totalPages}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button className="p-2 border rounded-md hover:bg-secondary disabled:opacity-50 transition-colors">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button className="p-2 border rounded-md hover:bg-secondary disabled:opacity-50 transition-colors">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -26,6 +26,14 @@ export const UserManagement = () => {
     },
   });
 
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ userId, isActive }: { userId: string; isActive: boolean }) =>
+      adminService.updateUserStatus(userId, isActive),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+  });
+
   const users = data?.users || [];
 
   const filteredData = useMemo(() => {
@@ -80,7 +88,11 @@ export const UserManagement = () => {
       >
         <UserCog className="w-4 h-4" />
       </button>
-      <button className="p-1 hover:text-rose-500 transition-colors" title="Status">
+      <button
+        className="p-1 hover:text-rose-500 transition-colors"
+        title={item.isActive === false ? 'Activate user' : 'Suspend user'}
+        onClick={() => updateStatusMutation.mutate({ userId: item._id || item.id || '', isActive: item.isActive === false })}
+      >
         <UserX className="w-4 h-4" />
       </button>
     </div>
