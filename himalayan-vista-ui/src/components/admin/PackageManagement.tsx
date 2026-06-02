@@ -62,6 +62,7 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
 export const PackageManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
+  const [localSearch, setLocalSearch] = useState('');
   const [destinationFilter, setDestinationFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'draft'>('all');
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
@@ -73,10 +74,19 @@ export const PackageManagement: React.FC = () => {
   const [form, setForm] = useState<PackageFormState>(emptyForm);
   const [uploading, setUploading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
+  const [pendingActionId, setPendingActionId] = useState<string | null>(null);
 
   useEffect(() => {
     setPage(1);
   }, [searchTerm, destinationFilter, statusFilter, showFeaturedOnly, sortOption, pageSize]);
+
+  // debounce localSearch -> searchTerm
+  useEffect(() => {
+    const id = setTimeout(() => setSearchTerm(localSearch.trim()), 400);
+    return () => clearTimeout(id);
+  }, [localSearch]);
+
+  const isSearchPending = useMemo(() => (localSearch.trim() !== searchTerm), [localSearch, searchTerm]);
 
   const { data, isLoading, error } = useQuery<{ success: boolean; count: number; total: number; pages: number; currentPage: number; data: PackageItem[] }, Error>({
     queryKey: ['admin-packages', searchTerm, destinationFilter, statusFilter, showFeaturedOnly, sortOption, page, pageSize],
@@ -103,6 +113,13 @@ export const PackageManagement: React.FC = () => {
     },
   });
 
+  // Surface load errors as a toast so admins notice failures quickly
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || 'Failed to load packages');
+    }
+  }, [error]);
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const payload = {
@@ -123,11 +140,19 @@ export const PackageManagement: React.FC = () => {
         ? adminService.updatePackage(selectedPackage._id || selectedPackage.id || '', payload)
         : adminService.createPackage(payload);
     },
+    onMutate: async () => {
+      // mark the currently edited package as pending so its row buttons can be disabled
+      if (selectedPackage && (selectedPackage._id || selectedPackage.id)) {
+        setPendingActionId(String(selectedPackage._id || selectedPackage.id));
+      }
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['admin-packages'] });
       setIsModalOpen(false);
       setSelectedPackage(null);
       setForm(emptyForm);
+      toast.success('Package saved successfully');
+      setPendingActionId(null);
     },
     onError: (err: any) => {
       console.error('Save error', err);
@@ -151,11 +176,27 @@ export const PackageManagement: React.FC = () => {
             case 'images':
               mapped.images = fe.message;
               break;
+            case 'title':
+              mapped.title = fe.message;
+              break;
+            case 'description':
+              mapped.description = fe.message;
+              break;
+            case 'price':
+              mapped.price = fe.message;
+              break;
+            case 'destination':
+              mapped.destination = fe.message;
+              break;
+            case 'itinerary':
+              mapped.itinerary = fe.message;
+              break;
             default:
               mapped[fe.field] = fe.message;
           }
         });
         setFormErrors(mapped);
+      setPendingActionId(null);
       }
       toast.error(err?.response?.data?.message || err?.message || 'Save failed');
     },
@@ -165,6 +206,12 @@ export const PackageManagement: React.FC = () => {
     mutationFn: (packageId: string) => adminService.deletePackage(packageId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['admin-packages'] });
+      toast.success('Package deleted');
+      setSelectedPackage(null);
+    },
+    onError: (err: any) => {
+      console.error('Delete error', err);
+      toast.error(err?.response?.data?.message || err?.message || 'Delete failed');
     },
   });
 
@@ -232,16 +279,33 @@ export const PackageManagement: React.FC = () => {
     }
   };
 
-  const actions = (item: PackageItem) => (
-    <div className="flex justify-end gap-2 text-muted-foreground">
-      <button className="p-1 hover:text-primary transition-colors" onClick={() => openForm(item)}>
-        <Edit className="w-4 h-4" />
-      </button>
-      <button className="p-1 hover:text-red-500 transition-colors" onClick={() => deleteMutation.mutate(item._id || item.id || '')}>
-        <Trash2 className="w-4 h-4" />
-      </button>
-    </div>
-  );
+  const actions = (item: PackageItem) => {
+    const id = String(item._id || item.id || '');
+    const isPending = pendingActionId === id;
+    return (
+      <div className="flex justify-end gap-2 text-muted-foreground">
+        <button
+          className="p-1 hover:text-primary transition-colors"
+          onClick={() => openForm(item)}
+          disabled={isPending}
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+        <button
+          className="p-1 hover:text-red-500 transition-colors"
+          onClick={() => {
+            setPendingActionId(id);
+            deleteMutation.mutate(id, {
+              onSettled: () => setPendingActionId(null),
+            });
+          }}
+          disabled={isPending}
+        >
+          {isPending ? <span className="inline-block w-4 h-4 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin" /> : <Trash2 className="w-4 h-4" />}
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -458,7 +522,10 @@ export const PackageManagement: React.FC = () => {
           data={packages}
           columns={columns}
           keyExtractor={(item) => item._id || item.id || item.title}
-          onSearch={setSearchTerm}
+          onSearch={setLocalSearch}
+          searchValue={localSearch}
+          onClearSearch={() => setLocalSearch('')}
+          isSearchPending={isSearchPending}
           searchPlaceholder="Search packages..."
           actions={actions}
           isLoading={isLoading}

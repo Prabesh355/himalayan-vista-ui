@@ -20,9 +20,13 @@ function getPool() {
       throw new Error('DATABASE_URL (or POSTGRES_URL / NEON_DATABASE_URL) is not defined');
     }
 
+    // Only enable SSL for Postgres when explicitly requested or in production.
+    // Some local Postgres instances do not support SSL; forcing SSL causes connection failures.
+    const enableSsl = (process.env.DB_SSL === 'true') || /sslmode=require/.test(connectionString) || process.env.NODE_ENV === 'production';
+
     pool = new Pool({
       connectionString,
-      ssl: { rejectUnauthorized: false },
+      ssl: enableSsl ? { rejectUnauthorized: false } : false,
       max: Number(process.env.DB_POOL_MAX || 10),
       idleTimeoutMillis: 30_000,
     });
