@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X, ShoppingCart, LogIn, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import logo from "@/assets/logo-nomads.png";
+import logo from "@/assets/NOMADS NAVIGATE  NEPAL STAMP.webp";
 
 const navLinks = [
   { to: "/", label: "Home" },
