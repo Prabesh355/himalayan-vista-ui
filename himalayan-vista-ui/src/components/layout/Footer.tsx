@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Twitter, Youtube, Mail } from "lucide-react";
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/NOMADS NAVIGATE  NEPAL STAMP.webp";
 
 export function Footer() {
   return (
