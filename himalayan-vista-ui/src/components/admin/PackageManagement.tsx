@@ -196,8 +196,8 @@ export const PackageManagement: React.FC = () => {
           }
         });
         setFormErrors(mapped);
-      setPendingActionId(null);
       }
+      setPendingActionId(null);
       toast.error(err?.response?.data?.message || err?.message || 'Save failed');
     },
   });

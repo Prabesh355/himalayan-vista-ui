@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/NOMADS NAVIGATE  NEPAL STAMP.webp';
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -74,7 +75,7 @@ export const AdminSidebar = () => {
       {/* Mobile Menu Toggle */}
       <div className="md:hidden fixed top-0 left-0 w-full bg-background/95 backdrop-blur-md border-b z-40 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <MountainSnow className="w-6 h-6 text-primary" />
+          <img src={logo} alt="Nomads Navigate Nepal" className="w-8 h-8 object-contain" />
           <span className="font-bold text-lg">Nomade Admin</span>
         </div>
         <button onClick={() => setIsMobileOpen(true)} className="p-2 -mr-2 bg-secondary/50 rounded-md">
@@ -110,18 +111,18 @@ export const AdminSidebar = () => {
       >
         <div className="flex items-center justify-between p-4 flex-shrink-0 h-[60px]">
           <div className="flex items-center gap-2 overflow-hidden">
-            <MountainSnow className="w-6 h-6 text-primary flex-shrink-0" />
+            <img src={logo} alt="Nomads Navigate Nepal" className="w-8 h-8 flex-shrink-0 object-contain" />
             <AnimatePresence mode='wait'>
-               {isExpanded && (
-                  <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="font-bold text-lg whitespace-nowrap"
-                  >
-                    Nomade Admin
-                  </motion.span>
-               )}
+              {isExpanded && (
+                <motion.span 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="font-bold text-lg whitespace-nowrap"
+                >
+                  Nomade Admin
+                </motion.span>
+              )}
             </AnimatePresence>
           </div>
           
