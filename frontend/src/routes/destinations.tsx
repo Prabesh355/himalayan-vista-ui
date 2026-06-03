@@ -73,8 +73,18 @@ function DestinationsPage() {
 
   const packages: PackagePreview[] = data?.data || [];
 
+  const deduped = useMemo(() => {
+    const seen = new Map<string, PackagePreview>();
+    for (const p of packages) {
+      const key = (p.slug || p.title || "").toLowerCase();
+      if (!key) continue;
+      if (!seen.has(key)) seen.set(key, p);
+    }
+    return Array.from(seen.values());
+  }, [packages]);
+
   const filtered = useMemo(() => {
-    return packages.filter((d) => {
+    return deduped.filter((d) => {
       const q = query.trim().toLowerCase();
       const matchesQ =
         !q ||
@@ -86,7 +96,7 @@ function DestinationsPage() {
       const matchesD = difficulty === "All" || d.difficulty === difficulty;
       return matchesQ && matchesR && matchesD;
     });
-  }, [packages, query, region, difficulty]);
+  }, [deduped, query, region, difficulty]);
 
   return (
     <>

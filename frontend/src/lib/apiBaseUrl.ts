@@ -6,14 +6,14 @@ function trimTrailingSlash(url: string) {
 }
 
 export function getApiBaseUrl() {
-  if (import.meta.env.PROD) {
-    return FALLBACK_PROD_API_BASE_URL;
-  }
-
   const configured = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
 
   if (configured) {
     return trimTrailingSlash(configured);
+  }
+
+  if (import.meta.env.PROD) {
+    return FALLBACK_PROD_API_BASE_URL;
   }
 
   return FALLBACK_DEV_API_BASE_URL;

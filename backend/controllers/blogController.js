@@ -5,7 +5,7 @@ const Blog = require('../models/Blog');
 // @access  Public
 exports.getAllBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find().populate('author', 'name _id');
+    const blogs = await Blog.find({ status: 'published' }).populate('author', 'name _id');
     res.status(200).json({ success: true, data: blogs });
   } catch (err) {
     next(err);
@@ -46,16 +46,19 @@ exports.getBlog = async (req, res, next) => {
 // @access  Private/Admin
 exports.createBlog = async (req, res, next) => {
   try {
-    // Basic body check
-    const { title, summary, content, category, author } = req.body;
-    let blogauthor = author || req.user.id; // use logged in user if not provided in request
+    const { title, summary, excerpt, content, category, author, status, featuredImage, tags } = req.body;
+    const blogauthor = author || req.user.id; // use logged in user if not provided in request
 
     const blog = await Blog.create({
       title,
-      summary,
+      summary: summary || excerpt,
+      excerpt: excerpt || summary,
       content,
       category,
       author: blogauthor,
+      status: status === 'published' ? 'published' : 'draft',
+      featuredImage: featuredImage || '',
+      tags: Array.isArray(tags) ? tags : [],
     });
     res.status(201).json({ success: true, data: blog });
   } catch (err) {

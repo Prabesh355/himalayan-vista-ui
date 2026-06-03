@@ -458,8 +458,8 @@ function PackageDetails() {
   });
 
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
-  const whatsappNumber = "977981234567";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.title || "trek")}%20package.`;
+  const whatsappNumber = "+9779769364689";
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.title || "trek")}%20package.`;
 
   const reviewCards: ReviewCard[] = useMemo(() => {
     const items = reviewsQuery.data?.data || [];

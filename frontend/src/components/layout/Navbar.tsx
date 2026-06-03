@@ -11,6 +11,9 @@ const navLinks = [
   { to: "/teams", label: "Our Teams" },
   { to: "/blogs", label: "Stories" },
   { to: "/shop", label: "Shop" },
+] as const;
+
+const moreLinks = [
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;
@@ -20,7 +23,9 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const visibleNavLinks = isAdmin ? [...navLinks, { to: "/admin", label: "Admin" }] : navLinks;
+  const visibleMoreLinks = isAdmin
+    ? [...moreLinks, { to: "/admin", label: "Admin" }]
+    : moreLinks;
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -61,19 +66,19 @@ export function Navbar() {
               alt="Nomads Navigate Nepal"
               className="h-12 w-14 shrink-0 object-contain transition-transform group-hover:rotate-3 md:h-14 md:w-16"
             />
-            <span className="hidden whitespace-nowrap text-sm font-semibold tracking-tight text-foreground sm:inline md:text-base">
-              Nomads <span className="text-gradient-sunset">Navigate Nepal</span>
+            <span className="hidden whitespace-nowrap text-sm font-bold tracking-wider text-foreground sm:inline md:text-base uppercase">
+              NOMADS NAVIGATE NEPAL
             </span>
           </Link>
 
           <ul className="hidden md:flex items-center gap-1">
-            {visibleNavLinks.map((l) => (
+            {navLinks.map((l) => (
               <li key={l.to}>
                 <Link
                   to={l.to}
                   activeOptions={{ exact: l.to === "/" }}
-                  className="relative inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[status=active]:text-foreground"
-                  activeProps={{ className: "text-foreground" }}
+                  className="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground data-[status=active]:text-foreground"
+                  activeProps={{ className: "text-foreground font-bold" }}
                 >
                   {({ isActive }) => (
                     <>
@@ -86,6 +91,27 @@ export function Navbar() {
                 </Link>
               </li>
             ))}
+            <li className="relative group">
+              <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground">
+                Others
+                <svg className="h-3 w-3 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="absolute right-0 top-full pt-2 opacity-0 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:pointer-events-auto">
+                <div className="glass rounded-xl p-2 shadow-elegant min-w-[140px] border border-border/50">
+                  {visibleMoreLinks.map((l) => (
+                    <Link
+                      key={l.to}
+                      to={l.to}
+                      className="block px-3 py-2 text-sm font-semibold text-foreground/80 hover:bg-secondary hover:text-foreground rounded-lg transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </li>
           </ul>
 
           <div className="flex items-center gap-2">
@@ -124,14 +150,23 @@ export function Navbar() {
         </nav>
 
         {open && (
-          <div className="md:hidden mt-2 glass rounded-2xl p-2 animate-fade-up">
-            {visibleNavLinks.map((l) => (
+          <div className="md:hidden mt-2 glass rounded-2xl p-2 animate-fade-up border border-border/50">
+            {navLinks.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
                 activeOptions={{ exact: l.to === "/" }}
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
-                activeProps={{ className: "bg-secondary text-foreground" }}
+                className="block rounded-xl px-4 py-3 text-sm font-semibold text-foreground/90 hover:bg-secondary hover:text-foreground"
+                activeProps={{ className: "bg-secondary text-foreground font-bold" }}
+              >
+                {l.label}
+              </Link>
+            ))}
+            {visibleMoreLinks.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="block rounded-xl px-4 py-3 text-sm font-semibold text-foreground/90 hover:bg-secondary hover:text-foreground"
               >
                 {l.label}
               </Link>

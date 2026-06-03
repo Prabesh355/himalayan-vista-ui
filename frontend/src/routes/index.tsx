@@ -7,6 +7,7 @@ import { ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/everest-base-camp.jpeg";
 import { stats, testimonials } from "@/services/uiData";
 import { packageService } from "@/services/packageService";
+import { homeContentService } from "@/services/homeContentService";
 import { DestinationCard } from "@/components/DestinationCard";
 
 export const Route = createFileRoute("/")({
@@ -29,23 +30,34 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { data: response } = useQuery({
+    queryKey: ["home-content"],
+    queryFn: () => homeContentService.getHomeContent(),
+  });
+  const homeData = response?.data;
+
   return (
     <>
-      <Hero />
-      <Stats />
+      <Hero data={homeData?.hero} />
+      <Stats data={homeData?.stats} />
       <FeaturedDestinations />
-      <Why />
-      <Testimonials />
-      <CTA />
+      <Why data={homeData?.why} />
+      <Testimonials data={homeData?.testimonials} />
+      <CTA data={homeData?.cta} />
     </>
   );
 }
 
-function Hero() {
+function Hero({ data }: { data?: any }) {
+  const badgeText = data?.badgeText || "Small group sizes · Expert Nepali guides";
+  const title = data?.title || "NOMADS NAVIGATE NEPAL";
+  const description = data?.description || "Explore Nepal, Beyond Maps";
+  const backgroundImage = data?.backgroundImage || heroImg;
+
   return (
     <section className="relative -mt-20 min-h-[100svh] overflow-hidden">
       <img
-        src={heroImg}
+        src={backgroundImage}
         alt="Himalayan peaks at sunset with prayer flags"
         width={1920}
         height={1080}
@@ -63,13 +75,13 @@ function Hero() {
         >
           <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-foreground border border-white/8">
             <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-            Small group sizes · Expert Nepali guides
+            {badgeText}
           </span>
           <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-display tracking-tight text-foreground leading-[1.02]">
-            NOMADS NAVIGATE NEPAL
+            {title}
           </h1>
           <p className="mt-6 max-w-xl text-lg text-foreground/90 leading-relaxed">
-            Explore Nepal, Beyond Maps
+            {description}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -115,11 +127,13 @@ function Hero() {
   );
 }
 
-function Stats() {
+function Stats({ data }: { data?: any[] }) {
+  const items = data && data.length > 0 ? data : stats;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((s, i) => (
+        {items.map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 20 }}
@@ -139,8 +153,8 @@ function Stats() {
 
 function FeaturedDestinations() {
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
-  const whatsappNumber = "977981234567";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20want%20to%20book%20a%20trek.`;
+  const whatsappNumber = "+9779769364689";
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20want%20to%20book%20a%20trek.`;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["featured-packages"],
@@ -266,8 +280,8 @@ function HorizontalScroller({
   );
 }
 
-function Why() {
-  const items = [
+function Why({ data }: { data?: any[] }) {
+  const defaultItems = [
     {
       icon: Compass,
       title: "Locally led, always",
@@ -285,6 +299,20 @@ function Why() {
     },
   ];
 
+  const iconMap: Record<string, any> = {
+    Compass,
+    ShieldCheck,
+    Sparkles,
+  };
+
+  const items = data && data.length > 0 
+    ? data.map((item: any) => ({
+        icon: iconMap[item.icon] || Compass,
+        title: item.title,
+        body: item.body,
+      }))
+    : defaultItems;
+
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-accent/10" />
@@ -297,29 +325,34 @@ function Why() {
         </div>
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {items.map((it, i) => (
-            <motion.div
-              key={it.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="glass rounded-3xl p-7 hover:shadow-elegant transition-all"
-            >
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-summit shadow-glow">
-                <it.icon className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="mt-5 text-xl font-semibold">{it.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{it.body}</p>
-            </motion.div>
-          ))}
+          {items.map((it, i) => {
+            const IconComponent = it.icon;
+            return (
+              <motion.div
+                key={it.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                className="glass rounded-3xl p-7 hover:shadow-elegant transition-all"
+              >
+                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-summit shadow-glow">
+                  <IconComponent className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="mt-5 text-xl font-semibold">{it.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{it.body}</p>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-function Testimonials() {
+function Testimonials({ data }: { data?: any[] }) {
+  const items = data && data.length > 0 ? data : testimonials;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-24">
       <div className="max-w-2xl mb-12">
@@ -331,9 +364,9 @@ function Testimonials() {
         </h2>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
-        {testimonials.map((t, i) => (
+        {items.map((t, i) => (
           <motion.figure
-            key={t.id}
+            key={t.id || t.name}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -367,7 +400,10 @@ function Testimonials() {
   );
 }
 
-function CTA() {
+function CTA({ data }: { data?: any }) {
+  const title = data?.title || "Your Nepal story starts with one email.";
+  const subtitle = data?.subtitle || "Tell us your dates and dream peak — we'll come back within 24 hours with a tailor-made plan.";
+
   return (
     <section className="mx-auto max-w-7xl px-4 pb-24">
       <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-aurora p-10 md:p-16 shadow-elegant">
@@ -375,11 +411,10 @@ function CTA() {
         <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-black/20 blur-3xl" />
         <div className="relative max-w-2xl text-white">
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            Your Nepal story starts with one email.
+            {title}
           </h2>
           <p className="mt-4 text-white/85 text-lg">
-            Tell us your dates and dream peak — we'll come back within 24 hours with a tailor-made
-            plan.
+            {subtitle}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
