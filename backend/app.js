@@ -13,7 +13,7 @@ const app = express();
 app.use(helmet());
 // CORS setup: allowlist from ALLOWED_ORIGINS env (comma-separated). If not set,
 // fall back to FRONTEND_URL or localhost for development.
-const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:5173';
+const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'https://nomadsnavigatenepal.com,https://www.nomadsnavigatenepal.com,http://localhost:5173,http://localhost:3000,http://localhost:8080';
 const allowedOrigins = allowedOriginsEnv
   .split(',')
   .map((s) => s.trim())

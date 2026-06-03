@@ -66,9 +66,6 @@ export function Navbar() {
               alt="Nomads Navigate Nepal"
               className="h-12 w-14 shrink-0 object-contain transition-transform group-hover:rotate-3 md:h-14 md:w-16"
             />
-            <span className="hidden whitespace-nowrap text-sm font-bold tracking-wider text-foreground sm:inline md:text-base uppercase">
-              NOMADS NAVIGATE NEPAL
-            </span>
           </Link>
 
           <ul className="hidden md:flex items-center gap-1">
