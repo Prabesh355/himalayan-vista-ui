@@ -13,6 +13,7 @@ import { ThemeProvider } from "@/context/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { MessageCircle } from "lucide-react";
 
 function NotFoundComponent() {
   return (
@@ -138,10 +139,28 @@ function RootComponent() {
               <Outlet />
             </main>
             <Footer />
+            <WhatsAppShortcut />
           </div>
         )}
         <Toaster position="top-right" />
       </ThemeProvider>
     </QueryClientProvider>
+  );
+}
+
+function WhatsAppShortcut() {
+  const whatsappNumber = "+9779769364689";
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20have%20an%20inquiry.`;
+
+  return (
+    <a
+      href={whatsappUrl}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Send inquiry on WhatsApp"
+      className="fixed bottom-5 left-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50"
+    >
+      <MessageCircle className="h-6 w-6" />
+    </a>
   );
 }

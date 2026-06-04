@@ -198,9 +198,13 @@ exports.getFeaturedPackages = async (req, res, next) => {
   try {
     const limit = Number(req.query.limit) || 6;
 
-    const packages = await Package.find({ isActive: true, featured: true, rating: { $gte: 4 } })
+    let packages = await Package.find({ isActive: true, featured: true })
       .limit(limit)
-      .sort('-rating');
+      .sort('-createdAt');
+
+    if (!packages.length) {
+      packages = await Package.find({ isActive: true }).limit(limit).sort('-createdAt');
+    }
 
     res.status(200).json({
       success: true,
@@ -292,8 +296,8 @@ exports.updatePackage = async (req, res, next) => {
       return next(new AppError('Package not found', 404));
     }
 
-    // Check ownership (creator or admin)
-    if (pkg.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check ownership (creator or admin). Legacy packages may not have createdBy.
+    if (req.user.role !== 'admin' && (!pkg.createdBy || pkg.createdBy.toString() !== req.user.id)) {
       return next(new AppError('Not authorized to update this package', 403));
     }
 
@@ -334,8 +338,8 @@ exports.deletePackage = async (req, res, next) => {
       return next(new AppError('Package not found', 404));
     }
 
-    // Check ownership (creator or admin)
-    if (pkg.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check ownership (creator or admin). Legacy packages may not have createdBy.
+    if (req.user.role !== 'admin' && (!pkg.createdBy || pkg.createdBy.toString() !== req.user.id)) {
       return next(new AppError('Not authorized to delete this package', 403));
     }
 

@@ -40,8 +40,8 @@ const emptyForm: PackageFormState = {
   durationDays: "1",
   durationNights: "0",
   images: [],
-  groupSizeMin: "1",
-  groupSizeMax: "10",
+  groupSizeMin: "6",
+  groupSizeMax: "8",
   featured: false,
   isActive: true,
   itinerary: "",
@@ -178,6 +178,8 @@ export const PackageManagement: React.FC = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-packages"] });
+      await queryClient.invalidateQueries({ queryKey: ["packages"] });
+      await queryClient.invalidateQueries({ queryKey: ["featured-packages"] });
       setIsModalOpen(false);
       setSelectedPackage(null);
       setForm(emptyForm);
@@ -238,6 +240,8 @@ export const PackageManagement: React.FC = () => {
     mutationFn: (packageId: string) => adminService.deletePackage(packageId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-packages"] });
+      await queryClient.invalidateQueries({ queryKey: ["packages"] });
+      await queryClient.invalidateQueries({ queryKey: ["featured-packages"] });
       toast.success("Package deleted");
       setSelectedPackage(null);
     },

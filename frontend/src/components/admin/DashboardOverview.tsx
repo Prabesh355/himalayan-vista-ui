@@ -72,14 +72,21 @@ export const DashboardOverview = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-dashboard-overview"],
     queryFn: async () => {
-      const [dashboardStats, bookingOverview] = await Promise.all([
+      const [dashboardStatsResult, bookingOverviewResult] = await Promise.allSettled([
         adminService.getDashboardStats(),
         adminService.getBookingOverview(),
       ]);
 
+      if (dashboardStatsResult.status === "rejected") {
+        throw dashboardStatsResult.reason;
+      }
+
       return {
-        dashboardStats: dashboardStats.stats,
-        bookingOverview,
+        dashboardStats: dashboardStatsResult.value.stats,
+        bookingOverview:
+          bookingOverviewResult.status === "fulfilled"
+            ? bookingOverviewResult.value
+            : { bookingStats: [], paymentStats: [] },
       };
     },
   });

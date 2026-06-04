@@ -436,6 +436,7 @@ export const Route = createFileRoute("/packages/$slug")({
 function PackageDetails() {
   const { slug } = Route.useParams();
   const detailsRef = useRef<HTMLElement | null>(null);
+  const itineraryRef = useRef<HTMLElement | null>(null);
 
   const packageQuery = useQuery({
     queryKey: ["package", slug],
@@ -498,11 +499,15 @@ function PackageDetails() {
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const target =
+        typeof window !== "undefined" && window.location.hash === "#itinerary"
+          ? itineraryRef.current
+          : detailsRef.current;
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [slug]);
+  }, [slug, pkg]);
 
   if (!pkg) {
     return (
@@ -575,7 +580,7 @@ function PackageDetails() {
                 { label: "Duration", value: `${pkg.duration?.days || 0} Days` },
                 {
                   label: "Group size",
-                  value: `${pkg.groupSize?.min || 1}–${pkg.groupSize?.max || 12} people`,
+                  value: "6-8 people",
                 },
               ].map((item) => (
                 <div
@@ -592,7 +597,11 @@ function PackageDetails() {
           </div>
 
           {itinerary ? (
-            <section className="rounded-[2rem] border border-border/70 bg-gradient-to-b from-card to-muted/30 p-6 shadow-elegant">
+            <section
+              id="itinerary"
+              ref={itineraryRef}
+              className="scroll-mt-28 rounded-[2rem] border border-border/70 bg-gradient-to-b from-card to-muted/30 p-6 shadow-elegant"
+            >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">

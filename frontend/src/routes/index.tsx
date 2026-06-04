@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useRef } from "react";
-import { ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { ArrowDown, ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/everest-base-camp.jpeg";
 import { stats, testimonials } from "@/services/uiData";
 import { packageService } from "@/services/packageService";
@@ -53,6 +53,10 @@ function Hero({ data }: { data?: any }) {
   const title = data?.title || "NOMADS NAVIGATE NEPAL";
   const description = data?.description || "Explore Nepal, Beyond Maps";
   const backgroundImage = data?.backgroundImage || heroImg;
+  const scrollToEnd = () => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+  };
 
   return (
     <section className="relative -mt-20 min-h-[100svh] overflow-hidden">
@@ -122,6 +126,15 @@ function Hero({ data }: { data?: any }) {
             </button>
           ))}
         </motion.div>
+
+        <button
+          type="button"
+          onClick={scrollToEnd}
+          className="absolute bottom-6 right-4 inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-xs font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/10 md:right-8"
+        >
+          <ArrowDown className="h-4 w-4" />
+          Jump to end
+        </button>
       </div>
     </section>
   );
