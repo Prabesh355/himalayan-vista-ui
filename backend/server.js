@@ -1,4 +1,5 @@
 require('dotenv').config();
+const bcrypt = require('bcryptjs');
 const app = require('./app');
 const connectDB = require('./config/db');
 const logger = require('./utils/logger');
@@ -44,7 +45,8 @@ async function start() {
             changed = true;
           }
 
-          if (adminUser.password !== password) {
+          const passwordMatches = await bcrypt.compare(password, adminUser.password);
+          if (!passwordMatches) {
             adminUser.password = password;
             changed = true;
           }
