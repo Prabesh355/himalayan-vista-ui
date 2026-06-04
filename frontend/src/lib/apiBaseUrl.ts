@@ -1,5 +1,5 @@
-const FALLBACK_PROD_API_BASE_URL = "https://api.nomadsnavigatenepal.com/api";
-const FALLBACK_DEV_API_BASE_URL = "http://localhost:5000/api";
+const FALLBACK_PROD_API_BASE_URL = "https://himalayan-vista-backend.onrender.com/api";
+const FALLBACK_DEV_API_BASE_URL = "http://localhost:5001/api";
 
 function trimTrailingSlash(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url;
