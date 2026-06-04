@@ -3,6 +3,7 @@ import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle } from "lucide-reac
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
+import { readJsonResponse } from "@/lib/apiResponse";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -107,8 +108,9 @@ function RegisterPage() {
 
     try {
       const apiUrl = getApiBaseUrl();
+      const endpoint = `${apiUrl}/auth/register`;
 
-      const response = await fetch(`${apiUrl}/auth/register`, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +125,7 @@ function RegisterPage() {
         credentials: "include",
       });
 
-      const data: ApiResponse = await response.json();
+      const data = await readJsonResponse<ApiResponse>(response, endpoint);
 
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");

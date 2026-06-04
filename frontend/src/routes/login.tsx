@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, CheckCircle, Loader2, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
+import { readJsonResponse } from "@/lib/apiResponse";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -86,9 +87,10 @@ function LoginPage() {
 
     try {
       const apiUrl = getApiBaseUrl();
+      const endpoint = `${apiUrl}/auth/login`;
       console.debug("Login: using API URL:", apiUrl);
 
-      const response = await fetch(`${apiUrl}/auth/login`, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +102,7 @@ function LoginPage() {
         credentials: "include",
       });
 
-      const data: ApiResponse = await response.json();
+      const data = await readJsonResponse<ApiResponse>(response, endpoint);
 
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
