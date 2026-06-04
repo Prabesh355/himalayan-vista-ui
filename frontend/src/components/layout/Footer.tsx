@@ -1,8 +1,85 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Twitter, Youtube, Mail } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { siteSettingsService, CmsLink } from "@/services/siteSettingsService";
 import logo from "@/assets/logo-nomads.png";
 
+function isExternalLink(href: string) {
+  return /^https?:\/\//i.test(href) || href.startsWith("mailto:") || href.startsWith("tel:");
+}
+
+function FooterLink({ item }: { item: CmsLink }) {
+  const href = item.href || "/";
+
+  if (isExternalLink(href)) {
+    return (
+      <a
+        href={href}
+        target={href.startsWith("http") ? "_blank" : undefined}
+        rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+        className="text-sm text-muted-foreground transition hover:text-foreground"
+      >
+        {item.label}
+      </a>
+    );
+  }
+
+  return (
+    <Link to={href as any} className="text-sm text-muted-foreground transition hover:text-foreground">
+      {item.label}
+    </Link>
+  );
+}
+
 export function Footer() {
+  const { data: settingsResponse } = useQuery({
+    queryKey: ["site-settings"],
+    queryFn: () => siteSettingsService.getSiteSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const settings = settingsResponse?.data;
+  const logoSrc = settings?.logoUrl || logo;
+  const siteName = settings?.siteName || "Nomads Navigate Nepal";
+  const footerTagline =
+    settings?.footerTagline ||
+    "Crafting unforgettable Himalayan journeys since 2011. Locally owned, ethically run, lifelong memories.";
+  const socialLinks = settings?.socialLinks || {};
+  const footerColumns =
+    settings?.footerColumns?.length
+      ? settings.footerColumns
+      : [
+          {
+            title: "Explore",
+            links: [
+              { label: "Destinations", href: "/destinations", visible: true },
+              { label: "Trekking Packages", href: "/packages", visible: true },
+              { label: "Our Teams", href: "/teams", visible: true },
+              { label: "Stories", href: "/blogs", visible: true },
+              { label: "Gallery", href: "/about", visible: true },
+            ],
+          },
+          {
+            title: "Company",
+            links: [
+              { label: "About Us", href: "/about", visible: true },
+              { label: "Contact", href: "/contact", visible: true },
+              { label: "Sign In", href: "/login", visible: true },
+              { label: "Dashboard", href: "/dashboard", visible: true },
+            ],
+          },
+          {
+            title: "Support",
+            links: [
+              { label: "Trekking FAQs", href: "/contact", visible: true },
+              { label: "Permits & Visas", href: "/contact", visible: true },
+              { label: "Responsible Travel", href: "/about", visible: true },
+              { label: "Safety", href: "/about", visible: true },
+            ],
+          },
+        ];
+  const copyright =
+    settings?.copyrightText || "Nomads Navigate Nepal. Made with thin air & strong tea.";
+
   return (
     <footer className="relative mt-32 border-t border-border/60 bg-gradient-to-b from-transparent to-secondary/40">
       <div className="mx-auto max-w-7xl px-4 py-16">
@@ -10,8 +87,8 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-3">
               <img
-                src={logo}
-                alt="Nomads Navigate Nepal"
+                src={logoSrc}
+                alt={siteName}
                 className="h-12 w-14 shrink-0 object-contain"
               />
               <span className="whitespace-nowrap font-semibold tracking-tight">
@@ -19,28 +96,51 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              Crafting unforgettable Himalayan journeys since 2011. Locally owned, ethically run,
-              lifelong memories.
+              {footerTagline}
             </p>
             <div className="mt-5 flex gap-3">
+              {socialLinks.instagram && (
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+                >
+                  <Instagram className="h-4 w-4" />
+                </a>
+              )}
+              {socialLinks.facebook && (
+                <a
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+                >
+                  <Facebook className="h-4 w-4" />
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a
+                  href={socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+                >
+                  <Twitter className="h-4 w-4" />
+                </a>
+              )}
+              {socialLinks.youtube && (
+                <a
+                  href={socialLinks.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
+                >
+                  <Youtube className="h-4 w-4" />
+                </a>
+              )}
               <a
-                href="https://www.instagram.com/nomadsnavigatenepal5?igsh=MWJteGl4czI4ejJjZA=="
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a
-                href="https://www.facebook.com/share/1K8PDHZgfM/?mibextid=wwXIfr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a
-                href="mailto:nomadsnavigatenepal5@gmail.com"
+                href={`mailto:${settings?.contactEmail || "nomadsnavigatenepal5@gmail.com"}`}
                 className="grid h-9 w-9 place-items-center rounded-full glass text-muted-foreground transition hover:text-foreground hover:scale-105"
               >
                 <Mail className="h-4 w-4" />
@@ -48,47 +148,13 @@ export function Footer() {
             </div>
           </div>
 
-          {[
-            {
-              title: "Explore",
-              links: [
-                ["Destinations", "/destinations"],
-                ["Trekking Packages", "/packages"],
-                ["Our Teams", "/teams"],
-                ["Stories", "/blogs"],
-                ["Gallery", "/about"],
-              ],
-            },
-            {
-              title: "Company",
-              links: [
-                ["About Us", "/about"],
-                ["Contact", "/contact"],
-                ["Sign In", "/login"],
-                ["Dashboard", "/dashboard"],
-              ],
-            },
-            {
-              title: "Support",
-              links: [
-                ["Trekking FAQs", "/contact"],
-                ["Permits & Visas", "/contact"],
-                ["Responsible Travel", "/about"],
-                ["Safety", "/about"],
-              ],
-            },
-          ].map((col) => (
+          {footerColumns.map((col) => (
             <div key={col.title}>
               <h4 className="text-sm font-semibold tracking-wide text-foreground">{col.title}</h4>
               <ul className="mt-4 space-y-2.5">
-                {col.links.map(([label, href]) => (
-                  <li key={label}>
-                    <Link
-                      to={href as string}
-                      className="text-sm text-muted-foreground transition hover:text-foreground"
-                    >
-                      {label}
-                    </Link>
+                {col.links.filter((link) => link.visible !== false).map((link) => (
+                  <li key={`${col.title}-${link.label}`}>
+                    <FooterLink item={link} />
                   </li>
                 ))}
               </ul>
@@ -98,9 +164,9 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border/60 pt-6 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
           <p>
-            © {new Date().getFullYear()} Nomads Navigate Nepal. Made with thin air & strong tea.
+            © {new Date().getFullYear()} {copyright}
           </p>
-          <p>Thamel, Kathmandu · Lakeside, Pokhara</p>
+          <p>{settings?.address || "Thamel, Kathmandu · Lakeside, Pokhara"}</p>
         </div>
       </div>
     </footer>

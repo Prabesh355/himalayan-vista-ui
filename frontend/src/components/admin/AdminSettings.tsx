@@ -11,29 +11,45 @@ import {
   MailCheck, 
   Save, 
   Settings2,
-  AlertCircle
+  AlertCircle,
+  Globe2
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { homeContentService, HomeContentData } from "@/services/homeContentService";
+import { siteSettingsService, SiteSettingsData } from "@/services/siteSettingsService";
 import { toast } from "sonner";
 
 export const AdminSettings = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"hero" | "stats" | "why" | "testimonials" | "cta" | "session">("hero");
+  const [activeTab, setActiveTab] = useState<
+    "hero" | "stats" | "why" | "testimonials" | "cta" | "site" | "session"
+  >("hero");
 
   const { data: response, isLoading, isError } = useQuery({
     queryKey: ["admin-home-content"],
     queryFn: () => homeContentService.getHomeContent(),
   });
+  const { data: siteResponse, isLoading: isSiteLoading, isError: isSiteError } = useQuery({
+    queryKey: ["admin-site-settings"],
+    queryFn: () => siteSettingsService.getSiteSettings(),
+  });
 
   const [formData, setFormData] = useState<HomeContentData | null>(null);
+  const [siteFormData, setSiteFormData] = useState<SiteSettingsData | null>(null);
+  const [siteJsonErrors, setSiteJsonErrors] = useState<Record<string, string | undefined>>({});
 
   useEffect(() => {
     if (response?.data) {
       setFormData(response.data);
     }
   }, [response]);
+
+  useEffect(() => {
+    if (siteResponse?.data) {
+      setSiteFormData(siteResponse.data);
+    }
+  }, [siteResponse]);
 
   const saveMutation = useMutation({
     mutationFn: (updatedData: HomeContentData) => homeContentService.updateHomeContent(updatedData),
@@ -46,6 +62,17 @@ export const AdminSettings = () => {
       toast.error(err.message || "Failed to update homepage content");
     }
   });
+  const saveSiteMutation = useMutation({
+    mutationFn: (updatedData: SiteSettingsData) => siteSettingsService.updateSiteSettings(updatedData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-site-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["site-settings"] });
+      toast.success("Site settings updated successfully!");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to update site settings");
+    },
+  });
 
   const handleLogout = () => {
     if (typeof window !== "undefined") {
@@ -57,6 +84,16 @@ export const AdminSettings = () => {
   };
 
   const handleSave = () => {
+    if (activeTab === "site") {
+      if (!siteFormData) return;
+      if (Object.values(siteJsonErrors).some(Boolean)) {
+        toast.error("Fix the JSON fields before saving site settings.");
+        return;
+      }
+      saveSiteMutation.mutate(siteFormData);
+      return;
+    }
+
     if (formData) {
       saveMutation.mutate(formData);
     }
@@ -132,6 +169,44 @@ export const AdminSettings = () => {
     });
   };
 
+  const handleSiteChange = (field: keyof SiteSettingsData, val: string) => {
+    setSiteFormData((prev) => (prev ? { ...prev, [field]: val } : prev));
+  };
+
+  const handleSocialChange = (
+    field: keyof SiteSettingsData["socialLinks"],
+    val: string,
+  ) => {
+    setSiteFormData((prev) =>
+      prev ? { ...prev, socialLinks: { ...prev.socialLinks, [field]: val } } : prev,
+    );
+  };
+
+  const handleSeoChange = (field: NonNullable<SiteSettingsData["seo"]> extends infer T ? keyof T : never, val: string) => {
+    setSiteFormData((prev) =>
+      prev ? { ...prev, seo: { ...(prev.seo || {}), [field]: val } } : prev,
+    );
+  };
+
+  const handleJsonChange = (
+    field: "navbarItems" | "footerColumns",
+    value: string,
+  ) => {
+    try {
+      const parsed = JSON.parse(value);
+      if (!Array.isArray(parsed)) {
+        throw new Error("Value must be an array.");
+      }
+      setSiteJsonErrors((prev) => ({ ...prev, [field]: undefined }));
+      setSiteFormData((prev) => (prev ? { ...prev, [field]: parsed } : prev));
+    } catch (error) {
+      setSiteJsonErrors((prev) => ({
+        ...prev,
+        [field]: error instanceof Error ? error.message : "Invalid JSON",
+      }));
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -158,6 +233,7 @@ export const AdminSettings = () => {
           { id: "why", label: "Why Choose Us", icon: HelpCircle },
           { id: "testimonials", label: "Testimonials", icon: Quote },
           { id: "cta", label: "CTA Section", icon: MailCheck },
+          { id: "site", label: "Site CMS", icon: Globe2 },
           { id: "session", label: "Session Basics", icon: Settings2 },
         ].map((tab) => {
           const TabIcon = tab.icon;
@@ -395,6 +471,169 @@ export const AdminSettings = () => {
                 />
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === "site" && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Global Website Settings</h2>
+              <p className="text-sm text-muted-foreground">
+                Manage shared navbar, footer, contact, social, logo, and SEO content used across the public website.
+              </p>
+            </div>
+
+            {isSiteLoading && (
+              <div className="flex h-40 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              </div>
+            )}
+
+            {(isSiteError || !siteFormData) && !isSiteLoading && (
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-500">
+                Failed to load site settings. Please ensure the backend server is reachable.
+              </div>
+            )}
+
+            {siteFormData && (
+              <div className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-1.5">
+                    <label className="text-sm font-semibold">Website Name</label>
+                    <input
+                      type="text"
+                      value={siteFormData.siteName}
+                      onChange={(e) => handleSiteChange("siteName", e.target.value)}
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-sm font-semibold">Logo URL</label>
+                    <input
+                      type="text"
+                      value={siteFormData.logoUrl || ""}
+                      onChange={(e) => handleSiteChange("logoUrl", e.target.value)}
+                      placeholder="Leave empty to use bundled logo"
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-sm font-semibold">Contact Email</label>
+                    <input
+                      type="email"
+                      value={siteFormData.contactEmail}
+                      onChange={(e) => handleSiteChange("contactEmail", e.target.value)}
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-sm font-semibold">Contact Phone</label>
+                    <input
+                      type="text"
+                      value={siteFormData.contactPhone}
+                      onChange={(e) => handleSiteChange("contactPhone", e.target.value)}
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid gap-1.5 md:col-span-2">
+                    <label className="text-sm font-semibold">Address</label>
+                    <input
+                      type="text"
+                      value={siteFormData.address}
+                      onChange={(e) => handleSiteChange("address", e.target.value)}
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid gap-1.5 md:col-span-2">
+                    <label className="text-sm font-semibold">Footer Tagline</label>
+                    <textarea
+                      value={siteFormData.footerTagline}
+                      onChange={(e) => handleSiteChange("footerTagline", e.target.value)}
+                      className="flex min-h-20 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="grid gap-1.5 md:col-span-2">
+                    <label className="text-sm font-semibold">Copyright Text</label>
+                    <input
+                      type="text"
+                      value={siteFormData.copyrightText}
+                      onChange={(e) => handleSiteChange("copyrightText", e.target.value)}
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="rounded-xl border bg-background/50 p-4">
+                  <h3 className="text-sm font-bold">Social Media Links</h3>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    {(["instagram", "facebook", "twitter", "youtube"] as const).map((key) => (
+                      <div key={key} className="grid gap-1.5">
+                        <label className="text-xs font-semibold capitalize text-muted-foreground">
+                          {key}
+                        </label>
+                        <input
+                          type="text"
+                          value={siteFormData.socialLinks?.[key] || ""}
+                          onChange={(e) => handleSocialChange(key, e.target.value)}
+                          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1.5 text-sm"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-1.5">
+                    <label className="text-sm font-semibold">Navbar Items JSON</label>
+                    <textarea
+                      defaultValue={JSON.stringify(siteFormData.navbarItems, null, 2)}
+                      onChange={(e) => handleJsonChange("navbarItems", e.target.value)}
+                      className="min-h-72 w-full rounded-lg border border-input bg-background px-3 py-2 font-mono text-xs"
+                    />
+                    {siteJsonErrors.navbarItems && (
+                      <p className="text-xs text-red-500">{siteJsonErrors.navbarItems}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-sm font-semibold">Footer Columns JSON</label>
+                    <textarea
+                      defaultValue={JSON.stringify(siteFormData.footerColumns, null, 2)}
+                      onChange={(e) => handleJsonChange("footerColumns", e.target.value)}
+                      className="min-h-72 w-full rounded-lg border border-input bg-background px-3 py-2 font-mono text-xs"
+                    />
+                    {siteJsonErrors.footerColumns && (
+                      <p className="text-xs text-red-500">{siteJsonErrors.footerColumns}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border bg-background/50 p-4">
+                  <h3 className="text-sm font-bold">Default SEO Metadata</h3>
+                  <div className="mt-4 grid gap-4">
+                    <input
+                      type="text"
+                      value={siteFormData.seo?.metaTitle || ""}
+                      onChange={(e) => handleSeoChange("metaTitle", e.target.value)}
+                      placeholder="Meta title"
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                    <textarea
+                      value={siteFormData.seo?.metaDescription || ""}
+                      onChange={(e) => handleSeoChange("metaDescription", e.target.value)}
+                      placeholder="Meta description"
+                      className="flex min-h-20 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="text"
+                      value={siteFormData.seo?.metaKeywords || ""}
+                      onChange={(e) => handleSeoChange("metaKeywords", e.target.value)}
+                      placeholder="Meta keywords"
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

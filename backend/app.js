@@ -80,6 +80,7 @@ app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/home-content', require('./routes/homeContentRoutes'));
+app.use('/api/site-settings', require('./routes/siteSettingsRoutes'));
 // File uploads (serve static uploads and upload endpoint)
 const path = require('path');
 const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
