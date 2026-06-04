@@ -1,3 +1,5 @@
+import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+
 export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
@@ -14,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5001',
         changeOrigin: true,
         secure: false,
       },
