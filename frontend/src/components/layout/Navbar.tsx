@@ -179,7 +179,23 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-2">
-            {/* Currency selector removed from desktop view */}
+            {/* Currency selector added to desktop view */}
+            <label className="hidden md:flex items-center gap-1 rounded-full bg-secondary/50 px-3 py-2 text-sm font-medium text-foreground">
+              <Globe className="h-4 w-4" />
+              <select
+                value={currency}
+                onChange={(event) => setCurrency(event.target.value as typeof currency)}
+                className="bg-transparent text-sm font-semibold outline-none"
+                aria-label="Choose currency"
+              >
+                {currencies.map((option) => (
+                  <option key={option.code} value={option.code} className="bg-background text-foreground">
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            
             {isAdmin && (
               <Link
                 to="/admin"
