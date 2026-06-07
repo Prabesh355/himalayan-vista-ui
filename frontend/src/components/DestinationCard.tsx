@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { Clock, MapPin, Star, TrendingUp } from "lucide-react";
+import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
 
 type DestinationCardData = {
   slug: string;
@@ -25,6 +26,9 @@ const difficultyColor: Record<string, string> = {
 };
 
 export function DestinationCard({ d, index = 0 }: { d: DestinationCardData; index?: number }) {
+  const imageSrc = resolveImageUrl(d.image);
+  const handleImageError = useFallbackImage(defaultImageFallback);
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 24 }}
@@ -36,8 +40,9 @@ export function DestinationCard({ d, index = 0 }: { d: DestinationCardData; inde
       <Link to="/packages/$slug" params={{ slug: d.slug }} className="block" aria-label={d.name}>
         <div className="relative aspect-[4/5] overflow-hidden">
           <img
-            src={d.image}
+            src={imageSrc}
             alt={d.name}
+            onError={handleImageError}
             loading="lazy"
             width={1024}
             height={1024}

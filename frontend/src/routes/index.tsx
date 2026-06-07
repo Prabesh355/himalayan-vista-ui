@@ -9,6 +9,7 @@ import { stats, testimonials } from "@/services/uiData";
 import { packageService } from "@/services/packageService";
 import { homeContentService } from "@/services/homeContentService";
 import { DestinationCard } from "@/components/DestinationCard";
+import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -57,12 +58,14 @@ function Hero({ data }: { data?: any }) {
     if (typeof window === "undefined") return;
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   };
+  const handleImageError = useFallbackImage(defaultImageFallback);
 
   return (
     <section className="relative -mt-20 min-h-[100svh] overflow-hidden">
       <img
-        src={backgroundImage}
+        src={resolveImageUrl(backgroundImage, heroImg)}
         alt="Himalayan peaks at sunset with prayer flags"
+        onError={handleImageError}
         width={1920}
         height={1080}
         className="absolute inset-0 h-full w-full object-cover"
@@ -179,7 +182,7 @@ function FeaturedDestinations() {
     slug: pkg.slug,
     name: pkg.title,
     tagline: pkg.tagline || pkg.description || "",
-    image: pkg.images?.[0] || "https://via.placeholder.com/640x800?text=No+Image",
+    image: resolveImageUrl(pkg.images?.[0]),
     region: pkg.destination,
     duration: pkg.duration?.days ? `${pkg.duration.days} days` : pkg.duration || "Trek",
     difficulty: pkg.difficulty,
@@ -365,6 +368,7 @@ function Why({ data }: { data?: any[] }) {
 
 function Testimonials({ data }: { data?: any[] }) {
   const items = data && data.length > 0 ? data : testimonials;
+  const handleImageError = useFallbackImage(defaultImageFallback);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-24">
@@ -394,8 +398,9 @@ function Testimonials({ data }: { data?: any[] }) {
             <blockquote className="mt-4 text-foreground/90 leading-relaxed">"{t.quote}"</blockquote>
             <figcaption className="mt-6 flex items-center gap-3 pt-5 border-t border-border/60">
               <img
-                src={t.avatar}
+                src={resolveImageUrl(t.avatar)}
                 alt={t.name}
+                onError={handleImageError}
                 className="h-10 w-10 rounded-full object-cover"
                 loading="lazy"
               />

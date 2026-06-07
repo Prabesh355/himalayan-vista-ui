@@ -158,8 +158,12 @@ function WhatsAppShortcut() {
       target="_blank"
       rel="noreferrer"
       aria-label="Send inquiry on WhatsApp"
-      className="fixed bottom-5 left-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50"
+      title="Need help"
+      className="group fixed bottom-5 left-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50"
     >
+      <span className="pointer-events-none absolute left-14 whitespace-nowrap rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+        Need help
+      </span>
       <MessageCircle className="h-6 w-6" />
     </a>
   );

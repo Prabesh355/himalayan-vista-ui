@@ -74,6 +74,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/packages', require('./routes/packageRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/blogs', require('./routes/blogRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));

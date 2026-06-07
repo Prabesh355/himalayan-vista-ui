@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DestinationCard } from "@/components/DestinationCard";
 import { packageService } from "@/services/packageService";
+import { resolveImageUrl } from "@/lib/imageUrl";
 
 type Region = "Everest" | "Annapurna" | "Langtang" | "Kathmandu Valley" | "Pokhara" | "Lowlands";
 type Difficulty = "Easy" | "Moderate" | "Challenging" | "Strenuous";
@@ -172,7 +173,7 @@ function DestinationsPage() {
                 d={{
                   slug: d.slug,
                   name: d.title,
-                  image: d.images?.[0] || "https://via.placeholder.com/640x800?text=No+Image",
+                  image: resolveImageUrl(d.images?.[0]),
                   tagline: d.tagline || d.description || "",
                   destination: d.destination,
                   duration:

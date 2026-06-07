@@ -1,6 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ShoppingCart, Star } from "lucide-react";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { PackageCheck, ShoppingCart, Star, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import api from "@/services/api";
+import backpackImage from "@/assets/annapurna-circuit.jpg";
+import jacketImage from "@/assets/everest-base-camp.jpeg";
+import shirtImage from "@/assets/annapurna-base-camp.jpg";
+import bootsImage from "@/assets/manaslu.jpg";
+import {
+  defaultShopImageFallback,
+  resolveImageUrl,
+  useFallbackImage,
+} from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -15,182 +26,227 @@ export const Route = createFileRoute("/shop")({
   component: Shop,
 });
 
-const products = [
+type Product = {
+  _id?: string;
+  id?: string | number;
+  name: string;
+  description?: string;
+  category?: string;
+  price: number;
+  rating?: number;
+  reviews?: number;
+  image: string;
+  inStock?: boolean;
+};
+
+const fallbackProducts: Product[] = [
   {
-    id: 1,
+    id: "jacket",
     name: "Nomads Navigate Nepal Trekking Jacket",
+    description: "A trail-ready shell for changing Himalayan conditions.",
+    category: "Outerwear",
     price: 89.99,
     rating: 4.8,
     reviews: 24,
-    image: "https://images.unsplash.com/photo-1544441892-3bae66e94f71?w=500&h=500&fit=crop",
+    image: jacketImage,
     inStock: true,
   },
   {
-    id: 2,
-    name: "Himalayan Adventure Backpack (65L)",
+    id: "backpack",
+    name: "Himalayan Adventure Backpack 65L",
+    description: "A spacious pack for multi-day trekking routes.",
+    category: "Bags",
     price: 149.99,
     rating: 4.9,
     reviews: 42,
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop",
+    image: backpackImage,
     inStock: true,
   },
   {
-    id: 3,
+    id: "base-layer",
     name: "Merino Wool Base Layer Set",
+    description: "Warm, breathable layers for high-altitude mornings.",
+    category: "Clothing",
     price: 59.99,
     rating: 4.7,
     reviews: 18,
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop",
+    image: shirtImage,
     inStock: true,
   },
   {
-    id: 4,
+    id: "boots",
     name: "Trekking Boots - Mountain Pro",
+    description: "Supportive boots for rocky trails and long descents.",
+    category: "Footwear",
     price: 179.99,
     rating: 4.9,
     reviews: 31,
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop",
+    image: bootsImage,
     inStock: true,
-  },
-  {
-    id: 5,
-    name: "Nomads Nepal T-Shirt",
-    price: 24.99,
-    rating: 4.6,
-    reviews: 15,
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop",
-    inStock: true,
-  },
-  {
-    id: 6,
-    name: "Sleeping Bag -40°C",
-    price: 199.99,
-    rating: 4.9,
-    reviews: 38,
-    image: "https://images.unsplash.com/photo-1505228395891-9a51e7e86e81?w=500&h=500&fit=crop",
-    inStock: false,
   },
 ];
 
-function Shop() {
-  const [cart, setCart] = useState<number[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+function productId(product: Product) {
+  return String(product._id || product.id || product.name);
+}
 
-  const addToCart = (productId: number) => {
-    setCart([...cart, productId]);
+function Shop() {
+  const handleImageError = useFallbackImage(defaultShopImageFallback);
+  const [cart, setCart] = useState<string[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["products", "public"],
+    queryFn: async () => (await api.get<{ success: boolean; data: Product[] }>("/products")).data,
+  });
+
+  const products = data?.data?.length ? data.data : fallbackProducts;
+  const cartProducts = useMemo(
+    () => cart.map((id) => products.find((product) => productId(product) === id)).filter(Boolean) as Product[],
+    [cart, products],
+  );
+  const cartTotal = cartProducts.reduce((sum, product) => sum + Number(product.price || 0), 0);
+
+  const addToCart = (product: Product) => {
+    setCart((current) => [...current, productId(product)]);
+    setCartOpen(true);
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-16">
+    <div className="min-h-screen pb-16 pt-32">
       <div className="mx-auto max-w-7xl px-4">
-        {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-bold tracking-tight text-foreground mb-4">
+          <h1 className="mb-4 text-5xl font-bold tracking-tight text-foreground">
             Nomads Navigate <span className="text-gradient-sunset">Shop</span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl">
-            Premium trekking gear and merchandise from Nomads Navigate Nepal. Everything you need
-            for your Himalayan adventure.
+          <p className="max-w-2xl text-xl text-muted-foreground">
+            Premium trekking gear and merchandise from Nomads Navigate Nepal.
           </p>
         </div>
 
-        {/* Shopping Cart Info */}
-        <div className="mb-8 p-4 rounded-xl glass border border-border/50">
-          <div className="flex items-center justify-between">
+        <div className="mb-8 rounded-xl border border-border/50 p-4 glass">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5 text-gradient-sunset" />
               <span className="text-sm font-medium">
-                Items in cart: <span className="text-gradient-sunset font-bold">{cart.length}</span>
+                Items in cart: <span className="font-bold text-gradient-sunset">{cart.length}</span>
               </span>
             </div>
-            <button className="text-sm text-gradient-sunset hover:underline">
+            <button
+              onClick={() => setCartOpen(true)}
+              className="rounded-full border border-border/60 px-4 py-2 text-sm font-semibold hover:bg-secondary"
+            >
               View Cart ({cart.length})
             </button>
           </div>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="group rounded-xl overflow-hidden glass border border-border/50 hover:border-border transition-all hover:shadow-lg"
-            >
-              {/* Product Image */}
-              <div className="relative overflow-hidden bg-secondary aspect-square">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                {!product.inStock && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="text-white font-bold">Out of Stock</span>
-                  </div>
-                )}
-                <div className="absolute top-3 right-3 bg-gradient-sunset text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  ${product.price}
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-2">
-                  {product.name}
-                </h3>
-
-                {/* Rating */}
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${
-                          i < Math.floor(product.rating)
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "text-muted-foreground"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {product.rating} ({product.reviews})
-                  </span>
-                </div>
-
-                {/* Add to Cart Button */}
-                <button
-                  onClick={() => addToCart(product.id)}
-                  disabled={!product.inStock}
-                  className={`w-full py-2 rounded-lg font-semibold transition-all ${
-                    product.inStock
-                      ? "bg-gradient-sunset text-white hover:shadow-glow hover:-translate-y-0.5"
-                      : "bg-muted text-muted-foreground cursor-not-allowed"
-                  }`}
-                >
-                  {product.inStock ? "Add to Cart" : "Out of Stock"}
+          {cartOpen && (
+            <div className="mt-4 rounded-xl border border-border/60 bg-background/80 p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold">Cart Summary</h2>
+                <button onClick={() => setCartOpen(false)} className="rounded-full p-1 hover:bg-secondary">
+                  <X className="h-4 w-4" />
                 </button>
               </div>
+              {cartProducts.length ? (
+                <div className="mt-3 space-y-2">
+                  {cartProducts.map((product, index) => (
+                    <div key={`${productId(product)}-${index}`} className="flex items-center justify-between gap-3 text-sm">
+                      <span>{product.name}</span>
+                      <span className="font-semibold">${Number(product.price || 0).toFixed(2)}</span>
+                    </div>
+                  ))}
+                  <div className="border-t border-border/60 pt-3 text-right text-sm font-bold">
+                    Total: ${cartTotal.toFixed(2)}
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">Your cart is empty.</p>
+              )}
             </div>
-          ))}
+          )}
         </div>
 
-        {/* Newsletter Section */}
-        <div className="mt-16 rounded-2xl glass border border-border/50 p-8 text-center">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Special Offers & Updates</h2>
-          <p className="text-muted-foreground mb-6">
-            Subscribe to get exclusive deals and new product announcements
+        {isLoading && <p className="mb-6 text-sm text-muted-foreground">Loading products...</p>}
+        {isError && (
+          <p className="mb-6 text-sm text-amber-600">
+            Live shop products are unavailable, showing the default catalog.
           </p>
-          <div className="flex gap-2 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 rounded-lg bg-secondary border border-border/50 px-4 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gradient-sunset"
-            />
-            <button className="bg-gradient-sunset text-white px-6 py-2 rounded-lg font-semibold hover:shadow-glow transition-all hover:-translate-y-0.5">
-              Subscribe
-            </button>
-          </div>
+        )}
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {products.map((product) => {
+            const inStock = product.inStock !== false;
+
+            return (
+              <div
+                key={productId(product)}
+                className="group overflow-hidden rounded-xl border border-border/50 transition-all hover:border-border hover:shadow-lg glass"
+              >
+                <div className="relative aspect-square overflow-hidden bg-secondary">
+                  <img
+                    src={resolveImageUrl(product.image, defaultShopImageFallback)}
+                    alt={product.name}
+                    onError={handleImageError}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  {!inStock && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                      <span className="font-bold text-white">Out of Stock</span>
+                    </div>
+                  )}
+                  <div className="absolute right-3 top-3 rounded-full bg-gradient-sunset px-3 py-1 text-sm font-semibold text-white">
+                    ${Number(product.price || 0).toFixed(2)}
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    {product.category || "Trekking Gear"}
+                  </p>
+                  <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-foreground">
+                    {product.name}
+                  </h3>
+                  {product.description && (
+                    <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
+                      {product.description}
+                    </p>
+                  )}
+
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className="flex items-center">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(product.rating || 0)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-muted-foreground"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {product.rating || 0} ({product.reviews || 0})
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => addToCart(product)}
+                    disabled={!inStock}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg py-2 font-semibold transition-all ${
+                      inStock
+                        ? "bg-gradient-sunset text-white hover:-translate-y-0.5 hover:shadow-glow"
+                        : "cursor-not-allowed bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    <PackageCheck className="h-4 w-4" />
+                    {inStock ? "Add to Cart" : "Out of Stock"}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

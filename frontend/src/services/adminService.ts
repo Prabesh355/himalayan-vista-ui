@@ -87,6 +87,21 @@ export interface PackageItem {
   createdAt?: string;
 }
 
+export interface ProductItem {
+  _id: string;
+  id?: string;
+  name: string;
+  description?: string;
+  category?: string;
+  price?: number;
+  image?: string;
+  inStock?: boolean;
+  isActive?: boolean;
+  rating?: number;
+  reviews?: number;
+  createdAt?: string;
+}
+
 export interface BlogItem {
   _id: string;
   id?: string;
@@ -185,6 +200,22 @@ export const adminService = {
   updatePackage: async (packageId: string, payload: Record<string, unknown>) =>
     (await api.put(`/packages/${packageId}`, payload)).data,
   deletePackage: async (packageId: string) => (await api.delete(`/packages/${packageId}`)).data,
+  getProducts: async (params?: Record<string, unknown>) =>
+    (
+      await api.get<{
+        success: boolean;
+        count: number;
+        total: number;
+        pages: number;
+        currentPage: number;
+        data: ProductItem[];
+      }>("/products/admin/all", { params })
+    ).data,
+  createProduct: async (payload: Record<string, unknown>) =>
+    (await api.post("/products", payload)).data,
+  updateProduct: async (productId: string, payload: Record<string, unknown>) =>
+    (await api.put(`/products/${productId}`, payload)).data,
+  deleteProduct: async (productId: string) => (await api.delete(`/products/${productId}`)).data,
   getBlogs: async () => (await api.get<{ success: boolean; data: BlogItem[] }>("/blogs")).data,
   createBlog: async (payload: Record<string, unknown>) => (await api.post("/blogs", payload)).data,
   updateBlog: async (blogId: string, payload: Record<string, unknown>) =>

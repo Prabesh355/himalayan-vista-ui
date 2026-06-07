@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-const ReactMarkdown: any = require("react-markdown");
-const remarkGfm: any = require("remark-gfm");
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { motion } from "framer-motion";
 import { DataTable } from "./DataTable";
 import { Plus, Edit, Trash2 } from "lucide-react";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { adminService, PackageItem } from "@/services/adminService";
 import { toast } from "sonner";
+import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
 
 type PackageFormState = {
   title: string;
@@ -67,6 +68,7 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
 
 export const PackageManagement: React.FC = () => {
   const queryClient = useQueryClient();
+  const handleImageError = useFallbackImage(defaultImageFallback);
   const [searchTerm, setSearchTerm] = useState("");
   const [localSearch, setLocalSearch] = useState("");
   const [destinationFilter, setDestinationFilter] = useState("");
@@ -464,7 +466,12 @@ export const PackageManagement: React.FC = () => {
                       key={img + idx}
                       className="relative w-24 h-16 border rounded overflow-hidden"
                     >
-                      <img src={img} alt={`img-${idx}`} className="object-cover w-full h-full" />
+                      <img
+                        src={resolveImageUrl(img)}
+                        alt={`img-${idx}`}
+                        onError={handleImageError}
+                        className="object-cover w-full h-full"
+                      />
                       <button
                         type="button"
                         onClick={() =>

@@ -7,6 +7,7 @@ import {
   Users,
   FileText,
   MessageSquare,
+  ShoppingBag,
   Star,
   Menu,
   X,
@@ -63,6 +64,7 @@ export const AdminSidebar = () => {
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", to: "/admin" },
     { icon: Package, label: "Packages", to: "/admin/packages" },
+    { icon: ShoppingBag, label: "Shop", to: "/admin/shop" },
     { icon: CalendarDays, label: "Bookings", to: "/admin/bookings" },
     { icon: Users, label: "Users", to: "/admin/users" },
     { icon: FileText, label: "Blogs", to: "/admin/blogs" },

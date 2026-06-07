@@ -3,6 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
+import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/packages")({
   head: () => ({
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/packages")({
 });
 
 function PackagesIndex() {
+  const handleImageError = useFallbackImage(defaultImageFallback);
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "+9779769364689";
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20booking%20a%20trek.`;
@@ -76,8 +78,9 @@ function PackagesIndex() {
             <div className="md:flex md:items-start md:gap-6">
               <div className="md:flex-shrink-0 md:w-44">
                 <img
-                  src={d.images?.[0] || "https://via.placeholder.com/300x200?text=No+Image"}
+                  src={resolveImageUrl(d.images?.[0])}
                   alt={d.title}
+                  onError={handleImageError}
                   className="w-full h-32 object-cover rounded-lg"
                 />
               </div>
