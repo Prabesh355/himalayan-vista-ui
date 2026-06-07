@@ -179,21 +179,7 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-2">
-            <label className="hidden md:flex items-center rounded-full border border-border/60 bg-background/70 px-2 py-1 text-xs font-semibold text-foreground shadow-soft">
-              <span className="sr-only">Currency</span>
-              <select
-                value={currency}
-                onChange={(event) => setCurrency(event.target.value as typeof currency)}
-                className="h-8 rounded-full bg-transparent px-2 text-xs font-semibold text-foreground outline-none"
-                aria-label="Choose currency"
-              >
-                {currencies.map((option) => (
-                  <option key={option.code} value={option.code} className="bg-background text-foreground">
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {/* Currency selector removed from desktop view */}
             {isAdmin && (
               <Link
                 to="/admin"
@@ -286,6 +272,7 @@ export function Navbar() {
               />
             ))}
             <div className="mt-2 flex gap-2">
+              {/* Currency selector added to mobile view */}
               <label className="flex-1 rounded-xl bg-secondary px-3 py-2 text-sm font-medium text-foreground">
                 <span className="mb-1 block text-xs text-muted-foreground">Currency</span>
                 <select
