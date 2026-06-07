@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { siteSettingsService, CmsLink } from "@/services/siteSettingsService";
+import { useCurrency } from "@/context/CurrencyProvider";
 // import logo from "@/assets/NOMADS NAVIGATE  NEPAL STAMP.webp";
 import logo from "@/assets/logo-nomads.png";
 
@@ -91,6 +91,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<StoredUser | null>(null);
+  const { currency, currencies, setCurrency } = useCurrency();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdmin = user?.role === "admin";
   const { data: settingsResponse } = useQuery({
@@ -178,7 +179,21 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            <label className="hidden md:flex items-center rounded-full border border-border/60 bg-background/70 px-2 py-1 text-xs font-semibold text-foreground shadow-soft">
+              <span className="sr-only">Currency</span>
+              <select
+                value={currency}
+                onChange={(event) => setCurrency(event.target.value as typeof currency)}
+                className="h-8 rounded-full bg-transparent px-2 text-xs font-semibold text-foreground outline-none"
+                aria-label="Choose currency"
+              >
+                {currencies.map((option) => (
+                  <option key={option.code} value={option.code} className="bg-background text-foreground">
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             {isAdmin && (
               <Link
                 to="/admin"
@@ -271,6 +286,21 @@ export function Navbar() {
               />
             ))}
             <div className="mt-2 flex gap-2">
+              <label className="flex-1 rounded-xl bg-secondary px-3 py-2 text-sm font-medium text-foreground">
+                <span className="mb-1 block text-xs text-muted-foreground">Currency</span>
+                <select
+                  value={currency}
+                  onChange={(event) => setCurrency(event.target.value as typeof currency)}
+                  className="w-full bg-transparent text-sm font-semibold outline-none"
+                  aria-label="Choose currency"
+                >
+                  {currencies.map((option) => (
+                    <option key={option.code} value={option.code} className="bg-background text-foreground">
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <Link
                 to="/shop"
                 className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-medium text-foreground"
