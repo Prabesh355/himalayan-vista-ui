@@ -8,26 +8,30 @@ import {
 
 export type CurrencyCode = "USD" | "NPR" | "EUR" | "GBP" | "AUD" | "CAD";
 
-export interface Currency {
+export interface CurrencyOption {
   code: CurrencyCode;
   symbol: string;
-  name: string;
+  label: string;
   rate: number; // relative to USD
 }
 
-export const currencies: Currency[] = [
-  { code: "USD", symbol: "$", name: "US Dollar", rate: 1 },
-  { code: "NPR", symbol: "₨", name: "Nepali Rupee", rate: 133.5 },
-  { code: "EUR", symbol: "€", name: "Euro", rate: 0.92 },
-  { code: "GBP", symbol: "£", name: "British Pound", rate: 0.79 },
-  { code: "AUD", symbol: "A$", name: "Australian Dollar", rate: 1.53 },
-  { code: "CAD", symbol: "C$", name: "Canadian Dollar", rate: 1.36 },
+export const currencies: CurrencyOption[] = [
+  { code: "USD", symbol: "$", label: "USD ($)", rate: 1 },
+  { code: "NPR", symbol: "₨", label: "NPR (₨)", rate: 133.5 },
+  { code: "EUR", symbol: "€", label: "EUR (€)", rate: 0.92 },
+  { code: "GBP", symbol: "£", label: "GBP (£)", rate: 0.79 },
+  { code: "AUD", symbol: "A$", label: "AUD (A$)", rate: 1.53 },
+  { code: "CAD", symbol: "C$", label: "CAD (C$)", rate: 1.36 },
 ];
 
 interface CurrencyContextValue {
-  currency: Currency;
-  currencies: Currency[];
+  /** The currently selected currency code (e.g. "USD") */
+  currency: CurrencyCode;
+  /** All available currency options */
+  currencies: CurrencyOption[];
+  /** Switch the active currency */
   setCurrency: (code: CurrencyCode) => void;
+  /** Format a USD price into the active currency */
   formatPrice: (priceInUsd: number) => string;
 }
 
@@ -38,7 +42,7 @@ const CurrencyContext = createContext<CurrencyContextValue | undefined>(
 export function CurrencyProvider({ children }: { children: ReactNode }) {
   const [currencyCode, setCurrencyCode] = useState<CurrencyCode>("USD");
 
-  const currency = currencies.find((c) => c.code === currencyCode)!;
+  const active = currencies.find((c) => c.code === currencyCode)!;
 
   const setCurrency = useCallback((code: CurrencyCode) => {
     setCurrencyCode(code);
@@ -46,18 +50,23 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
 
   const formatPrice = useCallback(
     (priceInUsd: number) => {
-      const converted = priceInUsd * currency.rate;
-      return `${currency.symbol}${converted.toLocaleString(undefined, {
+      const converted = priceInUsd * active.rate;
+      return `${active.symbol}${converted.toLocaleString(undefined, {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       })}`;
     },
-    [currency]
+    [active]
   );
 
   return (
     <CurrencyContext.Provider
-      value={{ currency, currencies, setCurrency, formatPrice }}
+      value={{
+        currency: currencyCode,
+        currencies,
+        setCurrency,
+        formatPrice,
+      }}
     >
       {children}
     </CurrencyContext.Provider>
