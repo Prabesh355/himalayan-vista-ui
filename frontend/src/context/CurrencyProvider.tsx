@@ -1,26 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
-
-interface CurrencyContextType {
-  currency: string;
-  setCurrency: (currency: string) => void;
-}
-
-const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
-
-export const useCurrency = () => {
-  const context = useContext(CurrencyContext);
-  if (!context) {
-    throw new Error('useCurrency must be used within a CurrencyProvider');
-  }
-  return context;
-};
-
-export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currency, setCurrency] = useState<string>('USD');
-
-  return (
-    <CurrencyContext.Provider value={{ currency, setCurrency }}>
-      {children}
-    </CurrencyContext.Provider>
-  );
-};
+Type    Name                Target
+A       @                   104.16.123.123 (Vercel IP)
+A       @                   104.16.123.124 (Vercel IP)
+CNAME   www                 your-vercel-project.vercel.app
