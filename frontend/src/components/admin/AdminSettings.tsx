@@ -337,6 +337,96 @@ export const AdminSettings = () => {
         })}
       </div>
 
+      <div className="space-y-5">
+        <div className="rounded-3xl border border-secondary/40 bg-background/80 p-5 shadow-sm">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Live preview</p>
+              <h2 className="text-xl font-semibold">Homepage snapshot</h2>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-xl">
+              Preview the current homepage content before saving. Changes to the hero, stats, testimonials, and CTA sections are shown here instantly.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-[1.4fr_0.8fr]">
+            <div className="rounded-3xl overflow-hidden border border-secondary/20 bg-slate-950 text-white shadow-sm">
+              <div
+                className="relative h-56 bg-cover bg-center"
+                style={{
+                  backgroundImage: formData.hero.backgroundImage
+                    ? `url(${formData.hero.backgroundImage})`
+                    : "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+                }}
+              >
+                <div className="absolute inset-0 bg-black/40" />
+                <div className="absolute inset-0 flex flex-col justify-center px-6 text-center">
+                  <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/80">
+                    {formData.hero.badgeText || "Small group sizes · Expert Nepali guides"}
+                  </span>
+                  <h3 className="mt-4 text-3xl font-bold leading-tight">
+                    {formData.hero.title || "NOMADS NAVIGATE NEPAL"}
+                  </h3>
+                  <p className="mx-auto mt-3 max-w-2xl text-sm text-white/80">
+                    {formData.hero.description || "Explore Nepal, Beyond Maps"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <aside className="space-y-4">
+              <div className="rounded-3xl border border-secondary/20 bg-white p-4 shadow-sm">
+                <h3 className="text-sm font-semibold">Stats preview</h3>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {formData.stats.map((stat, index) => (
+                    <div key={index} className="rounded-2xl border border-secondary/10 bg-slate-50 p-3">
+                      <p className="text-xl font-semibold">{stat.value || "—"}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.15em] text-muted-foreground">{stat.label || "Statistic"}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-secondary/20 bg-white p-4 shadow-sm">
+                <h3 className="text-sm font-semibold">CTA preview</h3>
+                <div className="mt-4 space-y-3">
+                  <p className="text-base font-semibold">{formData.cta.title || "Your Nepal story starts with one email."}</p>
+                  <p className="text-sm text-muted-foreground">{formData.cta.subtitle || "Tell us your dates and dream peak — we'll come back within 24 hours with a tailor-made plan."}</p>
+                  <button className="mt-3 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+                    Send a message
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div className="mt-5 rounded-3xl border border-secondary/20 bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold">Testimonials preview</h3>
+              <p className="text-xs text-muted-foreground">First three entries</p>
+            </div>
+            <div className="mt-4 grid gap-3">
+              {formData.testimonials.slice(0, 3).map((testimonial, index) => (
+                <div key={index} className="flex gap-3 rounded-3xl border border-secondary/10 bg-slate-50 p-3">
+                  <div className="h-14 w-14 overflow-hidden rounded-2xl bg-slate-200">
+                    {testimonial.avatar ? (
+                      <img src={testimonial.avatar} alt={testimonial.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-slate-500">No image</div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-semibold">{testimonial.name || "Customer Name"}</p>
+                    <p className="text-xs uppercase tracking-[0.1em] text-muted-foreground">{testimonial.country || "Country"} · {testimonial.trek || "Trek"}</p>
+                    <p className="mt-2 text-sm text-slate-700">{testimonial.quote || "A beautiful experience with expert guides and unforgettable landscapes."}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-card border rounded-2xl p-6 shadow-sm">
         {activeTab === "hero" && (
           <div className="space-y-4">
