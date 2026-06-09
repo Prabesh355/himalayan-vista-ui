@@ -135,7 +135,7 @@ function RootComponent() {
         ) : (
           <div className="min-h-screen flex flex-col bg-background">
             <Navbar />
-            <main className="flex-1 pt-20">
+            <main className="flex-1 pt-20 pb-20">
               <Outlet />
             </main>
             <Footer />
@@ -159,12 +159,12 @@ function WhatsAppShortcut() {
       rel="noreferrer"
       aria-label="Send inquiry on WhatsApp"
       title="Need help"
-      className="group fixed bottom-5 left-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50"
+      className="group fixed bottom-4 right-4 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50 sm:bottom-5 sm:right-5 sm:h-14 sm:w-14"
     >
-      <span className="pointer-events-none absolute left-14 whitespace-nowrap rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+      <span className="pointer-events-none absolute right-full mr-3 top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background opacity-0 shadow-lg transition-all duration-200 group-hover:block group-focus-visible:block sm:block sm:opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
         Need help
       </span>
-      <MessageCircle className="h-6 w-6" />
+      <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" />
     </a>
   );
 }
