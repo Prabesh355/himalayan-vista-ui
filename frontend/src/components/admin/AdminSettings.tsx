@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   LogOut, 
@@ -12,11 +12,13 @@ import {
   Save, 
   Settings2,
   AlertCircle,
-  Globe2
+  Globe2,
+  Upload
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { homeContentService, HomeContentData } from "@/services/homeContentService";
 import { siteSettingsService, SiteSettingsData } from "@/services/siteSettingsService";
+import { adminService } from "@/services/adminService";
 import { toast } from "sonner";
 
 export const AdminSettings = () => {
@@ -25,6 +27,13 @@ export const AdminSettings = () => {
   const [activeTab, setActiveTab] = useState<
     "hero" | "stats" | "why" | "testimonials" | "cta" | "site" | "session"
   >("hero");
+  const heroImageInputRef = useRef<HTMLInputElement | null>(null);
+  const testimonialImageInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingImageContext, setUploadingImageContext] = useState<
+    "hero" | "testimonial" | "site" | ""
+  >("");
+  const [testimonialUploadIndex, setTestimonialUploadIndex] = useState<number | null>(null);
 
   const { data: response, isLoading, isError } = useQuery({
     queryKey: ["admin-home-content"],
@@ -81,6 +90,79 @@ export const AdminSettings = () => {
       window.localStorage.removeItem("user");
     }
     navigate({ to: "/login" });
+  };
+
+  const uploadImage = async (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const result = await adminService.uploadImage(fd);
+    return result?.fileUrl;
+  };
+
+  const handleHeroImageUpload = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file || !formData) return;
+    setUploadingImage(true);
+    setUploadingImageContext("hero");
+    try {
+      const fileUrl = await uploadImage(file);
+      if (fileUrl) {
+        setFormData((prev) =>
+          prev
+            ? {
+                ...prev,
+                hero: {
+                  ...prev.hero,
+                  backgroundImage: fileUrl,
+                },
+              }
+            : prev,
+        );
+        toast.success("Hero background image uploaded");
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || "Upload failed");
+    } finally {
+      setUploadingImage(false);
+      setUploadingImageContext("");
+    }
+  };
+
+  const handleTestimonialAvatarUpload = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (file == null || testimonialUploadIndex == null || !formData) return;
+    setUploadingImage(true);
+    setUploadingImageContext("testimonial");
+    try {
+      const fileUrl = await uploadImage(file);
+      if (fileUrl) {
+        setFormData((prev) => {
+          if (!prev) return prev;
+          const nextTestimonials = [...prev.testimonials];
+          nextTestimonials[testimonialUploadIndex] = {
+            ...nextTestimonials[testimonialUploadIndex],
+            avatar: fileUrl,
+          };
+          return { ...prev, testimonials: nextTestimonials };
+        });
+        toast.success("Testimonial avatar uploaded");
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || "Upload failed");
+    } finally {
+      setUploadingImage(false);
+      setUploadingImageContext("");
+      setTestimonialUploadIndex(null);
+    }
+  };
+
+  const requestTestimonialUpload = (index: number) => {
+    setTestimonialUploadIndex(index);
+    testimonialImageInputRef.current?.click();
+  };
+
+  const requestHeroImageUpload = () => {
+    heroImageInputRef.current?.click();
   };
 
   const handleSave = () => {
@@ -289,13 +371,34 @@ export const AdminSettings = () => {
               </div>
               <div className="grid gap-1.5">
                 <label className="text-sm font-semibold">Hero Background Image URL</label>
-                <input
-                  type="text"
-                  value={formData.hero.backgroundImage || ""}
-                  onChange={(e) => handleHeroChange("backgroundImage", e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
-                />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <input
+                    type="text"
+                    value={formData.hero.backgroundImage || ""}
+                    onChange={(e) => handleHeroChange("backgroundImage", e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="flex-1 h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={requestHeroImageUpload}
+                    className="inline-flex items-center gap-2 rounded-lg bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/90"
+                    disabled={uploadingImage && uploadingImageContext === "hero"}
+                  >
+                    <Upload className="w-4 h-4" />
+                    {uploadingImage && uploadingImageContext === "hero" ? "Uploading..." : "Upload Image"}
+                  </button>
+                  <input
+                    ref={heroImageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      handleHeroImageUpload(e.target.files);
+                      if (e.target) e.target.value = "";
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -426,12 +529,25 @@ export const AdminSettings = () => {
                     </div>
                     <div className="grid gap-1">
                       <label className="text-xs font-semibold text-foreground/80">Avatar Image URL</label>
-                      <input
-                        type="text"
-                        value={t.avatar}
-                        onChange={(e) => handleTestimonialChange(index, "avatar", e.target.value)}
-                        className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1.5 text-sm"
-                      />
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="text"
+                          value={t.avatar}
+                          onChange={(e) => handleTestimonialChange(index, "avatar", e.target.value)}
+                          className="flex-1 h-9 rounded-lg border border-input bg-background px-3 py-1.5 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => requestTestimonialUpload(index)}
+                          className="inline-flex items-center gap-2 rounded-lg bg-secondary px-3 py-1.5 text-xs font-semibold hover:bg-secondary/90"
+                          disabled={uploadingImage && uploadingImageContext === "testimonial" && testimonialUploadIndex === index}
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          {uploadingImage && uploadingImageContext === "testimonial" && testimonialUploadIndex === index
+                            ? "Uploading..."
+                            : "Upload"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="grid gap-1">
@@ -444,6 +560,16 @@ export const AdminSettings = () => {
                   </div>
                 </div>
               ))}
+              <input
+                ref={testimonialImageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  handleTestimonialAvatarUpload(e.target.files);
+                  if (e.target) e.target.value = "";
+                }}
+              />
             </div>
           </div>
         )}
