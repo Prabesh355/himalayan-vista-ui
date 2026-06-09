@@ -2,13 +2,27 @@ require('dotenv').config();
 const Team = require('../models/Team');
 const { getPool } = require('../config/db');
 
-// Using unsplash URLs as a fallback - these can be updated to local files once uploads are configured
+// Get the API base URL from environment or default
+const getApiBaseUrl = () => {
+  if (process.env.API_BASE_URL) {
+    return process.env.API_BASE_URL;
+  }
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://himalayan-vista-backend.onrender.com/api';
+  }
+  return 'http://localhost:5001/api';
+};
+
+const apiBaseUrl = getApiBaseUrl();
+const uploadsBase = apiBaseUrl.replace('/api', '');
+
+// Team members with both local and fallback URLs
 const sampleTeamMembers = [
   {
     name: "Nishant Karki",
     role: "Trekking Guide",
     bio: "Experienced trekking guide with deep knowledge of Himalayan trails and local culture. Passionate about sharing Nepal's natural beauty.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    avatar: `${uploadsBase}/uploads/Nishant%20Karki.jpg`,
     sortOrder: 1,
     isActive: true,
   },
@@ -16,7 +30,7 @@ const sampleTeamMembers = [
     name: "Simon Bhattarai",
     role: "Leading Role",
     bio: "Senior expedition leader and guide with expertise in high-altitude mountaineering. Leads our most challenging expeditions.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+    avatar: `${uploadsBase}/uploads/Simon%20Bhattarai.jpg`,
     sortOrder: 2,
     isActive: true,
   },
@@ -24,7 +38,7 @@ const sampleTeamMembers = [
     name: "Prashant Mani Tamang",
     role: "Main Guide",
     bio: "Main guide and expedition coordinator with years of experience in managing treks and ensuring traveller safety and comfort.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    avatar: `${uploadsBase}/uploads/Prashant%20Mani%20Tamang.jpg`,
     sortOrder: 3,
     isActive: true,
   },
@@ -32,7 +46,7 @@ const sampleTeamMembers = [
     name: "Jangu Sherpa",
     role: "Trekking + Climbing Guide",
     bio: "Expert climbing and trekking guide specializing in high-altitude expeditions. Multi-skilled mountaineer with climbing expertise.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+    avatar: `${uploadsBase}/uploads/Jangu%20Sherpa.jpg`,
     sortOrder: 4,
     isActive: true,
   },
@@ -40,7 +54,7 @@ const sampleTeamMembers = [
     name: "Sukadev Thapa",
     role: "Trekking Guide",
     bio: "Dedicated guide with extensive knowledge of remote trails and local villages. Creates memorable cultural experiences.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    avatar: `${uploadsBase}/uploads/Sukadev%20Thapa.jpeg`,
     sortOrder: 5,
     isActive: true,
   },
@@ -48,7 +62,7 @@ const sampleTeamMembers = [
     name: "Aadarsha Bhandari",
     role: "Trekking Guide",
     bio: "Professional trekking guide committed to safety and excellent service. Fluent in multiple languages.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+    avatar: `${uploadsBase}/uploads/Aadarsha%20Bhandari.jpg`,
     sortOrder: 6,
     isActive: true,
   },
