@@ -184,6 +184,8 @@ export const PackageManagement: React.FC = () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-packages"] });
       await queryClient.invalidateQueries({ queryKey: ["packages"] });
       await queryClient.invalidateQueries({ queryKey: ["featured-packages"] });
+      // Invalidate individual package detail pages by slug
+      await queryClient.invalidateQueries({ queryKey: ["package"] });
       setIsModalOpen(false);
       setSelectedPackage(null);
       setForm(emptyForm);
