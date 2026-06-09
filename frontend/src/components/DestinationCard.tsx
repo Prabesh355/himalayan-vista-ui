@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { Clock, MapPin, Star, TrendingUp } from "lucide-react";
 import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
+import { useCurrency } from "@/context/CurrencyProvider";
 
 type DestinationCardData = {
   slug: string;
@@ -28,6 +29,7 @@ const difficultyColor: Record<string, string> = {
 export function DestinationCard({ d, index = 0 }: { d: DestinationCardData; index?: number }) {
   const imageSrc = resolveImageUrl(d.image);
   const handleImageError = useFallbackImage(defaultImageFallback);
+  const { formatPrice } = useCurrency();
 
   return (
     <motion.article
@@ -87,7 +89,9 @@ export function DestinationCard({ d, index = 0 }: { d: DestinationCardData; inde
               </span>
               <span className="rounded-full bg-white/10 px-2 py-0.5">
                 from{" "}
-                <span className="font-semibold text-white">${d.priceFrom ?? d.price ?? 0}</span>
+                <span className="font-semibold text-white">
+                  {formatPrice(d.priceFrom ?? d.price ?? 0)}
+                </span>
               </span>
             </div>
           </div>

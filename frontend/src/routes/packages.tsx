@@ -4,6 +4,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
 import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
+import { useCurrency } from "@/context/CurrencyProvider";
 
 export const Route = createFileRoute("/packages")({
   head: () => ({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/packages")({
 
 function PackagesIndex() {
   const handleImageError = useFallbackImage(defaultImageFallback);
+  const { formatPrice } = useCurrency();
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "+9779769364689";
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20booking%20a%20trek.`;
@@ -101,7 +103,7 @@ function PackagesIndex() {
                   <span className="capitalize">{d.difficulty}</span>
                   <span>·</span>
                   <span>
-                    from <strong>${d.price}</strong>
+                    from <strong>{formatPrice(d.price)}</strong>
                   </span>
                 </div>
 

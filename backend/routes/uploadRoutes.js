@@ -13,7 +13,7 @@ const uploadLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Only authenticated users can upload (admin recommended)
-router.post('/', protect, authorize('admin'), uploadLimiter, upload.single('file'), uploadFile);
+// Admins and vendors can upload package images from the package management panel.
+router.post('/', protect, authorize('admin', 'vendor'), uploadLimiter, upload.single('file'), uploadFile);
 
 module.exports = router;

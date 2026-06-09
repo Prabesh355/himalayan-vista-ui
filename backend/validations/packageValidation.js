@@ -23,15 +23,14 @@ exports.validatePackage = [
     .trim()
     .notEmpty()
     .withMessage('Package title is required')
-    .isLength({ min: 5, max: 100 })
-    .withMessage('Title must be between 5 and 100 characters'),
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Title must be between 2 and 100 characters'),
   
   body('description')
+    .optional({ checkFalsy: true })
     .trim()
-    .notEmpty()
-    .withMessage('Description is required')
-    .isLength({ min: 20 })
-    .withMessage('Description must be at least 20 characters'),
+    .isLength({ min: 5 })
+    .withMessage('Description must be at least 5 characters'),
   
   body('destination')
     .trim()
@@ -72,14 +71,9 @@ exports.validatePackage = [
     .withMessage('Nights cannot be negative'),
   
   body('images')
-    .isArray({ min: 1 })
-    .withMessage('At least one image is required')
-    .custom(images => {
-      if (!Array.isArray(images) || images.length === 0) {
-        throw new Error('Images array must not be empty');
-      }
-      return true;
-    }),
+    .optional()
+    .isArray()
+    .withMessage('Images must be an array'),
   
   body('groupSize.min')
     .notEmpty()
@@ -145,14 +139,14 @@ exports.validatePackageUpdate = [
   body('title')
     .optional()
     .trim()
-    .isLength({ min: 5, max: 100 })
-    .withMessage('Title must be between 5 and 100 characters'),
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Title must be between 2 and 100 characters'),
   
   body('description')
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
-    .isLength({ min: 20 })
-    .withMessage('Description must be at least 20 characters'),
+    .isLength({ min: 5 })
+    .withMessage('Description must be at least 5 characters'),
   
   body('destination')
     .optional()
@@ -190,8 +184,8 @@ exports.validatePackageUpdate = [
   
   body('images')
     .optional()
-    .isArray({ min: 1 })
-    .withMessage('At least one image is required'),
+    .isArray()
+    .withMessage('Images must be an array'),
   
   body('groupSize.min')
     .optional()

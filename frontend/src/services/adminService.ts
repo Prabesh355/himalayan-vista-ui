@@ -65,6 +65,7 @@ export interface BookingRow {
 export interface PackageItem {
   _id: string;
   id?: string;
+  slug?: string;
   title: string;
   description?: string;
   itinerary?: string;

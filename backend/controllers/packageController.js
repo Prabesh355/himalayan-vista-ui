@@ -1,6 +1,14 @@
 const Package = require('../models/Package');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
+const slugify = require('slugify');
+
+function isOwnedByUser(pkg, user) {
+  if (!pkg || !user) return false;
+  if (user.role === 'admin') return true;
+  if (!pkg.createdBy) return true;
+  return String(pkg.createdBy) === String(user.id);
+}
 
 // @desc Get all packages with search, filter and pagination
 // @route GET /api/packages
@@ -265,6 +273,14 @@ exports.createPackage = async (req, res, next) => {
     // Attach user ID
     req.body.createdBy = req.user.id;
 
+    const slug = slugify(String(req.body.title || ''), { lower: true, strict: true });
+    if (slug) {
+      const existing = await Package.findOne({ slug });
+      if (existing) {
+        return next(new AppError('A package with this title already exists. Edit the existing package instead of creating a duplicate.', 409));
+      }
+    }
+
     // Validate that group size is valid
     if (req.body.groupSize.min > req.body.groupSize.max) {
       return next(new AppError('Minimum group size cannot be greater than maximum', 400));
@@ -296,9 +312,21 @@ exports.updatePackage = async (req, res, next) => {
       return next(new AppError('Package not found', 404));
     }
 
-    // Check ownership (creator or admin). Legacy packages may not have createdBy.
-    if (req.user.role !== 'admin' && (!pkg.createdBy || pkg.createdBy.toString() !== req.user.id)) {
+    // Check ownership (creator or admin). Legacy packages without createdBy can be adopted on edit.
+    if (!isOwnedByUser(pkg, req.user)) {
       return next(new AppError('Not authorized to update this package', 403));
+    }
+
+    if (!pkg.createdBy) {
+      req.body.createdBy = req.user.id;
+    }
+
+    const nextSlug = req.body.title ? slugify(String(req.body.title), { lower: true, strict: true }) : null;
+    if (nextSlug) {
+      const duplicate = await Package.findOne({ slug: nextSlug });
+      if (duplicate && String(duplicate.id || duplicate._id) !== String(pkg.id || pkg._id)) {
+        return next(new AppError('A package with this title already exists. Please edit the existing package instead of creating a duplicate.', 409));
+      }
     }
 
     // Validate group size if provided
@@ -338,8 +366,8 @@ exports.deletePackage = async (req, res, next) => {
       return next(new AppError('Package not found', 404));
     }
 
-    // Check ownership (creator or admin). Legacy packages may not have createdBy.
-    if (req.user.role !== 'admin' && (!pkg.createdBy || pkg.createdBy.toString() !== req.user.id)) {
+    // Check ownership (creator or admin). Legacy packages without createdBy can be deleted by any authorized package editor.
+    if (!isOwnedByUser(pkg, req.user)) {
       return next(new AppError('Not authorized to delete this package', 403));
     }
 

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { ReviewsSection, type Review as ReviewCard } from "@/components/ReviewsSection";
+import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
 
 type ItineraryDay = {
@@ -392,6 +393,8 @@ function CostCard({
 }
 
 function PriceSummary({ price }: { price: number }) {
+  const { formatPrice } = useCurrency();
+
   return (
     <motion.section
       whileHover={{ scale: 1.01 }}
@@ -401,7 +404,7 @@ function PriceSummary({ price }: { price: number }) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.35em] text-white/65">Package Price</p>
-          <p className="mt-2 text-4xl font-semibold">${price}</p>
+          <p className="mt-2 text-4xl font-semibold">{formatPrice(price)}</p>
         </div>
         <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/10">
           <Ticket className="h-7 w-7 text-secondary" />
@@ -434,6 +437,7 @@ export const Route = createFileRoute("/packages/$slug")({
 });
 
 function PackageDetails() {
+  const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
@@ -544,7 +548,7 @@ function PackageDetails() {
             <strong>Difficulty:</strong> {pkg.difficulty || "Moderate"}
           </span>
           <span className="inline-flex items-center gap-2">
-            <strong>Price:</strong> ${pkg.price}
+            <strong>Price:</strong> {formatPrice(pkg.price)}
           </span>
         </div>
 

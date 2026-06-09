@@ -12,6 +12,7 @@ import {
   resolveImageUrl,
   useFallbackImage,
 } from "@/lib/imageUrl";
+import { useCurrency } from "@/context/CurrencyProvider";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -92,6 +93,7 @@ function productId(product: Product) {
 
 function Shop() {
   const handleImageError = useFallbackImage(defaultShopImageFallback);
+  const { formatPrice } = useCurrency();
   const [cart, setCart] = useState<string[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -152,11 +154,11 @@ function Shop() {
                   {cartProducts.map((product, index) => (
                     <div key={`${productId(product)}-${index}`} className="flex items-center justify-between gap-3 text-sm">
                       <span>{product.name}</span>
-                      <span className="font-semibold">${Number(product.price || 0).toFixed(2)}</span>
+                      <span className="font-semibold">{formatPrice(product.price)}</span>
                     </div>
                   ))}
                   <div className="border-t border-border/60 pt-3 text-right text-sm font-bold">
-                    Total: ${cartTotal.toFixed(2)}
+                    Total: {formatPrice(cartTotal)}
                   </div>
                 </div>
               ) : (
@@ -196,7 +198,7 @@ function Shop() {
                     </div>
                   )}
                   <div className="absolute right-3 top-3 rounded-full bg-gradient-sunset px-3 py-1 text-sm font-semibold text-white">
-                    ${Number(product.price || 0).toFixed(2)}
+                    {formatPrice(product.price)}
                   </div>
                 </div>
 

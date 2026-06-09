@@ -15,6 +15,7 @@ import {
 import { adminService, PackageItem } from "@/services/adminService";
 import { toast } from "sonner";
 import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
+import { useCurrency } from "@/context/CurrencyProvider";
 
 type PackageFormState = {
   title: string;
@@ -68,6 +69,7 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
 
 export const PackageManagement: React.FC = () => {
   const queryClient = useQueryClient();
+  const { formatPrice } = useCurrency();
   const handleImageError = useFallbackImage(defaultImageFallback);
   const [searchTerm, setSearchTerm] = useState("");
   const [localSearch, setLocalSearch] = useState("");
@@ -253,7 +255,17 @@ export const PackageManagement: React.FC = () => {
     },
   });
 
-  const packages = data?.data || [];
+  const packages = useMemo(() => {
+    const list = data?.data || [];
+    const seen = new Set<string>();
+
+    return list.filter((item) => {
+      const key = String(item.slug || item._id || item.id || item.title);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [data?.data]);
 
   const columns = [
     { key: "title", header: "Package Title" },
@@ -266,7 +278,7 @@ export const PackageManagement: React.FC = () => {
     {
       key: "price",
       header: "Price",
-      render: (item: PackageItem) => `$${Number(item.price || 0).toLocaleString()}`,
+      render: (item: PackageItem) => formatPrice(Number(item.price || 0)),
     },
     {
       key: "status",
@@ -299,7 +311,9 @@ export const PackageManagement: React.FC = () => {
     const target = e.target as HTMLInputElement;
     const url = target.value.trim();
     if (!url) return;
-    setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
+    setForm((prev) =>
+      prev.images.includes(url) ? prev : { ...prev, images: [...prev.images, url] },
+    );
     target.value = "";
   };
 
@@ -316,13 +330,15 @@ export const PackageManagement: React.FC = () => {
         }
         const res = await adminService.uploadImage(fd);
         if (res && res.fileUrl) {
-          setForm((prev) => ({ ...prev, images: [...prev.images, res.fileUrl] }));
+          setForm((prev) =>
+            prev.images.includes(res.fileUrl) ? prev : { ...prev, images: [...prev.images, res.fileUrl] },
+          );
         }
       }
       toast.success("Images uploaded");
     } catch (err: any) {
       console.error("Upload error", err);
-      toast.error(err?.message || "Upload failed");
+      toast.error(err?.response?.data?.message || err?.message || "Upload failed");
     } finally {
       setUploading(false);
     }

@@ -11,16 +11,15 @@ const Package = createModel('Package', {
   },
   validate: async (doc) => {
     if (!doc.title) throw new AppError('Please provide a package title', 400);
-    if (!doc.description) throw new AppError('Please provide a description', 400);
-    if (String(doc.description).length < 20) throw new AppError('Description must be at least 20 characters', 400);
+    if (doc.description && String(doc.description).length < 5) throw new AppError('Description must be at least 5 characters', 400);
     if (!doc.destination) throw new AppError('Please provide a destination', 400);
     if (doc.price == null) throw new AppError('Please provide a price', 400);
     if (Number(doc.price) < 0) throw new AppError('Price cannot be negative', 400);
     if (!doc.duration || doc.duration.days == null || doc.duration.nights == null) {
       throw new AppError('Please provide duration days and nights', 400);
     }
-    if (!Array.isArray(doc.images) || doc.images.length === 0) {
-      throw new AppError('Please provide at least one image', 400);
+    if (doc.images != null && !Array.isArray(doc.images)) {
+      throw new AppError('Images must be an array', 400);
     }
     if (!doc.groupSize || doc.groupSize.min == null || doc.groupSize.max == null) {
       throw new AppError('Please provide group size min/max', 400);

@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 
@@ -51,15 +52,27 @@ const defaultCurrencyContext: CurrencyContextValue = {
 };
 
 const CurrencyContext = createContext<CurrencyContextValue>(defaultCurrencyContext);
+const CURRENCY_STORAGE_KEY = "preferred-currency";
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(defaultCurrency);
+  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(() => {
+    if (typeof window === "undefined") return defaultCurrency;
+
+    const saved = window.localStorage.getItem(CURRENCY_STORAGE_KEY);
+    return currencies.some((currency) => currency.code === saved)
+      ? (saved as CurrencyCode)
+      : defaultCurrency;
+  });
 
   const active = currencies.find((c) => c.code === currencyCode)!;
 
   const setCurrency = useCallback((code: CurrencyCode) => {
     setCurrencyCode(code);
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(CURRENCY_STORAGE_KEY, currencyCode);
+  }, [currencyCode]);
 
   const formatPrice = useCallback(
     (priceInUsd: number) => {
