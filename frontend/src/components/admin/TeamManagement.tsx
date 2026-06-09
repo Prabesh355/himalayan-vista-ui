@@ -272,6 +272,23 @@ export const TeamManagement: React.FC = () => {
                     />
                   </div>
                 ) : null}
+                {form.avatar ? (
+                  <div className="mb-3 flex items-center gap-3 rounded-xl border border-input bg-background p-3">
+                    <div className="h-20 w-20 overflow-hidden rounded-lg border border-border bg-slate-50">
+                      <img
+                        src={form.avatar}
+                        alt={form.name || "Avatar preview"}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <p className="font-medium">Inline avatar preview</p>
+                      <p className="text-muted-foreground">
+                        This avatar will show on the team page. Upload or paste a new URL to replace it.
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
@@ -298,6 +315,15 @@ export const TeamManagement: React.FC = () => {
                     placeholder="Or paste image URL"
                     className="flex-1 min-w-[260px] h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
                   />
+                  {form.avatar ? (
+                    <button
+                      type="button"
+                      onClick={() => setForm((prev) => ({ ...prev, avatar: "" }))}
+                      className="inline-flex items-center rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700 hover:bg-red-100"
+                    >
+                      Remove
+                    </button>
+                  ) : null}
                 </div>
               </div>
               <label className="inline-flex items-center gap-2 text-sm font-medium">

@@ -474,22 +474,44 @@ export const PackageManagement: React.FC = () => {
 
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Images</label>
-                <div className="flex gap-2">
+                <p className="text-xs text-muted-foreground">Upload package images or paste image URLs. These appear in destination cards and package details.</p>
+                <div className="flex gap-2 flex-wrap">
                   <input
                     placeholder="Paste image URL and press Enter"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    className="flex-1 min-w-[240px] h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
                     onKeyDown={handleImageUrlKeyDown}
                   />
-                  <label className="flex items-center gap-2">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-secondary">
                     <input
                       type="file"
                       accept="image/*"
                       multiple
+                      className="hidden"
                       onChange={(e) => handleFilesUpload(e.target.files)}
                     />
-                    <span className="text-xs text-muted-foreground">Upload</span>
+                    Upload images
                   </label>
                 </div>
+                {form.images.length > 0 ? (
+                  <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-2">
+                    {form.images.slice(0, 5).map((img, idx) => (
+                      <div key={img + idx} className="relative h-20 w-28 overflow-hidden rounded-lg border border-input bg-background">
+                        <img
+                          src={resolveImageUrl(img)}
+                          alt={`Preview ${idx + 1}`}
+                          onError={handleImageError}
+                          className="h-full w-full object-cover"
+                        />
+                        <span className="absolute left-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] text-white">Preview</span>
+                      </div>
+                    ))}
+                    {form.images.length > 5 ? (
+                      <div className="flex h-20 w-28 items-center justify-center rounded-lg border border-input bg-background text-xs text-muted-foreground">
+                        +{form.images.length - 5} more
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
                 <div className="flex flex-wrap gap-2">
                   {form.images.map((img, idx) => (
                     <div
