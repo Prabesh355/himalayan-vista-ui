@@ -1,5 +1,5 @@
-import fallbackImage from "@/assets/everest-base-camp.jpeg";
-import shopFallbackImage from "@/assets/annapurna-base-camp.jpg";
+import fallbackImage from "@/assets/Everest Base Camp.jpeg";
+import shopFallbackImage from "@/assets/Annapurna Base Camp.jpg";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import type React from "react";
 

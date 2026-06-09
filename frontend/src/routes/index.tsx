@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { ArrowDown, ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
-import heroImg from "@/assets/everest-base-camp.jpeg";
+import heroImg from "@/assets/Everest Base Camp.jpeg";
 import { stats, testimonials } from "@/services/uiData";
 import { packageService } from "@/services/packageService";
 import { homeContentService } from "@/services/homeContentService";

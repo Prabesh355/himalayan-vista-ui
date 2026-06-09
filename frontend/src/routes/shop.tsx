@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { PackageCheck, ShoppingCart, Star, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import api from "@/services/api";
-import backpackImage from "@/assets/annapurna-circuit.jpg";
-import jacketImage from "@/assets/everest-base-camp.jpeg";
-import shirtImage from "@/assets/annapurna-base-camp.jpg";
-import bootsImage from "@/assets/manaslu.jpg";
+import backpackImage from "@/assets/Annapurna Circuit Trek.jpg";
+import jacketImage from "@/assets/Everest Base Camp.jpeg";
+import shirtImage from "@/assets/Annapurna Base Camp.jpg";
+import bootsImage from "@/assets/Manaslu and Tsum Valley.jpg";
 import {
   defaultShopImageFallback,
   resolveImageUrl,
