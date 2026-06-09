@@ -9,7 +9,7 @@ import { stats, testimonials } from "@/services/uiData";
 import { packageService } from "@/services/packageService";
 import { homeContentService } from "@/services/homeContentService";
 import { DestinationCard } from "@/components/DestinationCard";
-import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
+import { defaultImageFallback, resolveImageUrl, resolvePackageImage, useFallbackImage } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -182,7 +182,7 @@ function FeaturedDestinations() {
     slug: pkg.slug,
     name: pkg.title,
     tagline: pkg.tagline || pkg.description || "",
-    image: resolveImageUrl(pkg.images?.[0]),
+    image: resolvePackageImage(pkg.images?.[0], pkg.slug, pkg.title),
     region: pkg.destination,
     duration: pkg.duration?.days ? `${pkg.duration.days} days` : pkg.duration || "Trek",
     difficulty: pkg.difficulty,

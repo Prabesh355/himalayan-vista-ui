@@ -3,7 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
-import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
+import { defaultImageFallback, resolveImageUrl, resolvePackageImage, useFallbackImage } from "@/lib/imageUrl";
 import { useCurrency } from "@/context/CurrencyProvider";
 
 export const Route = createFileRoute("/packages")({
@@ -80,7 +80,7 @@ function PackagesIndex() {
             <div className="md:flex md:items-start md:gap-6">
               <div className="md:flex-shrink-0 md:w-44">
                 <img
-                  src={resolveImageUrl(d.images?.[0])}
+                  src={resolvePackageImage(d.images?.[0], d.slug, d.title)}
                   alt={d.title}
                   onError={handleImageError}
                   className="w-full h-32 object-cover rounded-lg"
