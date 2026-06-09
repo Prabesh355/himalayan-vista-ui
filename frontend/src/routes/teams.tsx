@@ -69,7 +69,7 @@ function TeamsPage() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {members.map((member, index) => (
             <motion.article
-              key={member.id}
+              key={member._id || member.id}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}

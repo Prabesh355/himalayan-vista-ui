@@ -234,8 +234,20 @@ export const adminService = {
   updateBlog: async (blogId: string, payload: Record<string, unknown>) =>
     (await api.put(`/blogs/${blogId}`, payload)).data,
   deleteBlog: async (blogId: string) => (await api.delete(`/blogs/${blogId}`)).data,
-  getTeamMembers: async () =>
-    (await api.get<{ success: boolean; count?: number; data: TeamItem[] }>("/team-members/admin/all")).data,
+  getTeamMembers: async () => {
+    try {
+      return (
+        await api.get<{ success: boolean; count?: number; data: TeamItem[] }>(
+          "/team-members/admin/all",
+        )
+      ).data;
+    } catch (err: any) {
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        return (await api.get<{ success: boolean; data: TeamItem[] }>("/team-members")).data;
+      }
+      throw err;
+    }
+  },
   createTeamMember: async (payload: Record<string, unknown>) =>
     (await api.post("/team-members", payload)).data,
   updateTeamMember: async (memberId: string, payload: Record<string, unknown>) =>

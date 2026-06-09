@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { adminService, TeamItem } from "@/services/adminService";
+import { teamMembers } from "@/services/uiData";
 import { toast } from "sonner";
 
 type TeamFormState = {
@@ -100,7 +101,8 @@ export const TeamManagement: React.FC = () => {
     },
   });
 
-  const members = data?.data || [];
+  const members = data?.data && data.data.length > 0 ? data.data : teamMembers;
+  const isShowingFallback = !isLoading && (!data?.data || data.data.length === 0);
 
   const filteredMembers = useMemo(() => {
     const term = searchTerm.toLowerCase();
@@ -162,19 +164,32 @@ export const TeamManagement: React.FC = () => {
     }
   };
 
-  const actions = (item: TeamItem) => (
-    <div className="flex justify-end gap-2 text-muted-foreground">
-      <button className="p-1 hover:text-primary transition-colors" onClick={() => openForm(item)}>
-        <Edit className="w-4 h-4" />
-      </button>
-      <button
-        className="p-1 hover:text-red-500 transition-colors"
-        onClick={() => deleteMutation.mutate(item._id || item.id || "")}
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
-    </div>
-  );
+  const actions = (item: TeamItem) => {
+    const isFallback = !item._id;
+    return (
+      <div className="flex items-center justify-end gap-2 text-muted-foreground">
+        <button
+          className="p-1 hover:text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          onClick={() => openForm(item)}
+          disabled={isFallback}
+          title={isFallback ? "Static fallback entry cannot be edited" : "Edit member"}
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+        <button
+          className="p-1 hover:text-red-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          onClick={() => deleteMutation.mutate(item._id || item.id || "")}
+          disabled={isFallback}
+          title={isFallback ? "Static fallback entry cannot be deleted" : "Delete member"}
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+        {isFallback ? (
+          <span className="text-xs text-amber-700 whitespace-nowrap">Fallback data</span>
+        ) : null}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -308,6 +323,11 @@ export const TeamManagement: React.FC = () => {
       {error && (
         <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-700">
           Unable to load team members: {error instanceof Error ? error.message : "Please try again."}
+        </div>
+      )}
+      {isShowingFallback && (
+        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4 text-yellow-900">
+          Showing fallback team members while admin team data is unavailable.
         </div>
       )}
 
