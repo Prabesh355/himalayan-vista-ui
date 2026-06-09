@@ -7,7 +7,6 @@ import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 export const api = axios.create({
   baseURL: getApiBaseUrl(),
   timeout: 15000,
-  headers: { "Content-Type": "application/json" },
 });
 
 // Request Interceptor: Attach JWT Token automatically
@@ -17,6 +16,17 @@ api.interceptors.request.use(
       const token =
         window.localStorage.getItem("token") || window.localStorage.getItem("authToken");
       if (token) config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Only set Content-Type if data is not FormData
+    if (config.data && !(config.data instanceof FormData)) {
+      if (!config.headers["Content-Type"]) {
+        config.headers["Content-Type"] = "application/json";
+      }
+    } else if (!config.data) {
+      // For GET requests without data, set JSON
+      if (!config.headers["Content-Type"]) {
+        config.headers["Content-Type"] = "application/json";
+      }
     }
     return config;
   },
