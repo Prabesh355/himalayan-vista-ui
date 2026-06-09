@@ -40,8 +40,8 @@ jobs:
         with:
           node-version: '20'
       - name: Install frontend dependencies
-        working-directory: himalayan-vista-ui
+        working-directory: frontend
         run: npm install
       - name: Run frontend build
-        working-directory: himalayan-vista-ui
+        working-directory: frontend
         run: npm run build
