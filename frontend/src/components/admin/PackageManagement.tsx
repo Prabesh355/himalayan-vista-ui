@@ -170,9 +170,16 @@ export const PackageManagement: React.FC = () => {
         itinerary: form.itinerary,
       };
 
-      return selectedPackage
-        ? adminService.updatePackage(selectedPackage._id || selectedPackage.id || "", payload)
-        : adminService.createPackage(payload);
+      console.log("Saving package payload:", payload);
+      console.log("Current form.images:", form.images);
+
+      const result = selectedPackage
+        ? await adminService.updatePackage(selectedPackage._id || selectedPackage.id || "", payload)
+        : await adminService.createPackage(payload);
+      
+      console.log("Save response data:", result);
+      console.log("Returned images:", result?.data?.images);
+      return result;
     },
     onMutate: async () => {
       // mark the currently edited package as pending so its row buttons can be disabled
@@ -194,6 +201,8 @@ export const PackageManagement: React.FC = () => {
     },
     onError: (err: any) => {
       console.error("Save error", err);
+      console.error("Error response:", err?.response?.data);
+      console.error("Error status:", err?.response?.status);
       const fieldErrors = err?.response?.data?.fieldErrors as
         | Array<{ field: string; message: string }>
         | undefined;
@@ -330,8 +339,11 @@ export const PackageManagement: React.FC = () => {
         if (selectedPackage && (selectedPackage._id || selectedPackage.id)) {
           fd.append("packageId", String(selectedPackage._id || selectedPackage.id));
         }
+        console.log("Uploading file:", file.name);
         const res = await adminService.uploadImage(fd);
+        console.log("Upload response:", res);
         if (res && res.fileUrl) {
+          console.log("Adding to images:", res.fileUrl);
           setForm((prev) =>
             prev.images.includes(res.fileUrl) ? prev : { ...prev, images: [...prev.images, res.fileUrl] },
           );
