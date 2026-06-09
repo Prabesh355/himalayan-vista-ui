@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Users } from "lucide-react";
 import { teamMembers } from "@/services/uiData";
+import { api } from "@/services/api";
+import type { TeamItem } from "@/services/adminService";
 
 export const Route = createFileRoute("/teams")({
   head: () => ({
@@ -23,6 +26,13 @@ export const Route = createFileRoute("/teams")({
 });
 
 function TeamsPage() {
+  const { data } = useQuery({
+    queryKey: ["team-members", "public"],
+    queryFn: async () => (await api.get<{ success: boolean; data: TeamItem[] }>("/team-members")).data,
+  });
+
+  const members = data?.data && data.data.length > 0 ? data.data : teamMembers;
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-border/60">
@@ -57,7 +67,7 @@ function TeamsPage() {
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {teamMembers.map((member, index) => (
+          {members.map((member, index) => (
             <motion.article
               key={member.id}
               initial={{ opacity: 0, y: 24 }}
@@ -72,7 +82,7 @@ function TeamsPage() {
             >
               <div className="overflow-hidden aspect-square bg-gradient-to-br from-primary/20 to-accent/20 relative">
                 <img
-                  src={member.avatar}
+                  src={member.avatar || "https://via.placeholder.com/600x600?text=Team"}
                   alt={member.name}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />

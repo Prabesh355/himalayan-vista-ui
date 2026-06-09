@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { DataTable } from "./DataTable";
-import { Edit, Trash2, Plus } from "lucide-react";
+import { Edit, Trash2, Plus, Upload } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { adminService, BlogItem } from "@/services/adminService";
+import { toast } from "sonner";
 
 type BlogFormState = {
   title: string;
@@ -43,10 +44,12 @@ function mapBlogToForm(blog: BlogItem): BlogFormState {
 
 export const BlogManagement = () => {
   const queryClient = useQueryClient();
+  const featuredImageInputRef = useRef<HTMLInputElement | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<BlogItem | null>(null);
   const [form, setForm] = useState<BlogFormState>(emptyForm);
+  const [uploadingFeaturedImage, setUploadingFeaturedImage] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-blogs"],
@@ -71,6 +74,7 @@ export const BlogManagement = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      await queryClient.invalidateQueries({ queryKey: ["blogs", "public"] });
       setIsModalOpen(false);
       setSelectedBlog(null);
       setForm(emptyForm);
@@ -81,6 +85,7 @@ export const BlogManagement = () => {
     mutationFn: (blogId: string) => adminService.deleteBlog(blogId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      await queryClient.invalidateQueries({ queryKey: ["blogs", "public"] });
     },
   });
 
@@ -135,6 +140,26 @@ export const BlogManagement = () => {
       setForm(emptyForm);
     }
     setIsModalOpen(true);
+  };
+
+  const handleFeaturedImageUpload = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+
+    setUploadingFeaturedImage(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await adminService.uploadImage(fd);
+      if (res?.fileUrl) {
+        setForm((prev) => ({ ...prev, featuredImage: res.fileUrl }));
+        toast.success("Featured image uploaded");
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || "Upload failed");
+    } finally {
+      setUploadingFeaturedImage(false);
+    }
   };
 
   const actions = (item: BlogItem) => (
@@ -229,11 +254,42 @@ export const BlogManagement = () => {
               </div>
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Featured Image URL</label>
-                <input
-                  value={form.featuredImage}
-                  onChange={(e) => setForm((prev) => ({ ...prev, featuredImage: e.target.value }))}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                />
+                {form.featuredImage ? (
+                  <div className="overflow-hidden rounded-xl border border-border">
+                    <img
+                      src={form.featuredImage}
+                      alt="Featured preview"
+                      className="h-48 w-full object-cover"
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => featuredImageInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm hover:bg-secondary"
+                    disabled={uploadingFeaturedImage}
+                  >
+                    <Upload className="h-4 w-4" />
+                    {uploadingFeaturedImage ? "Uploading…" : "Upload from device"}
+                  </button>
+                  <input
+                    ref={featuredImageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      void handleFeaturedImageUpload(e.target.files);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+                  <input
+                    value={form.featuredImage}
+                    onChange={(e) => setForm((prev) => ({ ...prev, featuredImage: e.target.value }))}
+                    className="flex-1 min-w-[260px] h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    placeholder="Or paste an image URL"
+                  />
+                </div>
               </div>
               <button
                 onClick={() => saveMutation.mutate()}

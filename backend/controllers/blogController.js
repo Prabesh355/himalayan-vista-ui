@@ -31,7 +31,10 @@ exports.getBlogsByCategory = async (req, res, next) => {
 // @access  Public
 exports.getBlog = async (req, res, next) => {
   try {
-    const blog = await Blog.findOne({ slug: req.params.slug }).populate('author', 'name _id');
+    let blog = await Blog.findOne({ slug: req.params.slug }).populate('author', 'name _id');
+    if (!blog && /^[a-f\d]{24}$/i.test(req.params.slug)) {
+      blog = await Blog.findById(req.params.slug).populate('author', 'name _id');
+    }
     if (!blog) {
       return res.status(404).json({ success: false, message: 'Blog not found' });
     }
@@ -48,6 +51,18 @@ exports.createBlog = async (req, res, next) => {
   try {
     const { title, summary, excerpt, content, category, author, status, featuredImage, tags } = req.body;
     const blogauthor = author || req.user.id; // use logged in user if not provided in request
+    const slug = String(title || '')
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+
+    if (slug) {
+      const existing = await Blog.findOne({ slug });
+      if (existing) {
+        return res.status(409).json({ success: false, message: 'A blog with this title already exists' });
+      }
+    }
 
     const blog = await Blog.create({
       title,
@@ -59,6 +74,7 @@ exports.createBlog = async (req, res, next) => {
       status: status === 'published' ? 'published' : 'draft',
       featuredImage: featuredImage || '',
       tags: Array.isArray(tags) ? tags : [],
+      slug,
     });
     res.status(201).json({ success: true, data: blog });
   } catch (err) {
@@ -74,6 +90,19 @@ exports.updateBlog = async (req, res, next) => {
     let blog = await Blog.findById(req.params.id);
     if (!blog) {
        return res.status(404).json({ success: false, message: 'Blog not found' });
+    }
+
+    if (req.body.title) {
+      req.body.slug = String(req.body.title)
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+
+      const duplicate = await Blog.findOne({ slug: req.body.slug });
+      if (duplicate && String(duplicate.id || duplicate._id) !== String(blog.id || blog._id)) {
+        return res.status(409).json({ success: false, message: 'A blog with this title already exists' });
+      }
     }
     
     blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {

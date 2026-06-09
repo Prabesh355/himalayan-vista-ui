@@ -67,6 +67,7 @@ export const AdminSidebar = () => {
     { icon: ShoppingBag, label: "Shop", to: "/admin/shop" },
     { icon: CalendarDays, label: "Bookings", to: "/admin/bookings" },
     { icon: Users, label: "Users", to: "/admin/users" },
+    { icon: MountainSnow, label: "Team", to: "/admin/teams" },
     { icon: FileText, label: "Blogs", to: "/admin/blogs" },
     { icon: MessageSquare, label: "Inquiries", to: "/admin/inquiries" },
     { icon: Star, label: "Reviews", to: "/admin/reviews" },

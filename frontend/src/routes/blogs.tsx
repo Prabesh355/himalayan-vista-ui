@@ -124,53 +124,55 @@ function BlogsPage() {
                   ? b.featuredImage
                   : "https://via.placeholder.com/640x800?text=Story";
               const blurb = b.excerpt || b.summary || "";
+              const slug = b.slug || b.id || b._id || "";
               return (
-                <motion.article
-                  key={b._id || b.id || b.slug || i}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.6, delay: i * 0.06 }}
-                  className="group relative overflow-hidden rounded-3xl glass shadow-soft transition-all hover:shadow-elegant hover:-translate-y-1"
-                >
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <img
-                      src={cover}
-                      alt={b.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                <Link key={b._id || b.id || b.slug || i} to="/blogs/$slug" params={{ slug }}>
+                  <motion.article
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ duration: 0.6, delay: i * 0.06 }}
+                    className="group relative overflow-hidden rounded-3xl glass shadow-soft transition-all hover:shadow-elegant hover:-translate-y-1"
+                  >
+                    <div className="relative aspect-[4/5] overflow-hidden">
+                      <img
+                        src={cover}
+                        alt={b.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-                    {b.category && (
-                      <div className="absolute top-4 left-4">
-                        <span className="rounded-full bg-white/15 backdrop-blur-md px-2.5 py-1 text-[11px] font-medium text-white border border-white/20">
-                          {b.category}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                      <h3 className="text-xl font-semibold tracking-tight line-clamp-2">
-                        {b.title}
-                      </h3>
-                      {blurb && (
-                        <p className="mt-1 text-sm text-white/80 line-clamp-2">{blurb}</p>
+                      {b.category && (
+                        <div className="absolute top-4 left-4">
+                          <span className="rounded-full bg-white/15 backdrop-blur-md px-2.5 py-1 text-[11px] font-medium text-white border border-white/20">
+                            {b.category}
+                          </span>
+                        </div>
                       )}
-                      <div className="mt-4 flex items-center justify-between gap-2 text-xs text-white/85">
-                        <span className="inline-flex items-center gap-1.5">
-                          <Calendar className="h-3.5 w-3.5" /> {formatDate(b.publishedAt || b.createdAt)}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Clock className="h-3.5 w-3.5" /> {b.readTime ?? 4} min read
-                        </span>
+
+                      <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                        <h3 className="text-xl font-semibold tracking-tight line-clamp-2">
+                          {b.title}
+                        </h3>
+                        {blurb && (
+                          <p className="mt-1 text-sm text-white/80 line-clamp-2">{blurb}</p>
+                        )}
+                        <div className="mt-4 flex items-center justify-between gap-2 text-xs text-white/85">
+                          <span className="inline-flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5" /> {formatDate(b.publishedAt || b.createdAt)}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <Clock className="h-3.5 w-3.5" /> {b.readTime ?? 4} min read
+                          </span>
+                        </div>
+                        <p className="mt-3 text-[11px] uppercase tracking-wider text-white/70">
+                          By {authorName(b.author)}
+                        </p>
                       </div>
-                      <p className="mt-3 text-[11px] uppercase tracking-wider text-white/70">
-                        By {authorName(b.author)}
-                      </p>
                     </div>
-                  </div>
-                </motion.article>
+                  </motion.article>
+                </Link>
               );
             })}
           </div>

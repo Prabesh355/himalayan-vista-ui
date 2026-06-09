@@ -77,6 +77,7 @@ app.use('/api/packages', require('./routes/packageRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/blogs', require('./routes/blogRoutes'));
+app.use('/api/team-members', require('./routes/teamRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));

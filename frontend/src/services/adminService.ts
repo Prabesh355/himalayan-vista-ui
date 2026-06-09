@@ -124,6 +124,18 @@ export interface BlogItem {
   createdAt?: string;
 }
 
+export interface TeamItem {
+  _id: string;
+  id?: string;
+  name: string;
+  role: string;
+  bio?: string;
+  avatar?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+  createdAt?: string;
+}
+
 export interface InquiryItem {
   _id: string;
   id?: string;
@@ -222,6 +234,14 @@ export const adminService = {
   updateBlog: async (blogId: string, payload: Record<string, unknown>) =>
     (await api.put(`/blogs/${blogId}`, payload)).data,
   deleteBlog: async (blogId: string) => (await api.delete(`/blogs/${blogId}`)).data,
+  getTeamMembers: async () =>
+    (await api.get<{ success: boolean; count?: number; data: TeamItem[] }>("/team-members/admin/all")).data,
+  createTeamMember: async (payload: Record<string, unknown>) =>
+    (await api.post("/team-members", payload)).data,
+  updateTeamMember: async (memberId: string, payload: Record<string, unknown>) =>
+    (await api.put(`/team-members/${memberId}`, payload)).data,
+  deleteTeamMember: async (memberId: string) =>
+    (await api.delete(`/team-members/${memberId}`)).data,
   getInquiries: async () =>
     (await api.get<{ success: boolean; data: InquiryItem[] }>("/inquiries")).data,
   getInquiryStats: async () =>
