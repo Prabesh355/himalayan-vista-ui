@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { ThemeProvider } from "@/context/ThemeProvider";
+import { CurrencyProvider } from "@/context/CurrencyProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -127,7 +127,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
+      <CurrencyProvider>
         {isAdminRoute ? (
           <div className="min-h-screen bg-background">
             <Outlet />
@@ -142,8 +142,8 @@ function RootComponent() {
             <WhatsAppShortcut />
           </div>
         )}
-        <Toaster position="top-right" />
-      </ThemeProvider>
+      </CurrencyProvider>
+      <Toaster position="top-right" />
     </QueryClientProvider>
   );
 }

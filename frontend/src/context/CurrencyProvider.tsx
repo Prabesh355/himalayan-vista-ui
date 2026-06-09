@@ -35,12 +35,25 @@ interface CurrencyContextValue {
   formatPrice: (priceInUsd: number) => string;
 }
 
-const CurrencyContext = createContext<CurrencyContextValue | undefined>(
-  undefined
-);
+const defaultCurrency: CurrencyCode = "USD";
+
+const defaultCurrencyContext: CurrencyContextValue = {
+  currency: defaultCurrency,
+  currencies,
+  setCurrency: () => {},
+  formatPrice: (priceInUsd: number) => {
+    const active = currencies[0];
+    return `${active.symbol}${priceInUsd.toLocaleString(undefined, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })}`;
+  },
+};
+
+const CurrencyContext = createContext<CurrencyContextValue>(defaultCurrencyContext);
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>("USD");
+  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(defaultCurrency);
 
   const active = currencies.find((c) => c.code === currencyCode)!;
 
@@ -74,9 +87,5 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCurrency(): CurrencyContextValue {
-  const ctx = useContext(CurrencyContext);
-  if (!ctx) {
-    throw new Error("useCurrency must be used within a CurrencyProvider");
-  }
-  return ctx;
+  return useContext(CurrencyContext);
 }
