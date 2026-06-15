@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo-nomads.png";
+import logo from "@/assets/nomadslogonew.jpeg";
 
 interface SidebarItemProps {
   icon: React.ElementType;

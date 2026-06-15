@@ -72,8 +72,8 @@ export const TeamManagement: React.FC = () => {
         isActive: form.isActive,
       };
 
-      return selectedMember
-        ? adminService.updateTeamMember(selectedMember._id || selectedMember.id || "", payload)
+      return selectedMember?._id
+        ? adminService.updateTeamMember(selectedMember._id, payload)
         : adminService.createTeamMember(payload);
     },
     onSuccess: async () => {
@@ -101,8 +101,37 @@ export const TeamManagement: React.FC = () => {
     },
   });
 
-  const members = data?.data && data.data.length > 0 ? data.data : teamMembers;
-  const isShowingFallback = !isLoading && (!data?.data || data.data.length === 0);
+  const [deletedFallbackIds, setDeletedFallbackIds] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("deleted_fallback_team_members");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  const members = useMemo(() => {
+    const dbMembers = data?.data || [];
+    const dbNames = new Set(dbMembers.map((m) => (m.name || "").toLowerCase().trim()));
+
+    const remainingFallbacks = teamMembers.filter((tf) => {
+      const nameKey = (tf.name || "").toLowerCase().trim();
+      const isSavedInDb = dbNames.has(nameKey);
+      const isDeleted = deletedFallbackIds.includes(tf.id || "");
+      return !isSavedInDb && !isDeleted;
+    });
+
+    return [...dbMembers, ...remainingFallbacks];
+  }, [data?.data, deletedFallbackIds]);
+
+  const isShowingFallback = useMemo(() => {
+    if (isLoading) return false;
+    const dbMembers = data?.data || [];
+    const dbNames = new Set(dbMembers.map((m) => (m.name || "").toLowerCase().trim()));
+    return teamMembers.some((tf) => {
+      const nameKey = (tf.name || "").toLowerCase().trim();
+      return !dbNames.has(nameKey) && !deletedFallbackIds.includes(tf.id || "");
+    });
+  }, [data?.data, deletedFallbackIds, isLoading]);
 
   const filteredMembers = useMemo(() => {
     const term = searchTerm.toLowerCase();
@@ -171,16 +200,28 @@ export const TeamManagement: React.FC = () => {
         <button
           className="p-1 hover:text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           onClick={() => openForm(item)}
-          disabled={isFallback}
-          title={isFallback ? "Static fallback entry cannot be edited" : "Edit member"}
+          title={isFallback ? "Edit fallback member (will save to database)" : "Edit member"}
         >
           <Edit className="w-4 h-4" />
         </button>
         <button
           className="p-1 hover:text-red-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-          onClick={() => deleteMutation.mutate(item._id || item.id || "")}
-          disabled={isFallback}
-          title={isFallback ? "Static fallback entry cannot be deleted" : "Delete member"}
+          onClick={() => {
+            if (isFallback) {
+              const nextDeleted = [...deletedFallbackIds, item.id || ""];
+              setDeletedFallbackIds(nextDeleted);
+              if (typeof window !== "undefined") {
+                window.localStorage.setItem(
+                  "deleted_fallback_team_members",
+                  JSON.stringify(nextDeleted)
+                );
+              }
+              toast.success("Team member deleted");
+            } else {
+              deleteMutation.mutate(item._id || item.id || "");
+            }
+          }}
+          title={isFallback ? "Delete fallback member" : "Delete member"}
         >
           <Trash2 className="w-4 h-4" />
         </button>

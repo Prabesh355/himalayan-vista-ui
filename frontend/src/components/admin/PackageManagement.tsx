@@ -16,6 +16,33 @@ import { adminService, PackageItem } from "@/services/adminService";
 import { toast } from "sonner";
 import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
 import { useCurrency } from "@/context/CurrencyProvider";
+import { destinations } from "@/services/mockData";
+
+// Map Destination from mockData to PackageItem for fallback merging
+const mapDestinationToPackageItem = (d: any): PackageItem => {
+  const daysMatch = d.duration ? d.duration.match(/(\d+)\s*days?/i) : null;
+  const days = daysMatch ? Number(daysMatch[1]) : 1;
+  const nights = Math.max(0, days - 1);
+
+  return {
+    _id: "", // no DB ID
+    id: d.slug,
+    slug: d.slug,
+    title: d.name,
+    description: d.description,
+    destination: d.region,
+    price: d.priceFrom || d.price || 0,
+    discountPrice: undefined,
+    duration: { days, nights },
+    images: d.image ? [d.image] : [],
+    groupSize: { min: 1, max: 12 },
+    featured: d.featured || false,
+    isActive: true,
+    itinerary: d.itinerary || "",
+    rating: d.rating || 0,
+    reviewCount: d.reviews || 0,
+  } as PackageItem;
+};
 
 type PackageFormState = {
   title: string;
@@ -161,7 +188,7 @@ export const PackageManagement: React.FC = () => {
         description: form.description,
         destination: form.destination,
         price: Number(form.price),
-        discountPrice: form.discountPrice ? Number(form.discountPrice) : undefined,
+        discountPrice: form.discountPrice ? Number(form.discountPrice) : null,
         duration: { days: Number(form.durationDays), nights: Number(form.durationNights) },
         images: form.images || [],
         groupSize: { min: Number(form.groupSizeMin), max: Number(form.groupSizeMax) },
@@ -173,8 +200,8 @@ export const PackageManagement: React.FC = () => {
       console.log("Saving package payload:", payload);
       console.log("Current form.images:", form.images);
 
-      const result = selectedPackage
-        ? await adminService.updatePackage(selectedPackage._id || selectedPackage.id || "", payload)
+      const result = selectedPackage?._id
+        ? await adminService.updatePackage(selectedPackage._id, payload)
         : await adminService.createPackage(payload);
       
       console.log("Save response data:", result);
@@ -182,7 +209,6 @@ export const PackageManagement: React.FC = () => {
       return result;
     },
     onMutate: async () => {
-      // mark the currently edited package as pending so its row buttons can be disabled
       if (selectedPackage && (selectedPackage._id || selectedPackage.id)) {
         setPendingActionId(String(selectedPackage._id || selectedPackage.id));
       }
@@ -191,7 +217,6 @@ export const PackageManagement: React.FC = () => {
       await queryClient.invalidateQueries({ queryKey: ["admin-packages"] });
       await queryClient.invalidateQueries({ queryKey: ["packages"] });
       await queryClient.invalidateQueries({ queryKey: ["featured-packages"] });
-      // Invalidate individual package detail pages by slug
       await queryClient.invalidateQueries({ queryKey: ["package"] });
       setIsModalOpen(false);
       setSelectedPackage(null);
@@ -201,8 +226,6 @@ export const PackageManagement: React.FC = () => {
     },
     onError: (err: any) => {
       console.error("Save error", err);
-      console.error("Error response:", err?.response?.data);
-      console.error("Error status:", err?.response?.status);
       const fieldErrors = err?.response?.data?.fieldErrors as
         | Array<{ field: string; message: string }>
         | undefined;
@@ -266,17 +289,38 @@ export const PackageManagement: React.FC = () => {
     },
   });
 
+  const [deletedFallbackSlugs, setDeletedFallbackSlugs] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("deleted_fallback_packages");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
   const packages = useMemo(() => {
     const list = data?.data || [];
     const seen = new Set<string>();
 
-    return list.filter((item) => {
+    const dbList = list.filter((item) => {
       const key = String(item.slug || item._id || item.id || item.title);
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
-  }, [data?.data]);
+
+    const dbSlugs = new Set(dbList.map((p) => (p.slug || "").toLowerCase().trim()));
+
+    const remainingFallbacks = destinations
+      .map(mapDestinationToPackageItem)
+      .filter((fp) => {
+        const slugKey = (fp.slug || "").toLowerCase().trim();
+        const isSavedInDb = dbSlugs.has(slugKey);
+        const isDeleted = deletedFallbackSlugs.includes(fp.slug || "");
+        return !isSavedInDb && !isDeleted;
+      });
+
+    return [...dbList, ...remainingFallbacks];
+  }, [data?.data, deletedFallbackSlugs]);
 
   const columns = [
     { key: "title", header: "Package Title" },
@@ -360,25 +404,40 @@ export const PackageManagement: React.FC = () => {
 
   const actions = (item: PackageItem) => {
     const id = String(item._id || item.id || "");
+    const isFallback = !item._id;
     const isPending = pendingActionId === id;
     return (
       <div className="flex justify-end gap-2 text-muted-foreground">
         <button
-          className="p-1 hover:text-primary transition-colors"
+          className="p-1 hover:text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           onClick={() => openForm(item)}
           disabled={isPending}
+          title={isFallback ? "Edit fallback package (will save to database)" : "Edit package"}
         >
           <Edit className="w-4 h-4" />
         </button>
         <button
-          className="p-1 hover:text-red-500 transition-colors"
+          className="p-1 hover:text-red-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           onClick={() => {
-            setPendingActionId(id);
-            deleteMutation.mutate(id, {
-              onSettled: () => setPendingActionId(null),
-            });
+            if (isFallback) {
+              const nextDeleted = [...deletedFallbackSlugs, item.slug || ""];
+              setDeletedFallbackSlugs(nextDeleted);
+              if (typeof window !== "undefined") {
+                window.localStorage.setItem(
+                  "deleted_fallback_packages",
+                  JSON.stringify(nextDeleted)
+                );
+              }
+              toast.success("Package deleted");
+            } else {
+              setPendingActionId(id);
+              deleteMutation.mutate(id, {
+                onSettled: () => setPendingActionId(null),
+              });
+            }
           }}
           disabled={isPending}
+          title={isFallback ? "Delete fallback package" : "Delete package"}
         >
           {isPending ? (
             <span className="inline-block w-4 h-4 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin" />
@@ -386,6 +445,9 @@ export const PackageManagement: React.FC = () => {
             <Trash2 className="w-4 h-4" />
           )}
         </button>
+        {isFallback ? (
+          <span className="text-xs text-amber-700 whitespace-nowrap self-center">Fallback data</span>
+        ) : null}
       </div>
     );
   };

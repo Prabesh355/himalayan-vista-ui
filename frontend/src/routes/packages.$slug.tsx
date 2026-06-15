@@ -532,30 +532,53 @@ function PackageDetails() {
     <section
       id="package-details"
       ref={detailsRef}
-      className="mx-auto mt-16 max-w-4xl rounded-3xl bg-background/60 px-4 py-12"
+      className="mx-auto mt-16 max-w-3xl rounded-3xl bg-background/60 px-4 py-12"
     >
+      {/* Mobile Floating Back Button */}
+      <Link
+        to="/packages"
+        className="fixed top-24 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/60 shadow-elegant backdrop-blur-md text-white hover:bg-black/80 lg:hidden"
+        aria-label="Back to packages"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="h-5 w-5"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </Link>
+
       <header className="mb-8">
-        <h1 className="text-4xl font-semibold">{pkg.title}</h1>
+        <div className="hidden lg:block mb-4">
+          <Link to="/packages" className="text-sm text-accent hover:underline flex items-center gap-1">
+            ← Back to all trekking packages
+          </Link>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">{pkg.title}</h1>
         {pkg.tagline && <p className="mt-2 text-muted-foreground">{pkg.tagline}</p>}
-        <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          <span className="inline-flex items-center gap-2">
-            <strong>Region:</strong> {pkg.destination}
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            <strong>Region:</strong> <span className="text-foreground">{pkg.destination}</span>
           </span>
-          <span className="inline-flex items-center gap-2">
-            <strong>Duration:</strong> {pkg.duration?.days || 0} Days
+          <span className="inline-flex items-center gap-1">
+            <strong>Duration:</strong> <span className="text-foreground">{pkg.duration?.days || 0} Days</span>
           </span>
-          <span className="inline-flex items-center gap-2">
-            <strong>Difficulty:</strong> {pkg.difficulty || "Moderate"}
+          <span className="inline-flex items-center gap-1">
+            <strong>Difficulty:</strong> <span className="text-foreground">{pkg.difficulty || "Moderate"}</span>
           </span>
-          <span className="inline-flex items-center gap-2">
-            <strong>Price:</strong> {formatPrice(pkg.price)}
+          <span className="inline-flex items-center gap-1">
+            <strong>Price:</strong> <span className="text-accent font-semibold">{formatPrice(pkg.price)}</span>
           </span>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
           <a
             href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
-            className="inline-flex items-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95"
+            className="inline-flex items-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
           >
             Email enquiry
           </a>
@@ -563,233 +586,151 @@ function PackageDetails() {
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+            className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
           >
             WhatsApp enquiry
           </a>
         </div>
       </header>
 
-      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="space-y-8">
-          <div className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-soft">
-            <h2 className="text-2xl font-semibold">Overview</h2>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground md:text-base whitespace-pre-wrap">
-              {pkg.description}
-            </p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {[
-                { label: "Destination", value: pkg.destination },
-                { label: "Category", value: pkg.category || "Trekking" },
-                { label: "Duration", value: `${pkg.duration?.days || 0} Days` },
-                {
-                  label: "Group size",
-                  value: "6-8 people",
-                },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-2xl border border-border/60 bg-background p-4"
-                >
-                  <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
-                    {item.label}
-                  </p>
-                  <p className="mt-2 text-base font-semibold text-foreground">{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {itinerary ? (
-            <section
-              id="itinerary"
-              ref={itineraryRef}
-              className="scroll-mt-28 rounded-[2rem] border border-border/70 bg-gradient-to-b from-card to-muted/30 p-6 shadow-elegant"
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">
-                    Journey plan
-                  </p>
-                  <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-                    Detailed Itinerary
-                  </h2>
-                </div>
-                <div className="rounded-full border border-accent/20 bg-secondary/10 px-4 py-2 text-sm font-medium text-foreground">
-                  {itinerary.days.length}+ days · scroll through the route
-                </div>
-              </div>
-
-              {itinerary.summary && (
-                <p className="mt-5 max-w-4xl text-sm leading-7 text-muted-foreground md:text-base">
-                  {itinerary.summary}
+      <div className="space-y-8">
+        {itinerary ? (
+          <section
+            id="itinerary"
+            ref={itineraryRef}
+            className="scroll-mt-28 rounded-[2rem] border border-border/70 bg-gradient-to-b from-card to-muted/30 p-6 shadow-elegant"
+          >
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">
+                  Journey plan
                 </p>
-              )}
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+                  Detailed Itinerary
+                </h2>
+              </div>
+              <div className="rounded-full border border-accent/20 bg-secondary/10 px-4 py-2 text-sm font-medium text-foreground w-fit">
+                {itinerary.days.length}+ days · scroll through the route
+              </div>
+            </div>
 
-              {itinerary.highlights.length > 0 && (
-                <div className="mt-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-                    Trip highlights
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {itinerary.highlights.map((item) => (
-                      <span
-                        key={item}
-                        className="inline-flex items-center rounded-full border border-accent/20 bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+            {itinerary.summary && (
+              <p className="mt-5 max-w-4xl text-sm leading-7 text-muted-foreground md:text-base">
+                {itinerary.summary}
+              </p>
+            )}
 
-              <div className="relative mt-8 pl-3 sm:pl-6">
-                <div className="absolute left-4 top-0 h-full w-px bg-gradient-to-b from-accent via-border to-transparent sm:left-6" />
-                <div className="space-y-5">
-                  {itinerary.days.map((day, index) => (
-                    <motion.article
-                      key={`${day.day}-${day.title}`}
-                      initial={{ opacity: 0, y: 18 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.25 }}
-                      transition={{ duration: 0.35, delay: index * 0.03 }}
-                      whileHover={{ y: -3 }}
-                      className="relative rounded-[1.75rem] border border-border/70 bg-background/95 p-5 pl-5 shadow-soft backdrop-blur-md sm:p-6 sm:pl-6"
+            {itinerary.highlights.length > 0 && (
+              <div className="mt-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                  Trip highlights
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {itinerary.highlights.map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center rounded-full border border-accent/20 bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm"
                     >
-                      <span className="absolute -left-1 top-6 grid h-8 w-8 place-items-center rounded-full border-4 border-background bg-gradient-sunset text-xs font-bold text-white shadow-glow sm:-left-2 sm:h-10 sm:w-10">
-                        {day.day}
-                      </span>
-
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
-                            Day {day.day}
-                          </p>
-                          <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
-                            {day.title}
-                          </h3>
-                        </div>
-                        <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground">
-                          <Clock3 className="h-3.5 w-3.5 text-accent" />
-                          <span>Structured trek day</span>
-                        </div>
-                      </div>
-
-                      {(day.meta.length > 0 || day.highlights.length > 0) && (
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {day.meta.slice(0, 4).map((item) => (
-                            <span
-                              key={item}
-                              className="inline-flex items-center rounded-full border border-border/70 bg-secondary/10 px-3 py-1 text-[11px] font-medium text-foreground"
-                            >
-                              {item}
-                            </span>
-                          ))}
-                          {day.highlights.slice(0, 3).map((item) => (
-                            <span
-                              key={item}
-                              className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-foreground"
-                            >
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">
-                        {day.detail}
-                      </p>
-                    </motion.article>
+                      {item}
+                    </span>
                   ))}
                 </div>
               </div>
-            </section>
-          ) : null}
-
-          <section className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-soft">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">
-                  Traveler feedback
-                </p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-                  Reviews
-                </h2>
-              </div>
-            </div>
-
-            {reviewsQuery.isLoading ? (
-              <p className="mt-6 text-sm text-muted-foreground">Loading approved reviews…</p>
-            ) : reviewsQuery.isError ? (
-              <p className="mt-6 text-sm text-red-600">We couldn’t load reviews right now.</p>
-            ) : reviewCards.length > 0 ? (
-              <div className="mt-6">
-                <ReviewsSection
-                  reviews={reviewCards}
-                  averageRating={averageRating}
-                  totalReviews={reviewCards.length}
-                />
-              </div>
-            ) : (
-              <p className="mt-6 text-sm text-muted-foreground">
-                No approved reviews yet for this package.
-              </p>
             )}
-          </section>
-        </div>
 
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-          <PriceSummary price={pkg.price} />
-          <CostCard
-            title="Included Costs"
-            items={includedCosts}
-            accent="bg-gradient-sunset"
-            icon={Check}
-          />
-          <CostCard
-            title="Excluded Costs"
-            items={excludedCosts}
-            accent="bg-gradient-to-br from-rose-500 to-red-700"
-            icon={Minus}
-          />
-          <CostCard
-            title="Optional Add-ons"
-            items={optionalAddOns}
-            accent="bg-gradient-to-br from-primary to-accent"
-            icon={CirclePlus}
-          />
+            <div className="relative mt-8 pl-3 sm:pl-6">
+              <div className="absolute left-4 top-0 h-full w-px bg-gradient-to-b from-accent via-border to-transparent sm:left-6" />
+              <div className="space-y-5">
+                {itinerary.days.map((day, index) => (
+                  <motion.article
+                    key={`${day.day}-${day.title}`}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.25 }}
+                    transition={{ duration: 0.35, delay: index * 0.03 }}
+                    whileHover={{ y: -3 }}
+                    className="relative rounded-[1.75rem] border border-border/70 bg-background/95 p-5 pl-5 shadow-soft backdrop-blur-md sm:p-6 sm:pl-6"
+                  >
+                    <span className="absolute -left-1 top-6 grid h-8 w-8 place-items-center rounded-full border-4 border-background bg-gradient-sunset text-xs font-bold text-white shadow-glow sm:-left-2 sm:h-10 sm:w-10">
+                      {day.day}
+                    </span>
 
-          <div className="rounded-[2rem] border border-white/10 bg-muted/70 p-6 shadow-soft">
-            <h3 className="text-lg font-semibold text-foreground">Plan your booking</h3>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Need a custom route, private departure, or luxury upgrade? We can tailor the package
-              to your dates and comfort level.
-            </p>
-            <div className="mt-6 grid gap-3">
-              <a
-                href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
-                className="inline-flex items-center justify-center rounded-full bg-gradient-sunset px-4 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95"
-              >
-                Email enquiry
-              </a>
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground hover:bg-secondary/10"
-              >
-                WhatsApp booking
-              </a>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
+                          Day {day.day}
+                        </p>
+                        <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
+                          {day.title}
+                        </h3>
+                      </div>
+                      <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground">
+                        <Clock3 className="h-3.5 w-3.5 text-accent" />
+                        <span>Structured trek day</span>
+                      </div>
+                    </div>
+
+                    {(day.meta.length > 0 || day.highlights.length > 0) && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {day.meta.slice(0, 4).map((item) => (
+                          <span
+                            key={item}
+                            className="inline-flex items-center rounded-full border border-border/70 bg-secondary/10 px-3 py-1 text-[11px] font-medium text-foreground"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                        {day.highlights.slice(0, 3).map((item) => (
+                          <span
+                            key={item}
+                            className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-foreground"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">
+                      {day.detail}
+                    </p>
+                  </motion.article>
+                ))}
+              </div>
             </div>
+          </section>
+        ) : (
+          <div className="rounded-[2rem] border border-border/70 bg-card p-6 text-center text-muted-foreground">
+            No itinerary details available for this package.
           </div>
-        </aside>
-      </section>
+        )}
+      </div>
 
-      <div className="mt-12">
-        <Link to="/packages" className="text-accent">
+      <div className="mt-12 text-center lg:text-left">
+        <Link to="/packages" className="text-accent hover:underline inline-flex items-center gap-1">
           ← Back to all trekking packages
         </Link>
+      </div>
+
+      {/* Floating Thumb-Friendly Action Dock for Mobile */}
+      <div className="h-28 lg:hidden" />
+      <div className="fixed bottom-6 left-4 right-4 z-50 rounded-2xl border border-white/10 bg-background/80 px-4 py-3.5 shadow-elegant backdrop-blur-xl max-w-md mx-auto lg:hidden">
+        <div className="flex gap-3">
+          <a
+            href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
+            className="flex-1 rounded-full bg-gradient-sunset px-4 py-3.5 text-center text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
+          >
+            Email Enquiry
+          </a>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 rounded-full border border-white/20 bg-white/10 px-4 py-3.5 text-center text-sm font-semibold text-white hover:bg-white/20 transition"
+          >
+            WhatsApp Booking
+          </a>
+        </div>
       </div>
     </section>
   );

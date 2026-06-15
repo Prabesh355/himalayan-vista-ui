@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
@@ -38,6 +37,13 @@ function PackagesIndex() {
   });
 
   const packages = response?.data || [];
+
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isPackageDetail = pathname !== "/packages" && pathname.startsWith("/packages/");
+
+  if (isPackageDetail) {
+    return <Outlet />;
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-20">
@@ -110,12 +116,13 @@ function PackagesIndex() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-3">
-                  <a
-                    href={`/packages/${d.slug}#itinerary`}
+                  <Link
+                    to="/packages/$slug"
+                    params={{ slug: d.slug }}
                     className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-sm font-semibold text-white"
                   >
                     View More
-                  </a>
+                  </Link>
                   <a
                     href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(d.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(d.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
                     className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"

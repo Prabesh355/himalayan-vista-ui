@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/Everest Base Camp.jpeg";
 import { stats, testimonials } from "@/services/uiData";
@@ -205,10 +205,10 @@ function FeaturedDestinations() {
             Six signature regions, hundreds of itineraries. Hover a card to start dreaming.
           </p>
         </div>
-        <div className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-end">
           <Link
             to="/destinations"
-            className="group inline-flex items-center gap-2 rounded-full glass px-5 py-2.5 text-sm font-semibold transition hover:shadow-glow"
+            className="group inline-flex w-full justify-center items-center gap-2 rounded-full glass px-5 py-3 text-sm font-semibold transition hover:shadow-glow sm:w-auto"
           >
             View all
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -217,7 +217,7 @@ function FeaturedDestinations() {
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-5 py-2.5 text-sm font-semibold text-white shadow-glow hover:opacity-95"
+            className="inline-flex w-full justify-center items-center gap-2 rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95 sm:w-auto"
           >
             Book via WhatsApp
           </a>
@@ -256,42 +256,112 @@ function HorizontalScroller({
   }>;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const scroll = (dir: "left" | "right") => {
+  const handleScroll = () => {
     const el = ref.current;
     if (!el) return;
-    const amt = Math.round(el.clientWidth * 0.8);
-    el.scrollBy({ left: dir === "left" ? -amt : amt, behavior: "smooth" });
+
+    const cards = el.querySelectorAll<HTMLElement>("[data-card]");
+    if (cards.length === 0) return;
+
+    const elRect = el.getBoundingClientRect();
+    let closestIndex = 0;
+    let minDiff = Infinity;
+
+    cards.forEach((card, index) => {
+      const cardRect = card.getBoundingClientRect();
+      const diff = Math.abs(cardRect.left - elRect.left - 24);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = index;
+      }
+    });
+
+    setActiveIndex(closestIndex);
+  };
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [destinations]);
+
+  const scrollToCard = (index: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const cards = el.querySelectorAll<HTMLElement>("[data-card]");
+    const targetCard = cards[index];
+    if (targetCard) {
+      const targetScrollLeft = targetCard.offsetLeft - el.offsetLeft - 24;
+      el.scrollTo({
+        left: targetScrollLeft,
+        behavior: "smooth",
+      });
+      setActiveIndex(index);
+    }
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    const nextIndex = dir === "left" ? activeIndex - 1 : activeIndex + 1;
+    if (nextIndex >= 0 && nextIndex < destinations.length) {
+      scrollToCard(nextIndex);
+    }
   };
 
   return (
-    <div className="relative">
-      <button
-        aria-label="scroll left"
-        onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/10 p-2 backdrop-blur-md hover:bg-white/20 hidden md:inline-flex"
-      >
-        ‹
-      </button>
+    <div className="relative group/scroller">
+      {activeIndex > 0 && (
+        <button
+          aria-label="scroll left"
+          onClick={() => scroll("left")}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-black/60 border border-white/10 text-white shadow-elegant hover:bg-black/80 flex items-center justify-center transition-all opacity-0 group-hover/scroller:opacity-100"
+        >
+          ‹
+        </button>
+      )}
 
       <div
         ref={ref}
-        className="flex gap-6 overflow-x-auto pb-6 scroll-pl-6 snap-x snap-mandatory touch-pan-x"
+        className="flex gap-6 overflow-x-auto pb-6 scroll-pl-6 snap-x snap-mandatory touch-pan-x no-scrollbar"
+        style={{ scrollbarWidth: "none" }}
       >
         {destinations.map((d, i) => (
-          <div key={d.slug} className="snap-start min-w-[260px] md:min-w-[300px]">
+          <div
+            key={d.slug}
+            data-card
+            className="snap-start snap-always min-w-[260px] sm:min-w-[280px] md:min-w-[320px]"
+          >
             <DestinationCard d={d} index={i} />
           </div>
         ))}
       </div>
 
-      <button
-        aria-label="scroll right"
-        onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/10 p-2 backdrop-blur-md hover:bg-white/20 hidden md:inline-flex"
-      >
-        ›
-      </button>
+      {activeIndex < destinations.length - 1 && (
+        <button
+          aria-label="scroll right"
+          onClick={() => scroll("right")}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-black/60 border border-white/10 text-white shadow-elegant hover:bg-black/80 flex items-center justify-center transition-all opacity-0 group-hover/scroller:opacity-100"
+        >
+          ›
+        </button>
+      )}
+
+      {/* Dot Indicators */}
+      <div className="mt-4 flex justify-center gap-2">
+        {destinations.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollToCard(i)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === activeIndex ? "w-6 bg-accent" : "w-2 bg-white/20 hover:bg-white/40"
+            }`}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }

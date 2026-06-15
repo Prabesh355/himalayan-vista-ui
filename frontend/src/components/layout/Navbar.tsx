@@ -16,7 +16,8 @@ import { useQuery } from "@tanstack/react-query";
 import { siteSettingsService, CmsLink } from "@/services/siteSettingsService";
 import { useCurrency } from "@/context/CurrencyProvider";
 // import logo from "@/assets/NOMADS NAVIGATE  NEPAL STAMP.webp";
-import logo from "@/assets/logo-nomads.png";
+// import logo from "@/assets/logo-nomads.png";
+import logo from "@/assets/nomadslogonew.jpeg";
 
 const fallbackNavLinks: CmsLink[] = [
   { to: "/", label: "Home" },
@@ -130,6 +131,18 @@ export function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
@@ -146,7 +159,7 @@ export function Navbar() {
             <img
               src={logoSrc}
               alt={settings?.siteName || "Nomads Navigate Nepal"}
-              className="h-12 w-14 shrink-0 object-contain transition-transform group-hover:rotate-3 md:h-14 md:w-16"
+              className="h-12 w-12 shrink-0 object-contain rounded-full transition-transform group-hover:rotate-3 md:h-14 md:w-14"
             />
           </Link>
 
@@ -259,84 +272,105 @@ export function Navbar() {
               type="button"
               aria-label="Menu"
               onClick={() => setOpen((v) => !v)}
-              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full glass"
+              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border shadow-md backdrop-blur-sm text-foreground"
             >
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </nav>
 
+        {/* Mobile menu backdrop overlay + sliding panel */}
         {open && (
-          <div className="md:hidden mt-2 glass rounded-2xl p-2 animate-fade-up border border-border/50">
-            {isAdmin && (
-              <div className="mb-2 rounded-xl bg-primary/10 px-4 py-3 text-sm font-semibold text-primary">
-                Admin Mode
-              </div>
-            )}
-            {navLinks.map((l) => (
-              <NavLinkItem
-                key={l.id || l.href}
-                item={l}
-                className="block rounded-xl px-4 py-3 text-sm font-semibold text-foreground/90 hover:bg-secondary hover:text-foreground"
-              />
-            ))}
-            {visibleMoreLinks.map((l) => (
-              <NavLinkItem
-                key={l.id || l.href}
-                item={l}
-                className="block rounded-xl px-4 py-3 text-sm font-semibold text-foreground/90 hover:bg-secondary hover:text-foreground"
-              />
-            ))}
-            <div className="mt-2 flex gap-2">
-              {/* Currency selector added to mobile view */}
-              <label className="flex-1 rounded-xl bg-secondary px-3 py-2 text-sm font-medium text-foreground">
-                <span className="mb-1 block text-xs text-muted-foreground">Currency</span>
-                <select
-                  value={currency}
-                  onChange={(event) => setCurrency(event.target.value as typeof currency)}
-                  className="w-full bg-transparent text-sm font-semibold outline-none"
-                  aria-label="Choose currency"
-                >
-                  {currencies.map((option) => (
-                    <option key={option.code} value={option.code} className="bg-background text-foreground">
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <Link
-                to="/shop"
-                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-medium text-foreground"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Shop
-              </Link>
-              {isAdmin ? (
-                <Link
-                  to="/admin"
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-medium text-foreground"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Link>
-              ) : (
-                <Link
-                  to="/login"
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-medium text-foreground"
-                >
-                  <LogIn className="h-4 w-4" />
-                  Login
-                </Link>
-              )}
-            </div>
-            <button
-              type="button"
-              className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-sunset px-4 py-3 text-sm font-semibold text-white"
+          <>
+            {/* Dark backdrop - clicking it closes the menu */}
+            <div
+              className="md:hidden fixed inset-0 top-0 left-0 w-full h-full bg-black/50 backdrop-blur-sm z-40"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Scrollable mobile nav panel */}
+            <div
+              className="md:hidden fixed inset-x-0 top-[72px] bottom-0 z-50 overflow-y-auto overscroll-contain"
+              onClick={(e) => e.stopPropagation()}
             >
-              <Bell className="h-4 w-4" />
-              Subscribe
-            </button>
-          </div>
+              <div className="mx-auto max-w-7xl px-4 pb-8">
+                <div className="glass-strong rounded-2xl p-3 animate-fade-up border border-border/50 bg-background/95 backdrop-blur-xl shadow-xl">
+                  {isAdmin && (
+                    <div className="mb-2 rounded-xl bg-primary/10 px-4 py-3 text-sm font-semibold text-primary">
+                      Admin Mode
+                    </div>
+                  )}
+                  {navLinks.map((l) => (
+                    <NavLinkItem
+                      key={l.id || l.href}
+                      item={l}
+                      className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-secondary hover:text-foreground active:bg-secondary/80"
+                    />
+                  ))}
+                  <div className="my-2 border-t border-border/30" />
+                  {visibleMoreLinks.map((l) => (
+                    <NavLinkItem
+                      key={l.id || l.href}
+                      item={l}
+                      className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-secondary hover:text-foreground active:bg-secondary/80"
+                    />
+                  ))}
+                  <div className="my-2 border-t border-border/30" />
+                  <div className="flex flex-wrap gap-2">
+                    {/* Currency selector added to mobile view */}
+                    <label className="flex-1 min-w-[120px] rounded-xl bg-secondary px-3 py-3 text-sm font-medium text-foreground">
+                      <span className="mb-1 block text-xs text-muted-foreground">Currency</span>
+                      <select
+                        value={currency}
+                        onChange={(event) => setCurrency(event.target.value as typeof currency)}
+                        className="w-full bg-transparent text-sm font-semibold outline-none"
+                        aria-label="Choose currency"
+                      >
+                        {currencies.map((option) => (
+                          <option key={option.code} value={option.code} className="bg-background text-foreground">
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <Link
+                      to="/shop"
+                      className="flex-1 min-w-[100px] flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3.5 text-sm font-medium text-foreground active:bg-secondary/80"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Shop
+                    </Link>
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    {isAdmin ? (
+                      <Link
+                        to="/admin"
+                        className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3.5 text-sm font-medium text-foreground active:bg-secondary/80"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/login"
+                        className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3.5 text-sm font-medium text-foreground active:bg-secondary/80"
+                      >
+                        <LogIn className="h-4 w-4" />
+                        Login
+                      </Link>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-sunset px-4 py-3.5 text-sm font-semibold text-white shadow-soft active:opacity-90"
+                  >
+                    <Bell className="h-4 w-4" />
+                    Subscribe
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </header>
