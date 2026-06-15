@@ -100,6 +100,7 @@ function extractItinerary(markdown: string): ParsedItinerary {
   const days: DayDraft[] = [];
   let currentDay: DayDraft | null = null;
   let hasSeenDays = false;
+  let ignoreRemaining = false;
 
   const pushDay = () => {
     if (!currentDay) return;
@@ -163,11 +164,26 @@ function extractItinerary(markdown: string): ParsedItinerary {
   };
 
   for (const line of lines) {
+    if (ignoreRemaining) {
+      continue;
+    }
+
     if (!line || line === "---") {
       if (currentDay) {
         const activeDay = currentDay as DayDraft;
         activeDay.activeSection = null;
       }
+      continue;
+    }
+
+    // Ignore includes/excludes and other general trailing sections
+    if (
+      hasSeenDays &&
+      (line.match(/^(?:#{1,3}\s*|\*\*)?(Cost Includes|Cost Excludes|Package Cost|Why Choose|Why Tsho Rolpa|Recommended Selling Price)\b/i) ||
+       line.startsWith("✅") ||
+       line.startsWith("❌"))
+    ) {
+      ignoreRemaining = true;
       continue;
     }
 
