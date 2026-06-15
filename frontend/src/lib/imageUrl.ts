@@ -8,6 +8,9 @@ import manasluAndTsum from "@/assets/Manaslu and Tsum Valley.jpg";
 import meraPeakSki from "@/assets/Mera Peak Ski.jpeg";
 import meraPeakExpedition from "@/assets/Mera Peak Expedition.jpg";
 import threePassTrek from "@/assets/Three Pass Trek.jpg";
+import kanchenjungaBaseCamp from "@/assets/Kanchenjunga Base Camp Trek.JPG";
+import tshoRolpaLake from "@/assets/Tsho Rolpa Lake Trek.JPG";
+import apiHimalBaseCamp from "@/assets/Api Himal Base Camp Trek.JPG";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import type React from "react";
 
@@ -31,6 +34,9 @@ const packageImagesBySlug: Record<string, string> = {
   "mera-peak-ski": meraPeakSki,
   "mera-peak-expedition": meraPeakExpedition,
   "three-pass-trek": threePassTrek,
+  "kanchenjunga-base-camp-trek": kanchenjungaBaseCamp,
+  "tsho-rolpa-lake-trek": tshoRolpaLake,
+  "api-himal-base-camp-trek": apiHimalBaseCamp,
 };
 
 const packageImagesByTitle: Record<string, string> = {
@@ -42,6 +48,9 @@ const packageImagesByTitle: Record<string, string> = {
   "mera peak ski": meraPeakSki,
   "mera peak expedition": meraPeakExpedition,
   "three pass trek": threePassTrek,
+  "kanchenjunga base camp trek": kanchenjungaBaseCamp,
+  "tsho rolpa lake trek": tshoRolpaLake,
+  "api himal base camp trek": apiHimalBaseCamp,
 };
 
 function normalizeText(value?: string) {
@@ -93,6 +102,18 @@ export function resolveImageUrl(src?: string | null, fallback = defaultImageFall
     const path = value.startsWith("/") ? value : `/${value}`;
     const origin = getApiOrigin();
     return origin ? `${origin}${path}` : path;
+  }
+
+  if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\//i.test(value)) {
+    try {
+      const parsed = new URL(value);
+      const origin = getApiOrigin();
+      if (origin) {
+        return `${origin}${parsed.pathname}${parsed.search}`;
+      }
+    } catch {
+      // fall back to the original URL if parsing fails
+    }
   }
 
   if (value.startsWith("/")) return value;

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const slugify = require('slugify');
 const Package = require('../models/Package');
 const { getPool } = require('../config/db');
 
@@ -188,16 +189,29 @@ async function seed() {
     console.log('Seeding packages...');
     for (const data of rawDestinations) {
       // Don't add query params to local URLs
-      const url = data.imageUrl.startsWith('http://localhost') 
-        ? data.imageUrl 
-        : data.imageUrl + '?auto=format&fit=crop&w=1024&q=80';
+      const url = data.imageUrl.startsWith('http://localhost')
+        ? data.imageUrl
+        : `${data.imageUrl}?auto=format&fit=crop&w=1024&q=80`;
+
       const processedData = {
         ...data,
         image: url,
         images: [url],
       };
       delete processedData.imageUrl;
-      await Package.create(processedData);
+
+      const slug = slugify(String(data.title), { lower: true, strict: true });
+      const existing = await Package.find({ slug }).exec();
+
+      if (existing && existing.length > 0) {
+        const pkg = existing[0];
+        Object.assign(pkg, processedData);
+        await pkg.save();
+        console.log(`Updated package "${data.title}" (${slug})`);
+      } else {
+        await Package.create(processedData);
+        console.log(`Created package "${data.title}" (${slug})`);
+      }
     }
     console.log('Packages seeded successfully!');
   } catch (error) {

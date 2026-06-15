@@ -30,7 +30,9 @@ function PackagesIndex() {
   } = useQuery({
     queryKey: ["packages", "public"],
     queryFn: async () => {
-      const res = await api.get<{ success: boolean; data: any[] }>("/packages");
+      const res = await api.get<{ success: boolean; data: any[] }>("/packages", {
+        params: { limit: 100 },
+      });
       return res.data;
     },
   });

@@ -174,7 +174,7 @@ function FeaturedDestinations() {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["featured-packages"],
-    queryFn: () => packageService.getFeaturedPackages({ limit: 6 }),
+    queryFn: () => packageService.getFeaturedPackages({ limit: 10 }),
   });
 
   const featuredPackages = data?.data || [];

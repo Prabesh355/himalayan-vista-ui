@@ -204,7 +204,7 @@ exports.getPackageBySlug = async (req, res, next) => {
 // @access Public
 exports.getFeaturedPackages = async (req, res, next) => {
   try {
-    const limit = Number(req.query.limit) || 6;
+    const limit = Number(req.query.limit) || 10;
 
     let packages = await Package.find({ isActive: true, featured: true })
       .limit(limit)
