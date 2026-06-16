@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  Bell,
   ChevronDown,
   Globe,
   LayoutDashboard,
@@ -418,17 +419,6 @@ export function Navbar() {
                 ))}
               </select>
             </label>
-
-            {/* Admin dashboard link */}
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary ring-1 ring-primary/20 transition-colors hover:bg-primary/15"
-              >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                Dashboard
-              </Link>
-            )}
 
             {/* User / Admin menu */}
             {isAdmin ? (
