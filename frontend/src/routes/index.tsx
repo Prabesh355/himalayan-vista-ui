@@ -61,7 +61,7 @@ function Hero({ data }: { data?: any }) {
   const handleImageError = useFallbackImage(defaultImageFallback);
 
   return (
-    <section className="relative -mt-20 min-h-[100svh] overflow-hidden flex flex-col justify-between">
+    <section className="relative -mt-[88px] min-h-[100svh] overflow-hidden flex flex-col justify-between">
       <img
         src={resolveImageUrl(backgroundImage, heroImg)}
         alt="Himalayan peaks at sunset with prayer flags"

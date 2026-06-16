@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Bell,
   ChevronDown,
   Globe,
   LayoutDashboard,
@@ -9,7 +8,6 @@ import {
   Menu,
   Mountain,
   Settings,
-  ShoppingCart,
   UserCircle,
   X,
 } from "lucide-react";
@@ -299,151 +297,131 @@ export function Navbar() {
   const closeMobile = () => setOpen(false);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-2 bg-transparent" : "py-4 bg-transparent"}`}
-    >
-      <div className="mx-auto max-w-7xl px-4">
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div className="mx-auto max-w-7xl px-4 py-3">
         <nav
-          className={`flex items-center justify-between transition-all duration-500 ${
-            scrolled ? "glass shadow-elegant rounded-2xl px-4 py-2.5" : "bg-transparent px-4 py-2"
+          className={`flex items-center justify-between transition-all duration-500 rounded-2xl px-4 py-2 ${
+            scrolled
+              ? "glass shadow-elegant"
+              : "bg-black/10 backdrop-blur-sm"
           }`}
         >
-          {/* Logo & Navigation Menu Grouped Close Together */}
-          <div className="flex items-center gap-4 lg:gap-8 min-w-0">
-            {/* ── Logo ── */}
-            <Link to="/" className="flex flex-col items-center justify-center text-center group shrink-0 relative z-20">
+          {/* ── Left: Logo + Nav ── */}
+          <div className="flex items-center gap-5">
+
+            {/* Logo: icon stacked above text, no background */}
+            <Link to="/" className="flex flex-col items-center text-center group shrink-0">
               <img
                 src={logoSrc}
                 alt={siteName}
-                className={`shrink-0 object-contain transition-all duration-500 ease-out group-hover:scale-105 ${
-                  scrolled
-                    ? "h-12 w-10"
-                    : "h-28 w-20 md:h-32 md:w-24"
+                className={`object-contain transition-all duration-500 ease-out group-hover:scale-105 ${
+                  scrolled ? "h-9 w-auto" : "h-16 w-auto md:h-20"
                 }`}
+                style={{ background: "transparent" }}
               />
-              <div className={`flex flex-col items-center mt-1 leading-[1.1] transition-all duration-500 ${scrolled ? "opacity-0 h-0 overflow-hidden mt-0" : "opacity-100"}`}>
-                <span className="font-display text-[9px] font-semibold uppercase tracking-[0.2em] text-foreground/85 whitespace-nowrap">
+              {/* Text directly under logo — hidden on scroll */}
+              <div
+                className={`flex flex-col items-center transition-all duration-500 overflow-hidden ${
+                  scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-10 opacity-100 mt-0.5"
+                }`}
+              >
+                <span className="font-display text-[8px] font-bold uppercase tracking-[0.18em] text-foreground/80 whitespace-nowrap leading-none">
                   Nomads Navigate
                 </span>
-                <span className="font-display text-[10px] font-black uppercase tracking-[0.25em] text-accent mt-0.5 whitespace-nowrap">
+                <span className="font-display text-[9px] font-black uppercase tracking-[0.2em] text-accent whitespace-nowrap leading-none mt-0.5">
                   Nepal
                 </span>
               </div>
             </Link>
 
-            {/* ── Desktop nav ── */}
-            <ul className="hidden md:flex items-center gap-1 lg:gap-3 xl:gap-4 shrink-0">
-              {/* Home */}
+            {/* ── Desktop nav — sits beside logo ── */}
+            <ul className="hidden md:flex items-center">
               <li>
                 <Link
                   to="/"
                   activeOptions={{ exact: true }}
-                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
-                  activeProps={{ className: "text-foreground font-black" }}
+                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  activeProps={{ className: "text-foreground" }}
                 >
                   {({ isActive }) => (
                     <>
-                      <span>Home</span>
-                      {isActive && (
-                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                      )}
+                      Home
+                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
                     </>
                   )}
                 </Link>
               </li>
-
-              {/* Destinations */}
               <li>
                 <Link
                   to="/destinations"
-                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
-                  activeProps={{ className: "text-foreground font-black" }}
+                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  activeProps={{ className: "text-foreground" }}
                 >
                   {({ isActive }) => (
                     <>
-                      <span>Destinations</span>
-                      {isActive && (
-                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                      )}
+                      Destinations
+                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
                     </>
                   )}
                 </Link>
               </li>
-
-              {/* Trekking dropdown */}
               <TrekkingDropdown onClose={closeMobile} />
-
-              {/* Expedition dropdown */}
               <ExpeditionDropdown onClose={closeMobile} />
-
-              {/* Our Teams */}
               <li>
                 <Link
                   to="/teams"
-                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
-                  activeProps={{ className: "text-foreground font-black" }}
+                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  activeProps={{ className: "text-foreground" }}
                 >
                   {({ isActive }) => (
                     <>
-                      <span>Our Teams</span>
-                      {isActive && (
-                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                      )}
+                      Our Teams
+                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
                     </>
                   )}
                 </Link>
               </li>
-
-              {/* Stories */}
               <li>
                 <Link
                   to="/blogs"
-                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
-                  activeProps={{ className: "text-foreground font-black" }}
+                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  activeProps={{ className: "text-foreground" }}
                 >
                   {({ isActive }) => (
                     <>
-                      <span>Stories</span>
-                      {isActive && (
-                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                      )}
+                      Stories
+                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
                     </>
                   )}
                 </Link>
               </li>
-
-              {/* Shop */}
               <li>
                 <Link
                   to="/shop"
-                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
-                  activeProps={{ className: "text-foreground font-black" }}
+                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  activeProps={{ className: "text-foreground" }}
                 >
                   {({ isActive }) => (
                     <>
-                      <span>Shop</span>
-                      {isActive && (
-                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                      )}
+                      Shop
+                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
                     </>
                   )}
                 </Link>
               </li>
-
-              {/* Others dropdown */}
               <OthersDropdown isAdmin={isAdmin} />
             </ul>
           </div>
 
-          {/* ── Right actions ── */}
-          <div className="flex items-center gap-2">
+          {/* ── Right: actions ── */}
+          <div className="flex items-center gap-2 shrink-0">
             {/* Currency */}
-            <label className="hidden md:flex items-center gap-1 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-foreground cursor-pointer transition-colors">
-              <Globe className="h-4 w-4" />
+            <label className="hidden md:flex items-center gap-1 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-foreground cursor-pointer transition-colors">
+              <Globe className="h-3.5 w-3.5" />
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as typeof currency)}
-                className="bg-transparent text-sm font-semibold outline-none"
+                className="bg-transparent text-[11px] font-semibold outline-none"
                 aria-label="Choose currency"
               >
                 {currencies.map((opt) => (
@@ -458,72 +436,53 @@ export function Navbar() {
             {isAdmin && (
               <Link
                 to="/admin"
-                className="hidden md:inline-flex items-center justify-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary ring-1 ring-primary/20 transition-colors hover:bg-primary/15"
+                className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary ring-1 ring-primary/20 transition-colors hover:bg-primary/15"
               >
-                <LayoutDashboard className="h-4 w-4" />
+                <LayoutDashboard className="h-3.5 w-3.5" />
                 Dashboard
               </Link>
             )}
 
-            {/* Cart */}
-            <Link
-              to="/shop"
-              className="hidden md:inline-flex items-center justify-center h-9 w-9 rounded-full glass hover:bg-secondary/20 transition-colors"
-              title="Shopping Cart"
-            >
-              <ShoppingCart className="h-4.5 w-4.5" />
-            </Link>
-
-            {/* User menu / Login */}
+            {/* User / Admin menu */}
             {isAdmin ? (
               <div className="hidden md:block relative group">
-                <button className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground/10 px-3 py-1.5 text-sm font-medium hover:bg-foreground/20 transition-colors">
-                  <UserCircle className="h-4 w-4" />
+                <button className="inline-flex items-center gap-1.5 rounded-full bg-foreground/10 px-2.5 py-1.5 text-[11px] font-medium hover:bg-foreground/20 transition-colors">
+                  <UserCircle className="h-3.5 w-3.5" />
                   {adminName}
-                  <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">
-                    Admin
-                  </span>
+                  <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary">Admin</span>
                 </button>
                 <div className="absolute right-0 top-full pt-2 opacity-0 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:pointer-events-auto z-50">
                   <div className="glass-strong min-w-[170px] rounded-xl border border-border/50 p-2 shadow-elegant">
-                    <Link to="/admin" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-secondary/20">
-                      <LayoutDashboard className="h-4 w-4" />Dashboard
-                    </Link>
-                    <Link to="/" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-secondary/20">
-                      <Globe className="h-4 w-4" />View Website
-                    </Link>
-                    <Link to="/admin/settings" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-secondary/20">
-                      <Settings className="h-4 w-4" />Settings
-                    </Link>
+                    <Link to="/admin" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-secondary/20"><LayoutDashboard className="h-4 w-4" />Dashboard</Link>
+                    <Link to="/" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-secondary/20"><Globe className="h-4 w-4" />View Website</Link>
+                    <Link to="/admin/settings" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-secondary/20"><Settings className="h-4 w-4" />Settings</Link>
                   </div>
                 </div>
               </div>
             ) : (
               <Link
                 to="/login"
-                className="hidden md:inline-flex items-center justify-center gap-2 rounded-full bg-foreground/10 px-3 py-1.5 text-sm font-medium hover:bg-foreground/20 transition-colors"
+                className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-foreground/10 px-3 py-1.5 text-[11px] font-medium hover:bg-foreground/20 transition-colors"
               >
-                <LogIn className="h-4 w-4" />
+                <LogIn className="h-3.5 w-3.5" />
                 Login
               </Link>
             )}
 
-            {/* Subscribe */}
-            <button
-              type="button"
-              className="hidden md:inline-flex items-center justify-center gap-2 rounded-full bg-gradient-sunset px-4 py-1.5 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-glow hover:-translate-y-0.5"
-              title="Subscribe for updates"
+            {/* Plan Your Trip CTA */}
+            <Link
+              to="/contact"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-gradient-sunset px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-white shadow-soft transition-all hover:shadow-glow hover:-translate-y-0.5 whitespace-nowrap"
             >
-              <Bell className="h-4 w-4" />
-              Subscribe
-            </button>
+              Plan Your Trip →
+            </Link>
 
             {/* Mobile hamburger */}
             <button
               type="button"
               aria-label="Menu"
               onClick={() => setOpen((v) => !v)}
-              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border shadow-md backdrop-blur-sm text-foreground"
+              className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full bg-background/90 border border-border shadow-md backdrop-blur-sm text-foreground"
             >
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
