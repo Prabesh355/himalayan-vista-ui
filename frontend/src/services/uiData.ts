@@ -112,20 +112,20 @@ export const teamMembers: TeamMember[] = [
     name: "Sushant Thapa",
     role: "Trekking Guide",
     bio: "Skilled guide with expertise in different seasons. Known for attention to detail and authentic local experiences.",
-    avatar: "https://i.pravatar.cc/280?img=16",
+    avatar: "https://ui-avatars.com/api/?name=Sushant+Thapa&background=random&size=280",
   },
   {
     id: "tm8",
     name: "Samraj",
     role: "Trekking Guide",
     bio: "Enthusiastic guide with strong connections in local communities. Specializes in cultural and environmental awareness.",
-    avatar: "https://i.pravatar.cc/280?img=17",
+    avatar: "https://ui-avatars.com/api/?name=Samraj&background=random&size=280",
   },
   {
     id: "tm9",
     name: "Prashidda",
     role: "Trekking Guide",
     bio: "Experienced guide passionate about sustainable tourism and environmental conservation in the Himalayas.",
-    avatar: "https://i.pravatar.cc/280?img=18",
+    avatar: "https://ui-avatars.com/api/?name=Prashidda&background=random&size=280",
   },
 ];
