@@ -99,8 +99,8 @@ function TrekkingDropdown({ onClose }: { onClose: () => void }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1 px-3 py-2 text-sm font-semibold transition-colors hover:text-foreground ${
-          open ? "text-foreground" : "text-foreground/90"
+        className={`inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-foreground ${
+          open ? "text-foreground" : "text-foreground/80"
         }`}
       >
         Trekking
@@ -175,8 +175,8 @@ function ExpeditionDropdown({ onClose }: { onClose: () => void }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1 px-3 py-2 text-sm font-semibold transition-colors hover:text-foreground ${
-          open ? "text-foreground" : "text-foreground/90"
+        className={`inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-foreground ${
+          open ? "text-foreground" : "text-foreground/80"
         }`}
       >
         Expedition
@@ -225,7 +225,7 @@ function OthersDropdown({ isAdmin }: { isAdmin: boolean }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground"
+        className="inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
       >
         Others
         <ChevronDown
@@ -300,43 +300,44 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-2" : "py-3"}`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-2 bg-transparent" : "py-6 bg-transparent"}`}
     >
       <div className="mx-auto max-w-7xl px-4">
         <nav
-          className={`flex items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-500 ${
-            scrolled ? "glass shadow-elegant" : "bg-black/20 backdrop-blur-sm"
+          className={`flex items-center justify-between transition-all duration-500 ${
+            scrolled ? "glass shadow-elegant rounded-2xl px-6 py-2.5" : "bg-transparent px-6 py-2"
           }`}
         >
           {/* ── Logo ── */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="relative">
-              <img
-                src={logoSrc}
-                alt={siteName}
-                className="h-11 w-11 shrink-0 object-contain rounded-full bg-black ring-2 ring-accent/60 transition-transform group-hover:scale-105 md:h-13 md:w-13"
-                style={{ background: "#000" }}
-              />
-            </div>
+          <Link to="/" className="flex items-center gap-3.5 group shrink-0 relative z-20">
+            <img
+              src={logoSrc}
+              alt={siteName}
+              className={`shrink-0 object-contain transition-all duration-500 ease-out group-hover:scale-105 ${
+                scrolled
+                  ? "h-12 w-auto"
+                  : "h-24 md:h-28 w-auto"
+              }`}
+            />
             <div className="flex flex-col leading-tight">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/70">
+              <span className="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-foreground/80">
                 Nomads Navigate
               </span>
-              <span className="text-sm font-extrabold uppercase tracking-wider text-foreground">
+              <span className="font-display text-sm font-extrabold uppercase tracking-[0.3em] text-accent">
                 Nepal
               </span>
             </div>
           </Link>
 
           {/* ── Desktop nav ── */}
-          <ul className="hidden md:flex items-center gap-0.5">
+          <ul className="hidden md:flex items-center gap-2 lg:gap-5">
             {/* Home */}
             <li>
               <Link
                 to="/"
                 activeOptions={{ exact: true }}
-                className="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-bold" }}
+                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground font-black" }}
               >
                 {({ isActive }) => (
                   <>
@@ -353,8 +354,8 @@ export function Navbar() {
             <li>
               <Link
                 to="/destinations"
-                className="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-bold" }}
+                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground font-black" }}
               >
                 {({ isActive }) => (
                   <>
@@ -377,8 +378,8 @@ export function Navbar() {
             <li>
               <Link
                 to="/teams"
-                className="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-bold" }}
+                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground font-black" }}
               >
                 {({ isActive }) => (
                   <>
@@ -395,8 +396,8 @@ export function Navbar() {
             <li>
               <Link
                 to="/blogs"
-                className="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-bold" }}
+                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground font-black" }}
               >
                 {({ isActive }) => (
                   <>
@@ -413,8 +414,8 @@ export function Navbar() {
             <li>
               <Link
                 to="/shop"
-                className="relative inline-flex items-center px-3 py-2 text-sm font-semibold text-foreground/90 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-bold" }}
+                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground font-black" }}
               >
                 {({ isActive }) => (
                   <>
@@ -434,7 +435,7 @@ export function Navbar() {
           {/* ── Right actions ── */}
           <div className="flex items-center gap-2">
             {/* Currency */}
-            <label className="hidden md:flex items-center gap-1 rounded-full bg-secondary/20 px-3 py-1.5 text-sm font-medium text-foreground cursor-pointer">
+            <label className="hidden md:flex items-center gap-1 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-foreground cursor-pointer transition-colors">
               <Globe className="h-4 w-4" />
               <select
                 value={currency}

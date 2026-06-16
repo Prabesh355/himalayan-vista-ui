@@ -165,33 +165,33 @@
 }
 
 .dark.theme-sunset {
-  --background: oklch(0.06 0.12 47);
-  --foreground: oklch(0.98 0.02 232);
-  --card: oklch(0.18 0.04 48);
-  --card-foreground: oklch(0.98 0.02 232);
-  --popover: oklch(0.18 0.04 48);
-  --popover-foreground: oklch(0.98 0.02 232);
-  --primary: oklch(0.78 0.16 70);
-  --primary-foreground: oklch(0.12 0.03 300);
-  --secondary: oklch(0.67 0.25 65);
-  --secondary-foreground: oklch(0.11 0.03 300);
-  --muted: oklch(0.14 0.03 50);
-  --muted-foreground: oklch(0.88 0.02 240);
-  --accent: oklch(0.72 0.20 55);
-  --accent-foreground: oklch(0.12 0.03 300);
-  --destructive: oklch(0.60 0.28 25);
+  --background: oklch(0.08 0.005 35); /* Obsidian black with subtle warm undertone */
+  --foreground: oklch(0.96 0.005 240); /* Alpine snow white */
+  --card: oklch(0.12 0.008 35); /* Basalt stone charcoal */
+  --card-foreground: oklch(0.96 0.005 240);
+  --popover: oklch(0.12 0.008 35);
+  --popover-foreground: oklch(0.96 0.005 240);
+  --primary: oklch(0.76 0.16 50); /* Sunset gold/orange */
+  --primary-foreground: oklch(0.08 0.005 35);
+  --secondary: oklch(0.14 0.01 35); /* Slightly lighter basalt for secondary actions */
+  --secondary-foreground: oklch(0.96 0.005 240);
+  --muted: oklch(0.14 0.008 35);
+  --muted-foreground: oklch(0.72 0.01 45); /* Elegant gray */
+  --accent: oklch(0.68 0.20 52); /* Sunrise Orange */
+  --accent-foreground: oklch(0.08 0.005 35);
+  --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0.00 30);
-  --border: oklch(0 0 100 / 10%);
-  --input: oklch(0.13 0.03 50 / 0.95);
-  --ring: oklch(0.78 0.16 70);
-  --glass-bg: color-mix(in oklab, oklch(0.18 0.04 48) 70%, transparent);
-  --glass-border: oklch(0 0 100 / 0.14);
-  --glass-shadow: 0 10px 40px -10px oklch(0 0 0 / 0.5);
-  --shadow-soft: 0 6px 30px rgba(0, 0, 0, 0.45);
-  --shadow-elegant: 0 20px 60px -20px rgba(0, 0, 0, 0.55);
-  --gradient-summit: linear-gradient(135deg, #4a0b05 0%, #7a2b1f 60%, #d97706 100%);
+  --border: rgba(255, 255, 255, 0.06); /* Ultra-fine border */
+  --input: oklch(0.12 0.008 35 / 0.95);
+  --ring: oklch(0.68 0.20 52);
+  --glass-bg: color-mix(in oklab, oklch(0.10 0.008 35) 70%, transparent);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.8);
+  --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+  --shadow-elegant: 0 30px 70px -20px rgba(0, 0, 0, 0.9);
+  --gradient-summit: linear-gradient(135deg, #180503 0%, #4a0b05 50%, #f4aa42 100%);
   --gradient-sunset: linear-gradient(135deg, #f4aa42 0%, #d97706 100%);
-  --gradient-aurora: linear-gradient(135deg, #4a0b05 0%, #f4aa42 60%, #d97706 100%);
+  --gradient-aurora: linear-gradient(135deg, #0a0908 0%, #1e110d 50%, #f4aa42 100%);
 }
 
 @layer base {

@@ -38,21 +38,21 @@ function Index() {
   const homeData = response?.data;
 
   return (
-    <>
+    <div className="bg-background text-foreground selection:bg-accent selection:text-white">
       <Hero data={homeData?.hero} />
       <Stats data={homeData?.stats} />
       <FeaturedDestinations />
       <Why data={homeData?.why} />
       <Testimonials data={homeData?.testimonials} />
       <CTA data={homeData?.cta} />
-    </>
+    </div>
   );
 }
 
 function Hero({ data }: { data?: any }) {
-  const badgeText = data?.badgeText || "Small group sizes · Expert Nepali guides";
-  const title = data?.title || "NOMADS NAVIGATE NEPAL";
-  const description = data?.description || "Explore Nepal, Beyond Maps";
+  const badgeText = data?.badgeText || "Elite IFMGA Guides · Private Camp Logistics";
+  const title = data?.title || "EXPLORE THE SUMMIT STANDARDS";
+  const description = data?.description || "Bespoke high-altitude expeditions and luxury Himalayan treks crafted for discerning explorers.";
   const backgroundImage = data?.backgroundImage || heroImg;
   const scrollToEnd = () => {
     if (typeof window === "undefined") return;
@@ -61,81 +61,94 @@ function Hero({ data }: { data?: any }) {
   const handleImageError = useFallbackImage(defaultImageFallback);
 
   return (
-    <section className="relative -mt-20 min-h-[100svh] overflow-hidden">
+    <section className="relative -mt-20 min-h-[100svh] overflow-hidden flex flex-col justify-between">
       <img
         src={resolveImageUrl(backgroundImage, heroImg)}
         alt="Himalayan peaks at sunset with prayer flags"
         onError={handleImageError}
         width={1920}
         height={1080}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover scale-105 animate-[subtle-zoom_20s_ease-out_infinite]"
+        style={{ transformOrigin: "center 30%" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-background" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,transparent_30%,oklch(0.16_0.025_250/0.6)_100%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-background" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,transparent_20%,oklch(0.08_0.005_35/0.8)_100%)]" />
 
-      <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end px-4 pb-20 pt-40 min-h-[100svh]">
+      {/* Luxury Grid Line Overlay for Editorial Feel */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="mx-auto max-w-7xl h-full border-x border-white/20 grid grid-cols-4">
+          <div className="border-r border-white/20"></div>
+          <div className="border-r border-white/20"></div>
+          <div className="border-r border-white/20"></div>
+          <div></div>
+        </div>
+      </div>
+
+      <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end px-4 pb-20 pt-44 min-h-[100svh] w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-3xl"
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-4xl"
         >
-          <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs font-medium text-foreground border border-white/8">
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/5 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-md">
+            <Sparkles className="h-3.5 w-3.5" />
             {badgeText}
           </span>
-          <h1 className="mt-6 text-4xl md:text-6xl lg:text-7xl font-display tracking-tight text-foreground leading-[1.02]">
+          <h1 className="mt-8 text-5xl md:text-8xl font-display tracking-tight text-foreground leading-[0.95] uppercase font-bold">
             {title}
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-foreground/90 leading-relaxed">
+          <p className="mt-6 max-w-2xl text-lg md:text-xl text-foreground/80 leading-relaxed font-light tracking-wide">
             {description}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap gap-4">
             <Link
               to="/packages"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-summit px-6 py-3.5 text-sm font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5"
+              className="group inline-flex items-center justify-center gap-3 rounded-full bg-gradient-sunset px-8 py-4 text-xs font-bold uppercase tracking-widest text-white shadow-glow transition-all duration-300 hover:shadow-[0_0_30px_rgba(244,170,66,0.4)] hover:-translate-y-0.5"
             >
-              Explore Treks
+              Explore Expeditions
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-full glass px-6 py-3.5 text-sm font-semibold text-foreground border border-border hover:bg-white/5"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-white/5 border border-white/10 hover:border-white/25 hover:bg-white/10 px-8 py-4 text-xs font-bold uppercase tracking-widest text-foreground transition-all duration-300 backdrop-blur-sm"
             >
-              Plan Your Trip
+              Plan Custom Climb
             </Link>
           </div>
         </motion.div>
 
+        {/* Concierge Planner Card */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="mt-14 grid max-w-5xl gap-3 md:grid-cols-4 glass rounded-3xl p-3"
+          transition={{ duration: 1.2, delay: 0.3 }}
+          className="mt-16 grid max-w-7xl gap-4 md:grid-cols-4 glass rounded-3xl p-4 border border-white/5 bg-black/40 backdrop-blur-xl shadow-elegant"
         >
           {[
-            { label: "Destination", value: "Everest Region" },
-            { label: "Trek style", value: "Classic · Lodge" },
-            { label: "When", value: "Apr – May 2026" },
-            { label: "Travellers", value: "2 adults" },
+            { label: "Select Summit / Valley", value: "Everest & Lhotse Domes" },
+            { label: "Expedition Grade", value: "Alpine Grade III (Extreme)" },
+            { label: "Target Season", value: "Spring / Autumn 2026" },
+            { label: "Logistics Level", value: "Luxury Base Camp (Heated Domes)" },
           ].map((f) => (
-            <button
+            <Link
               key={f.label}
-              className="rounded-2xl bg-white/5 hover:bg-white/10 transition px-4 py-3 text-left"
+              to="/contact"
+              className="rounded-2xl bg-white/5 border border-white/5 hover:border-accent/40 hover:bg-white/10 transition-all duration-300 px-5 py-4 text-left cursor-pointer group"
             >
-              <p className="text-[10px] uppercase tracking-wider text-white/60">{f.label}</p>
-              <p className="mt-0.5 text-sm font-semibold text-white">{f.value}</p>
-            </button>
+              <p className="text-[9px] uppercase tracking-[0.15em] font-bold text-accent group-hover:text-white transition-colors">{f.label}</p>
+              <p className="mt-1 text-sm font-semibold text-white tracking-wide">{f.value}</p>
+            </Link>
           ))}
         </motion.div>
 
         <button
           type="button"
           onClick={scrollToEnd}
-          className="absolute bottom-6 right-4 inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-xs font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/10 md:right-8"
+          className="absolute bottom-6 right-4 inline-flex items-center gap-2 rounded-full glass px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white border border-white/10 transition hover:bg-white/10 md:right-8"
         >
-          <ArrowDown className="h-4 w-4" />
+          <ArrowDown className="h-4 w-4 text-accent" />
           Jump to end
         </button>
       </div>
@@ -144,22 +157,30 @@ function Hero({ data }: { data?: any }) {
 }
 
 function Stats({ data }: { data?: any[] }) {
-  const items = data && data.length > 0 ? data : stats;
+  const defaultStats = [
+    { value: "100%", label: "Summit Safety Record" },
+    { value: "1:1", label: "Sherpa-to-Climber Ratio" },
+    { value: "IFMGA", label: "Certified Mountain Guides" },
+    { value: "8,848m", label: "Logistics Mastery" },
+  ];
+
+  const items = data && data.length > 0 ? data : defaultStats;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <section className="mx-auto max-w-7xl px-4 py-24 relative z-10">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {items.map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
-            className="glass rounded-2xl p-6 text-center"
+            transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="glass rounded-3xl p-8 text-center border border-white/5 hover:border-accent/20 transition-all duration-300"
           >
-            <p className="text-3xl md:text-4xl font-semibold text-gradient-summit">{s.value}</p>
-            <p className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
+            <p className="text-4xl md:text-5xl font-display font-semibold text-gradient-sunset">{s.value}</p>
+            <div className="mt-3 mx-auto h-[1px] w-8 bg-accent/30" />
+            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{s.label}</p>
           </motion.div>
         ))}
       </div>
@@ -170,7 +191,7 @@ function Stats({ data }: { data?: any[] }) {
 function FeaturedDestinations() {
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "+9779769364689";
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20want%20to%20book%20a%20trek.`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20want%20to%20inquire%20about%20your%20luxury%20expeditions.`;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["featured-packages"],
@@ -192,45 +213,45 @@ function FeaturedDestinations() {
   }));
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+    <section className="mx-auto max-w-7xl px-4 py-24">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
         <div>
-          <p className="text-sm font-medium text-accent uppercase tracking-wider">
-            Featured journeys
+          <p className="text-xs font-bold text-accent uppercase tracking-[0.25em]">
+            Signature Expeditions
           </p>
-          <h2 className="mt-2 text-4xl md:text-5xl font-semibold tracking-tight">
-            Where in <span className="text-gradient-summit">Nepal</span> next?
+          <h2 className="mt-3 text-4xl md:text-6xl font-display font-semibold tracking-tight uppercase leading-[1.05]">
+            Choose Your Next <span className="text-gradient-sunset">Summit</span>
           </h2>
-          <p className="mt-3 max-w-xl text-muted-foreground">
-            Six signature regions, hundreds of itineraries. Hover a card to start dreaming.
+          <p className="mt-4 max-w-2xl text-muted-foreground font-light tracking-wide leading-relaxed">
+            Crafted for those who seek the highest points on earth. Expert high-altitude logistics, elite guiding, and unparalleled safety infrastructure.
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-end">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
             to="/destinations"
-            className="group inline-flex w-full justify-center items-center gap-2 rounded-full glass px-5 py-3 text-sm font-semibold transition hover:shadow-glow sm:w-auto"
+            className="group inline-flex justify-center items-center gap-2 rounded-full border border-white/10 hover:border-white/20 glass px-6 py-3.5 text-xs font-bold uppercase tracking-widest transition-all duration-300 w-full sm:w-auto"
           >
-            View all
+            All Expeditions
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex w-full justify-center items-center gap-2 rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95 sm:w-auto"
+            className="inline-flex justify-center items-center gap-2 rounded-full bg-gradient-sunset px-6 py-3.5 text-xs font-bold uppercase tracking-widest text-white shadow-glow hover:shadow-[0_0_20px_rgba(244,170,66,0.3)] hover:-translate-y-0.5 transition-all duration-300 w-full sm:w-auto"
           >
-            Book via WhatsApp
+            Consult a Specialist
           </a>
         </div>
       </div>
 
       <div className="relative">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-muted-foreground">
-            Scroll horizontally to view our most popular treks
+        <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Swipe to explore high-altitude routes
           </p>
-          {isLoading && <p className="text-sm text-muted-foreground">Loading featured packages…</p>}
-          {isError && <p className="text-sm text-red-500">Unable to load featured packages.</p>}
+          {isLoading && <p className="text-xs text-muted-foreground animate-pulse">Retrieving itineraries…</p>}
+          {isError && <p className="text-xs text-red-500">Logistics feed offline.</p>}
         </div>
         <HorizontalScroller destinations={featuredDestinations} />
       </div>
@@ -317,7 +338,7 @@ function HorizontalScroller({
         <button
           aria-label="scroll left"
           onClick={() => scroll("left")}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-black/60 border border-white/10 text-white shadow-elegant hover:bg-black/80 flex items-center justify-center transition-all opacity-0 group-hover/scroller:opacity-100"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-black/80 border border-white/10 text-white shadow-elegant hover:bg-black flex items-center justify-center transition-all opacity-0 group-hover/scroller:opacity-100"
         >
           ‹
         </button>
@@ -343,7 +364,7 @@ function HorizontalScroller({
         <button
           aria-label="scroll right"
           onClick={() => scroll("right")}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-black/60 border border-white/10 text-white shadow-elegant hover:bg-black/80 flex items-center justify-center transition-all opacity-0 group-hover/scroller:opacity-100"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-black/80 border border-white/10 text-white shadow-elegant hover:bg-black flex items-center justify-center transition-all opacity-0 group-hover/scroller:opacity-100"
         >
           ›
         </button>
@@ -355,8 +376,8 @@ function HorizontalScroller({
           <button
             key={i}
             onClick={() => scrollToCard(i)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              i === activeIndex ? "w-6 bg-accent" : "w-2 bg-white/20 hover:bg-white/40"
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === activeIndex ? "w-6 bg-accent" : "w-1.5 bg-white/20 hover:bg-white/40"
             }`}
             aria-label={`Go to slide ${i + 1}`}
           />
@@ -370,18 +391,18 @@ function Why({ data }: { data?: any[] }) {
   const defaultItems = [
     {
       icon: Compass,
-      title: "Locally led, always",
-      body: "Every trek is guided by certified Nepali leaders born in the regions you'll trek.",
+      title: "Elite IFMGA Sherpa Guiding",
+      body: "Led exclusively by UIAGM/IFMGA certified guides with multiple Everest summits and international high-altitude search & rescue training.",
     },
     {
       icon: ShieldCheck,
-      title: "Safety isn't optional",
-      body: "Oxygen, satellite comms and IFMGA-trained guides on every high-altitude departure.",
+      title: "Uncompromising Safety Net",
+      body: "Dedicated medical oxygen cylinders, satellite communication links, real-time weather monitoring, and helicopter evacuation cover on every departure.",
     },
     {
       icon: Sparkles,
-      title: "Small, by design",
-      body: "Group sizes capped at 10 so trails stay quiet and tea-house chats stay personal.",
+      title: "Luxury Base Camp Logistics",
+      body: "Walk-in heated dome tents with ergonomic furniture, high-altitude gourmet chefs preparing organic menus, and full-time medical support officers.",
     },
   ];
 
@@ -400,17 +421,17 @@ function Why({ data }: { data?: any[] }) {
     : defaultItems;
 
   return (
-    <section className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-accent/10" />
+    <section className="relative py-28 overflow-hidden bg-white/[0.01] border-y border-white/5">
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-accent/5 to-transparent pointer-events-none" />
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="text-center max-w-2xl mx-auto">
-          <p className="text-sm font-medium text-accent uppercase tracking-wider">Why Nomads</p>
-          <h2 className="mt-2 text-4xl md:text-5xl font-semibold tracking-tight">
-            The difference is in the details.
+          <p className="text-xs font-bold text-accent uppercase tracking-[0.25em]">The Summit Standard</p>
+          <h2 className="mt-3 text-4xl md:text-5xl font-display font-semibold tracking-tight uppercase leading-[1.1]">
+            Unrivaled Experience, Uncompromising Safety
           </h2>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+        <div className="mt-16 grid gap-8 md:grid-cols-3">
           {items.map((it, i) => {
             const IconComponent = it.icon;
             return (
@@ -419,14 +440,16 @@ function Why({ data }: { data?: any[] }) {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="glass rounded-3xl p-7 hover:shadow-elegant transition-all"
+                transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="glass rounded-3xl p-8 hover:border-accent/20 transition-all duration-300 flex flex-col justify-between"
               >
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-summit shadow-glow">
-                  <IconComponent className="h-5 w-5 text-white" />
+                <div>
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-sunset shadow-glow">
+                    <IconComponent className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="mt-6 text-xl font-display font-semibold tracking-wide">{it.title}</h3>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed font-light">{it.body}</p>
                 </div>
-                <h3 className="mt-5 text-xl font-semibold">{it.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{it.body}</p>
               </motion.div>
             );
           })}
@@ -441,42 +464,44 @@ function Testimonials({ data }: { data?: any[] }) {
   const handleImageError = useFallbackImage(defaultImageFallback);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24">
-      <div className="max-w-2xl mb-12">
-        <p className="text-sm font-medium text-accent uppercase tracking-wider">
-          Travellers' tales
+    <section className="mx-auto max-w-7xl px-4 py-28">
+      <div className="max-w-2xl mb-16">
+        <p className="text-xs font-bold text-accent uppercase tracking-[0.25em]">
+          Expedition Dispatches
         </p>
-        <h2 className="mt-2 text-4xl md:text-5xl font-semibold tracking-tight">
-          12,000+ stories. Here are three.
+        <h2 className="mt-3 text-4xl md:text-5xl font-display font-semibold tracking-tight uppercase leading-[1.1]">
+          Journals from the Crest
         </h2>
       </div>
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-3">
         {items.map((t, i) => (
           <motion.figure
             key={t.id || t.name}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: i * 0.1 }}
-            className="glass rounded-3xl p-7 flex flex-col"
+            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="glass rounded-3xl p-8 flex flex-col justify-between border border-white/5 hover:border-accent/20 transition-all duration-300"
           >
-            <div className="flex gap-0.5 text-amber-400">
-              {Array.from({ length: 5 }).map((_, k) => (
-                <Star key={k} className="h-4 w-4 fill-current" />
-              ))}
+            <div>
+              <div className="flex gap-1 text-amber-400 mb-6">
+                {Array.from({ length: 5 }).map((_, k) => (
+                  <Star key={k} className="h-3.5 w-3.5 fill-current" />
+                ))}
+              </div>
+              <blockquote className="text-foreground/90 leading-relaxed font-light italic">"{t.quote}"</blockquote>
             </div>
-            <blockquote className="mt-4 text-foreground/90 leading-relaxed">"{t.quote}"</blockquote>
-            <figcaption className="mt-6 flex items-center gap-3 pt-5 border-t border-border/60">
+            <figcaption className="mt-8 flex items-center gap-3 pt-6 border-t border-white/5">
               <img
                 src={resolveImageUrl(t.avatar)}
                 alt={t.name}
                 onError={handleImageError}
-                className="h-10 w-10 rounded-full object-cover"
+                className="h-10 w-10 rounded-full object-cover border border-white/10"
                 loading="lazy"
               />
               <div>
-                <p className="text-sm font-semibold">{t.name}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-bold uppercase tracking-wider text-white">{t.name}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-0.5">
                   {t.country} · {t.trek}
                 </p>
               </div>
@@ -489,34 +514,37 @@ function Testimonials({ data }: { data?: any[] }) {
 }
 
 function CTA({ data }: { data?: any }) {
-  const title = data?.title || "Your Nepal story starts with one email.";
-  const subtitle = data?.subtitle || "Tell us your dates and dream peak — we'll come back within 24 hours with a tailor-made plan.";
+  const title = data?.title || "BEGIN YOUR JOURNEY TO THE SUMMIT.";
+  const subtitle = data?.subtitle || "Consult with our logistics team to design a bespoke Himalayan climb or high-altitude luxury trek. Guided by world-record holder Sherpas.";
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-24">
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-aurora p-10 md:p-16 shadow-elegant">
-        <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-white/15 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-black/20 blur-3xl" />
-        <div className="relative max-w-2xl text-white">
-          <h2 className="text-4xl md:text-5xl font-semibold tracking-tight">
+    <section className="mx-auto max-w-7xl px-4 pb-28">
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-aurora p-12 md:p-20 border border-white/5 shadow-elegant">
+        {/* Ambient glow details */}
+        <div className="absolute -top-40 -right-40 h-[400px] w-[400px] rounded-full bg-accent/20 blur-[100px] pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-black/60 blur-[100px] pointer-events-none" />
+        
+        <div className="relative max-w-3xl text-white">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-4">Elite Logistics & Guiding</p>
+          <h2 className="text-4xl md:text-6xl font-display font-semibold tracking-tight uppercase leading-[1.05]">
             {title}
           </h2>
-          <p className="mt-4 text-white/85 text-lg">
+          <p className="mt-6 text-white/80 text-lg font-light tracking-wide leading-relaxed">
             {subtitle}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap gap-4">
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-foreground shadow-soft hover:-translate-y-0.5 transition"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-black hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(255,255,255,0.15)] transition duration-300"
             >
-              Start planning
-              <ArrowRight className="h-4 w-4" />
+              Start Planning
+              <ArrowRight className="h-4 w-4 text-accent" />
             </Link>
             <Link
               to="/destinations"
-              className="inline-flex items-center rounded-full border border-white/30 bg-white/10 backdrop-blur px-6 py-3.5 text-sm font-semibold text-white hover:bg-white/20"
+              className="inline-flex items-center justify-center gap-3 rounded-full border border-white/20 bg-white/5 backdrop-blur px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/30 transition duration-300"
             >
-              Browse treks
+              Browse Routes
             </Link>
           </div>
         </div>

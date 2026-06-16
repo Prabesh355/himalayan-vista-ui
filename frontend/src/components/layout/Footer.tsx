@@ -81,19 +81,24 @@ export function Footer() {
     settings?.copyrightText || "Nomads Navigate Nepal. Made with thin air & strong tea.";
 
   return (
-    <footer className="relative mt-32 border-t border-border/60 bg-gradient-to-b from-transparent to-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-16">
+    <footer className="relative mt-32 border-t border-white/5 bg-gradient-to-b from-transparent to-black/80">
+      <div className="mx-auto max-w-7xl px-4 py-20">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-4 group">
               <img
                 src={logoSrc}
                 alt={siteName}
-                className="h-12 w-14 shrink-0 object-contain"
+                className="h-20 w-auto shrink-0 object-contain transition-transform group-hover:scale-105"
               />
-              <span className="whitespace-nowrap font-semibold tracking-tight">
-                Nomads <span className="text-gradient-sunset">Navigate Nepal</span>
-              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-foreground/80">
+                  Nomads Navigate
+                </span>
+                <span className="font-display text-sm font-extrabold uppercase tracking-[0.3em] text-accent">
+                  Nepal
+                </span>
+              </div>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
               {footerTagline}
