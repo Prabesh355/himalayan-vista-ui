@@ -99,7 +99,7 @@ function TrekkingDropdown({ onClose }: { onClose: () => void }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-foreground ${
+        className={`inline-flex items-center gap-1 px-2 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider transition-colors hover:text-foreground ${
           open ? "text-foreground" : "text-foreground/80"
         }`}
       >
@@ -175,7 +175,7 @@ function ExpeditionDropdown({ onClose }: { onClose: () => void }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-foreground ${
+        className={`inline-flex items-center gap-1 px-2 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider transition-colors hover:text-foreground ${
           open ? "text-foreground" : "text-foreground/80"
         }`}
       >
@@ -225,7 +225,7 @@ function OthersDropdown({ isAdmin }: { isAdmin: boolean }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
+        className="inline-flex items-center gap-1 px-2 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
       >
         Others
         <ChevronDown
@@ -300,137 +300,140 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-2 bg-transparent" : "py-6 bg-transparent"}`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-2 bg-transparent" : "py-4 bg-transparent"}`}
     >
       <div className="mx-auto max-w-7xl px-4">
         <nav
           className={`flex items-center justify-between transition-all duration-500 ${
-            scrolled ? "glass shadow-elegant rounded-2xl px-6 py-2.5" : "bg-transparent px-6 py-2"
+            scrolled ? "glass shadow-elegant rounded-2xl px-4 py-2.5" : "bg-transparent px-4 py-2"
           }`}
         >
-          {/* ── Logo ── */}
-          <Link to="/" className="flex items-center gap-3.5 group shrink-0 relative z-20">
-            <img
-              src={logoSrc}
-              alt={siteName}
-              className={`shrink-0 object-contain transition-all duration-500 ease-out group-hover:scale-105 ${
-                scrolled
-                  ? "h-12 w-auto"
-                  : "h-24 md:h-28 w-auto"
-              }`}
-            />
-            <div className="flex flex-col leading-tight">
-              <span className="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-foreground/80">
-                Nomads Navigate
-              </span>
-              <span className="font-display text-sm font-extrabold uppercase tracking-[0.3em] text-accent">
-                Nepal
-              </span>
-            </div>
-          </Link>
+          {/* Logo & Navigation Menu Grouped Close Together */}
+          <div className="flex items-center gap-4 lg:gap-8 min-w-0">
+            {/* ── Logo ── */}
+            <Link to="/" className="flex flex-col items-center justify-center text-center group shrink-0 relative z-20">
+              <img
+                src={logoSrc}
+                alt={siteName}
+                className={`shrink-0 object-contain transition-all duration-500 ease-out group-hover:scale-105 ${
+                  scrolled
+                    ? "h-12 w-10"
+                    : "h-28 w-20 md:h-32 md:w-24"
+                }`}
+              />
+              <div className={`flex flex-col items-center mt-1 leading-[1.1] transition-all duration-500 ${scrolled ? "opacity-0 h-0 overflow-hidden mt-0" : "opacity-100"}`}>
+                <span className="font-display text-[9px] font-semibold uppercase tracking-[0.2em] text-foreground/85 whitespace-nowrap">
+                  Nomads Navigate
+                </span>
+                <span className="font-display text-[10px] font-black uppercase tracking-[0.25em] text-accent mt-0.5 whitespace-nowrap">
+                  Nepal
+                </span>
+              </div>
+            </Link>
 
-          {/* ── Desktop nav ── */}
-          <ul className="hidden md:flex items-center gap-2 lg:gap-5">
-            {/* Home */}
-            <li>
-              <Link
-                to="/"
-                activeOptions={{ exact: true }}
-                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-black" }}
-              >
-                {({ isActive }) => (
-                  <>
-                    <span>Home</span>
-                    {isActive && (
-                      <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                    )}
-                  </>
-                )}
-              </Link>
-            </li>
+            {/* ── Desktop nav ── */}
+            <ul className="hidden md:flex items-center gap-1 lg:gap-3 xl:gap-4 shrink-0">
+              {/* Home */}
+              <li>
+                <Link
+                  to="/"
+                  activeOptions={{ exact: true }}
+                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
+                  activeProps={{ className: "text-foreground font-black" }}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span>Home</span>
+                      {isActive && (
+                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
+                      )}
+                    </>
+                  )}
+                </Link>
+              </li>
 
-            {/* Destinations */}
-            <li>
-              <Link
-                to="/destinations"
-                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-black" }}
-              >
-                {({ isActive }) => (
-                  <>
-                    <span>Destinations</span>
-                    {isActive && (
-                      <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                    )}
-                  </>
-                )}
-              </Link>
-            </li>
+              {/* Destinations */}
+              <li>
+                <Link
+                  to="/destinations"
+                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
+                  activeProps={{ className: "text-foreground font-black" }}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span>Destinations</span>
+                      {isActive && (
+                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
+                      )}
+                    </>
+                  )}
+                </Link>
+              </li>
 
-            {/* Trekking dropdown */}
-            <TrekkingDropdown onClose={closeMobile} />
+              {/* Trekking dropdown */}
+              <TrekkingDropdown onClose={closeMobile} />
 
-            {/* Expedition dropdown */}
-            <ExpeditionDropdown onClose={closeMobile} />
+              {/* Expedition dropdown */}
+              <ExpeditionDropdown onClose={closeMobile} />
 
-            {/* Our Teams */}
-            <li>
-              <Link
-                to="/teams"
-                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-black" }}
-              >
-                {({ isActive }) => (
-                  <>
-                    <span>Our Teams</span>
-                    {isActive && (
-                      <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                    )}
-                  </>
-                )}
-              </Link>
-            </li>
+              {/* Our Teams */}
+              <li>
+                <Link
+                  to="/teams"
+                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
+                  activeProps={{ className: "text-foreground font-black" }}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span>Our Teams</span>
+                      {isActive && (
+                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
+                      )}
+                    </>
+                  )}
+                </Link>
+              </li>
 
-            {/* Stories */}
-            <li>
-              <Link
-                to="/blogs"
-                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-black" }}
-              >
-                {({ isActive }) => (
-                  <>
-                    <span>Stories</span>
-                    {isActive && (
-                      <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                    )}
-                  </>
-                )}
-              </Link>
-            </li>
+              {/* Stories */}
+              <li>
+                <Link
+                  to="/blogs"
+                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
+                  activeProps={{ className: "text-foreground font-black" }}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span>Stories</span>
+                      {isActive && (
+                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
+                      )}
+                    </>
+                  )}
+                </Link>
+              </li>
 
-            {/* Shop */}
-            <li>
-              <Link
-                to="/shop"
-                className="relative inline-flex items-center px-3 py-2 text-xs font-bold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground font-black" }}
-              >
-                {({ isActive }) => (
-                  <>
-                    <span>Shop</span>
-                    {isActive && (
-                      <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
-                    )}
-                  </>
-                )}
-              </Link>
-            </li>
+              {/* Shop */}
+              <li>
+                <Link
+                  to="/shop"
+                  className="relative inline-flex items-center px-2.5 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
+                  activeProps={{ className: "text-foreground font-black" }}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span>Shop</span>
+                      {isActive && (
+                        <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />
+                      )}
+                    </>
+                  )}
+                </Link>
+              </li>
 
-            {/* Others dropdown */}
-            <OthersDropdown isAdmin={isAdmin} />
-          </ul>
+              {/* Others dropdown */}
+              <OthersDropdown isAdmin={isAdmin} />
+            </ul>
+          </div>
 
           {/* ── Right actions ── */}
           <div className="flex items-center gap-2">
