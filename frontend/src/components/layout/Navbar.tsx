@@ -310,7 +310,7 @@ export function Navbar() {
           <div className="flex items-center gap-5">
 
             {/* Logo: icon stacked above text, no background */}
-            <Link to="/" className="flex flex-col items-center text-center group shrink-0">
+            <Link to="/" className="flex items-center group shrink-0">
               <img
                 src={logoSrc}
                 alt={siteName}
@@ -319,19 +319,6 @@ export function Navbar() {
                 }`}
                 style={{ background: "transparent" }}
               />
-              {/* Text directly under logo — hidden on scroll */}
-              <div
-                className={`flex flex-col items-center transition-all duration-500 overflow-hidden ${
-                  scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-10 opacity-100 mt-0.5"
-                }`}
-              >
-                <span className="font-display text-[8px] font-bold uppercase tracking-[0.18em] text-foreground/80 whitespace-nowrap leading-none">
-                  Nomads Navigate
-                </span>
-                <span className="font-display text-[9px] font-black uppercase tracking-[0.2em] text-accent whitespace-nowrap leading-none mt-0.5">
-                  Nepal
-                </span>
-              </div>
             </Link>
 
             {/* ── Desktop nav — sits beside logo ── */}
