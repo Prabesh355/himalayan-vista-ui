@@ -24,6 +24,7 @@ export interface StatItem {
 
 export interface TeamMember {
   id: string;
+  _id?: string;
   name: string;
   role: string;
   bio?: string;

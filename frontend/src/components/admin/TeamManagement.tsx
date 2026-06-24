@@ -147,16 +147,16 @@ export const TeamManagement: React.FC = () => {
     {
       key: "sortOrder",
       header: "Order",
-      render: (item: TeamItem) => String(item.sortOrder ?? 0),
+      render: (item: any) => String(item.sortOrder ?? 0),
     },
     {
       key: "status",
       header: "Status",
-      render: (item: TeamItem) => (
+      render: (item: any) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${item.isActive ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
+          className={`px-2 py-1 rounded-full text-xs font-medium ${item.isActive !== false ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
         >
-          {item.isActive ? "Active" : "Inactive"}
+          {item.isActive !== false ? "Active" : "Inactive"}
         </span>
       ),
     },
@@ -193,7 +193,7 @@ export const TeamManagement: React.FC = () => {
     }
   };
 
-  const actions = (item: TeamItem) => {
+  const actions = (item: any) => {
     const isFallback = !item._id;
     return (
       <div className="flex items-center justify-end gap-2 text-muted-foreground">
@@ -400,9 +400,9 @@ export const TeamManagement: React.FC = () => {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <DataTable
-          data={filteredMembers}
+          data={filteredMembers as any[]}
           columns={columns}
-          keyExtractor={(item) => item._id || item.id || item.name}
+          keyExtractor={(item: any) => item._id || item.id || item.name}
           onSearch={setSearchTerm}
           searchPlaceholder="Search team members..."
           actions={actions}
