@@ -6,6 +6,10 @@ import annapurnaCircuit from "@/assets/Annapurna Circuit Trek.jpg";
 import manaslu from "@/assets/Manaslu and Tsum Valley.jpg";
 import lobucheEast from "@/assets/Lobuche East.jpg";
 import threePass from "@/assets/Three Pass Trek.jpg";
+import narPhu from "@/assets/nur.jpeg";
+import apiHimal from "@/assets/Api Himal Base Camp Trek.JPG";
+import kanchenjunga from "@/assets/Kanchenjunga Base Camp Trek.JPG";
+import tshoRolpa from "@/assets/Tsho Rolpa Lake Trek.JPG";
 
 // Team member images
 import nishantKarki from "@/assets/Nishant Karki.jpg";
@@ -740,6 +744,160 @@ export const destinations: Destination[] = [
     rating: 4.9,
     reviews: 64,
     tags: ["Trekking", "High Altitude", "Adventure"],
+  },
+  {
+    id: "9",
+    slug: "nar-phu-valley-trek",
+    name: "Nar Phu Valley Trek",
+    region: "Annapurna",
+    tagline: "Explore the hidden valleys of Nar and Phu",
+    description: "Trek through ancient Tibetan-influenced villages, dramatic canyons, centuries-old monasteries, and the spectacular Kang La Pass connecting Nar Valley with the Annapurna Circuit.",
+    itinerary: `# Nar Phu Valley Trek – 15 Days
+
+Nar Phu Valley Trek is one of Nepal's most remote and culturally preserved trekking destinations. Opened to foreign trekkers only in 2002, the trail takes you through ancient Tibetan-influenced villages, dramatic canyons, centuries-old monasteries, and the spectacular Kang La Pass.
+
+---
+
+## Detailed Itinerary
+
+### Day 01: Drive Kathmandu – Koto (2,610m)
+Drive through the scenic Marsyangdi Valley via Besisahar and Chame to Koto, the gateway to Nar Phu Valley.
+*Driving:* 9–10 hrs
+
+### Day 02: Trek Koto – Meta (3,560m)
+Enter the restricted Nar Phu Valley, trekking through dense pine forests, narrow canyons, and suspension bridges.
+*Walking:* 6–7 hrs
+
+### Day 03: Trek Meta – Phu Village (4,080m)
+Follow rugged trails alongside ancient chortens and spectacular rock formations before reaching the medieval village of Phu.
+*Walking:* 6–7 hrs
+
+### Day 04: Acclimatization Day at Phu
+Explore the historic Tashi Lhakhang Monastery and enjoy stunning views of Himlung Himal and surrounding peaks.
+
+### Day 05: Trek Phu – Nar Phedi (3,490m)
+Descend through yak pastures and remote settlements to Nar Phedi Monastery.
+*Walking:* 5–6 hrs
+
+### Day 06: Trek Nar Phedi – Nar Village (4,110m)
+A short ascent leads to the beautiful village of Nar, known for its unique Tibetan culture and traditional stone houses.
+*Walking:* 3–4 hrs
+
+### Day 07: Acclimatization & Exploration at Nar
+Spend the day acclimatizing and exploring the surrounding ridges and monasteries.
+
+### Day 08: Trek Nar – Kang La Pass (5,320m) – Ngawal (3,660m)
+Cross the spectacular Kang La Pass, one of the major highlights of the trek, offering panoramic views of Annapurna II, Gangapurna, and Tilicho Peak.
+*Walking:* 8–9 hrs
+
+### Day 09: Trek Ngawal – Manang (3,540m)
+Join the Annapurna Circuit trail and trek through traditional villages to Manang.
+*Walking:* 4–5 hrs
+
+### Day 10: Acclimatization Day in Manang
+Explore Gangapurna Lake, local monasteries, and viewpoints around Manang.
+
+### Day 11: Trek Manang – Yak Kharka (4,110m)
+Gradual ascent through alpine terrain and grazing pastures.
+*Walking:* 4–5 hrs
+
+### Day 12: Trek Yak Kharka – Thorong Phedi (4,600m)
+Continue toward the base of Thorong La Pass.
+*Walking:* 4–5 hrs
+
+### Day 13: Cross Thorong La Pass (5,416m) – Muktinath (3,800m)
+A challenging yet rewarding day crossing one of the world's highest trekking passes before descending to the sacred pilgrimage site of Muktinath.
+*Walking:* 8–10 hrs
+
+### Day 14: Drive Muktinath – Pokhara
+Scenic drive through Jomsom, Marpha, and Tatopani to Pokhara.
+
+### Day 15: Drive or Fly Pokhara – Kathmandu
+End of the trek.
+
+---
+
+# Cost Per Person (USD)
+
+| Group Size | Cost Per Person |
+| ---------- | --------------: |
+| 1 Pax      |          $1,750 |
+| 2 Pax      |          $1,550 |
+| 3–4 Pax    |          $1,450 |
+| 5–6 Pax    |          $1,350 |
+| 7–8 Pax    |          $1,250 |
+
+### Trek Highlights
+
+* Explore the hidden valleys of Nar and Phu.
+* Experience authentic Tibetan Buddhist culture.
+* Visit the ancient Tashi Lhakhang Monastery.
+* Cross the spectacular Kang La Pass (5,320m).
+* Stunning views of Himlung Himal, Annapurna II, Gangapurna, and Tilicho Peak.
+* Combine the remote Nar Phu Valley with the iconic Annapurna Circuit.`,
+    image: narPhu,
+    altitude: "5,320 m",
+    bestSeason: "Mar–May · Sep–Nov",
+    difficulty: "Challenging",
+    duration: "15 days",
+    priceFrom: 1250,
+    rating: 4.8,
+    reviews: 14,
+    tags: ["Trekking", "Remote", "Cultural"],
+  },
+  {
+    id: "10",
+    slug: "api-himal-base-camp",
+    name: "API Himal Base Camp",
+    region: "Lowlands",
+    tagline: "Untouched wilderness in far-western Nepal",
+    description: "Explore the remote and rugged trails of far-western Nepal, trekking to the base of the majestic API Himal.",
+    itinerary: "# Coming Soon...",
+    image: apiHimal,
+    altitude: "4,250 m",
+    bestSeason: "Mar–May · Sep–Nov",
+    difficulty: "Challenging",
+    duration: "17 days",
+    priceFrom: 1800,
+    rating: 4.7,
+    reviews: 8,
+    tags: ["Remote", "Off the Beaten Path"],
+  },
+  {
+    id: "11",
+    slug: "kanchenjunga-base-camp",
+    name: "Kanchenjunga Base Camp",
+    region: "Everest",
+    tagline: "Journey to the world's third highest peak",
+    description: "Trek through pristine forests and remote villages to the base of Mt. Kanchenjunga, experiencing unique cultures and breathtaking vistas.",
+    itinerary: "# Coming Soon...",
+    image: kanchenjunga,
+    altitude: "5,143 m",
+    bestSeason: "Mar–May · Sep–Nov",
+    difficulty: "Strenuous",
+    duration: "21 days",
+    priceFrom: 2200,
+    rating: 4.9,
+    reviews: 24,
+    tags: ["Trekking", "Expedition", "Remote"],
+  },
+  {
+    id: "12",
+    slug: "tsho-rolpa-valley-trek",
+    name: "Tsho Rolpa Valley Trek",
+    region: "Langtang",
+    tagline: "Discover one of Nepal's largest glacial lakes",
+    description: "Trek through the beautiful Rolwaling Valley to the stunning Tsho Rolpa glacial lake, surrounded by towering peaks.",
+    itinerary: "# Coming Soon...",
+    image: tshoRolpa,
+    altitude: "4,580 m",
+    bestSeason: "Mar–May · Sep–Nov",
+    difficulty: "Moderate",
+    duration: "14 days",
+    priceFrom: 1350,
+    rating: 4.8,
+    reviews: 12,
+    tags: ["Trekking", "Lakes", "Scenic"],
   },
 ];
 

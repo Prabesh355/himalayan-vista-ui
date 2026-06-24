@@ -23,21 +23,22 @@ import logo from "@/assets/nomads-logo-official.png";
 const TREKKING_PACKAGES = [
   { label: "Annapurna Circuit Trek", slug: "annapurna-circuit-trek" },
   { label: "Everest Base Camp", slug: "everest-base-camp" },
-  { label: "Manaslu and Tsum Valley Trek", slug: "manaslu-and-tsum-valley-trek" },
-  { label: "Annapurna Base Camp Trek", slug: "annapurna-base-camp-trek" },
+  { label: "Manaslu & Tsum Valley", slug: "manaslu-tsum-valley" },
+  { label: "Annapurna Base Camp", slug: "annapurna-base-camp" },
   { label: "Three Pass Trek", slug: "three-pass-trek" },
 ];
 
 const REMOTE_TREKKING = [
+  { label: "Nar Phu Valley Trek", slug: "nar-phu-valley-trek" },
   { label: "API Himal Base Camp", slug: "api-himal-base-camp" },
   { label: "Kanchenjunga Base Camp", slug: "kanchenjunga-base-camp" },
-  { label: "Tshorolpa Valley Trek", slug: "tshorolpa-valley-trek" },
+  { label: "Tsho Rolpa Valley Trek", slug: "tsho-rolpa-valley-trek" },
 ];
 
 const EXPEDITIONS = [
-  { label: "Lobuche East Peak", slug: "lobuche-east-peak" },
-  { label: "Island Peak", slug: "island-peak" },
-  { label: "Mera Peak", slug: "mera-peak" },
+  { label: "Lobuche East Peak", slug: "lobuche-east" },
+  { label: "Mera Peak Ski", slug: "mera-peak-ski" },
+  { label: "Mera Peak Expedition", slug: "mera-peak-expedition" },
 ];
 
 const MORE_LINKS = [
