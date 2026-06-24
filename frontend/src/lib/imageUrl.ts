@@ -11,6 +11,15 @@ import threePassTrek from "@/assets/Three Pass Trek.jpg";
 import kanchenjungaBaseCamp from "@/assets/Kanchenjunga Base Camp Trek.JPG";
 import tshoRolpaLake from "@/assets/Tsho Rolpa Lake Trek.JPG";
 import apiHimalBaseCamp from "@/assets/Api Himal Base Camp Trek.JPG";
+import nishantKarki from "@/assets/Nishant Karki.jpg";
+import sukadevThapa from "@/assets/Sukadev Thapa.jpeg";
+import prashantManiTamang from "@/assets/Prashant Mani Tamang.jpg";
+import aadarshaBhandari from "@/assets/Aadarsha Bhandari.jpg";
+import simonBhattarai from "@/assets/Simon Bhattarai.jpg";
+import janguSherpa from "@/assets/Jangu Sherpa.jpg";
+import sushantThapa from "@/assets/Sushant Thapa.JPG";
+import samraj from "@/assets/Samraj.png";
+import prashiddha from "@/assets/Prashiddha.png";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import type React from "react";
 
@@ -53,12 +62,54 @@ const packageImagesByTitle: Record<string, string> = {
   "api himal base camp trek": apiHimalBaseCamp,
 };
 
+const teamImagesByName: Record<string, string> = {
+  "nishant karki": nishantKarki,
+  "sukadev thapa": sukadevThapa,
+  "prashant mani tamang": prashantManiTamang,
+  "aadarsha bhandari": aadarshaBhandari,
+  "simon bhattarai": simonBhattarai,
+  "jangu sherpa": janguSherpa,
+  "sushant thapa": sushantThapa,
+  samraj,
+  prashidda: prashiddha,
+  prashiddha,
+};
+
+const shopImagesByName: Record<string, string> = {
+  "everest base camp": everestBaseCamp,
+  "annapurna base camp": annapurnaBaseCamp,
+  "annapurna circuit trek": annapurnaCircuit,
+  "annapurna circuit": annapurnaCircuit,
+  "lobuche east": lobucheEast,
+  "manaslu and tsum valley": manasluAndTsum,
+  "manaslu tsum valley": manasluAndTsum,
+  "mera peak ski": meraPeakSki,
+  "mera peak expedition": meraPeakExpedition,
+  "three pass trek": threePassTrek,
+  "kanchenjunga base camp trek": kanchenjungaBaseCamp,
+  "kanchenjunga base camp": kanchenjungaBaseCamp,
+  "tsho rolpa lake trek": tshoRolpaLake,
+  "tsho rolpa valley trek": tshoRolpaLake,
+  "tsho rolpa": tshoRolpaLake,
+  "api himal base camp trek": apiHimalBaseCamp,
+  "api himal base camp": apiHimalBaseCamp,
+};
+
 function normalizeText(value?: string) {
   return String(value || "")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, " ")
     .replace(/\s+/g, " ");
+}
+
+function getUploadCandidateFromName(name?: string, src?: string | null) {
+  const rawName = String(name || "").trim();
+  if (!rawName) return "";
+
+  const sourceExtension = String(src || "").match(/\.(png|jpe?g|webp|gif)(?:[?#].*)?$/i)?.[1];
+  const extension = sourceExtension || "jpg";
+  return `/uploads/${encodeURIComponent(rawName)}.${extension}`;
 }
 
 export function resolvePackageImage(
@@ -87,6 +138,49 @@ export function resolvePackageImage(
     return meraPeakExpedition;
   }
   if (normalizedTitle.includes("three pass")) return threePassTrek;
+
+  return resolveImageUrl(src, fallback);
+}
+
+export function resolveShopImage(
+  src?: string | null,
+  productName?: string,
+  fallback = defaultShopImageFallback,
+) {
+  const normalizedName = normalizeText(productName);
+
+  if (normalizedName) {
+    for (const [name, image] of Object.entries(shopImagesByName)) {
+      if (normalizedName === name || normalizedName.includes(name) || name.includes(normalizedName)) {
+        return image;
+      }
+    }
+  }
+
+  const source = String(src || "").trim();
+  const shouldInferUpload =
+    !source ||
+    source.startsWith("/uploads/") ||
+    source.startsWith("uploads/") ||
+    /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\/uploads\//i.test(source);
+  const uploadCandidate = shouldInferUpload ? getUploadCandidateFromName(productName, src) : "";
+  if (uploadCandidate) {
+    return resolveImageUrl(uploadCandidate, fallback);
+  }
+
+  return resolveImageUrl(src, fallback);
+}
+
+export function resolveTeamImage(
+  src?: string | null,
+  memberName?: string,
+  fallback = defaultImageFallback,
+) {
+  const normalizedName = normalizeText(memberName);
+
+  if (normalizedName && teamImagesByName[normalizedName]) {
+    return teamImagesByName[normalizedName];
+  }
 
   return resolveImageUrl(src, fallback);
 }

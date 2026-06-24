@@ -9,7 +9,7 @@ import shirtImage from "@/assets/Annapurna Base Camp.jpg";
 import bootsImage from "@/assets/Manaslu and Tsum Valley.jpg";
 import {
   defaultShopImageFallback,
-  resolveImageUrl,
+  resolveShopImage,
   useFallbackImage,
 } from "@/lib/imageUrl";
 import { useCurrency } from "@/context/CurrencyProvider";
@@ -186,7 +186,7 @@ function Shop() {
               >
                 <div className="relative aspect-square overflow-hidden bg-secondary">
                   <img
-                    src={resolveImageUrl(product.image, defaultShopImageFallback)}
+                    src={resolveShopImage(product.image, product.name, defaultShopImageFallback)}
                     alt={product.name}
                     onError={handleImageError}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"

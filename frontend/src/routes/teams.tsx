@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Users } from "lucide-react";
 import { teamMembers } from "@/services/uiData";
 import { api } from "@/services/api";
+import { resolveTeamImage } from "@/lib/imageUrl";
 import type { TeamItem } from "@/services/adminService";
 
 export const Route = createFileRoute("/teams")({
@@ -82,7 +83,7 @@ function TeamsPage() {
             >
               <div className="overflow-hidden aspect-square bg-gradient-to-br from-primary/20 to-accent/20 relative">
                 <img
-                  src={member.avatar || "https://via.placeholder.com/600x600?text=Team"}
+                  src={resolveTeamImage(member.avatar, member.name)}
                   alt={member.name}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
