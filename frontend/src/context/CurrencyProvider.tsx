@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type CurrencyCode = "USD" | "NPR" | "EUR" | "GBP" | "AUD" | "CAD";
+export type CurrencyCode = "USD" | "EUR" | "GBP" | "AUD" | "CAD";
 
 export interface CurrencyOption {
   code: CurrencyCode;
@@ -18,7 +18,6 @@ export interface CurrencyOption {
 
 export const currencies: CurrencyOption[] = [
   { code: "USD", symbol: "$", label: "USD ($)", rate: 1 },
-  { code: "NPR", symbol: "₨", label: "NPR (₨)", rate: 133.5 },
   { code: "EUR", symbol: "€", label: "EUR (€)", rate: 0.92 },
   { code: "GBP", symbol: "£", label: "GBP (£)", rate: 0.79 },
   { code: "AUD", symbol: "A$", label: "AUD (A$)", rate: 1.53 },

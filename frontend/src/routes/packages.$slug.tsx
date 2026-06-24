@@ -461,8 +461,40 @@ function PackageDetails() {
   const packageQuery = useQuery({
     queryKey: ["package", slug],
     queryFn: async () => {
-      const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${slug}`);
-      return res.data;
+      try {
+        const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${slug}`);
+        return res.data;
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          const mockModule = await import("@/services/mockData");
+          const fallback = mockModule.destinations.find((d) => d.slug === slug);
+          if (fallback) {
+            const daysMatch = fallback.duration ? fallback.duration.match(/(\d+)\s*days?/i) : null;
+            const days = daysMatch ? Number(daysMatch[1]) : 1;
+            const nights = Math.max(0, days - 1);
+            return {
+              success: true,
+              data: {
+                id: fallback.slug,
+                slug: fallback.slug,
+                title: fallback.name,
+                description: fallback.description,
+                destination: fallback.region,
+                price: fallback.priceFrom || 0,
+                duration: { days, nights },
+                images: fallback.image ? [fallback.image] : [],
+                groupSize: { min: 1, max: 12 },
+                featured: false,
+                isActive: true,
+                itinerary: fallback.itinerary || "",
+                rating: fallback.rating || 0,
+                reviewCount: fallback.reviews || 0,
+              }
+            };
+          }
+        }
+        throw err;
+      }
     },
   });
 
