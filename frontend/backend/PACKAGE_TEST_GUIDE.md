@@ -3,10 +3,6 @@
 ## 🧪 Testing the API Endpoints
 
 ### Setup
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 1. Start backend: `npm run dev`
 2. Get admin/vendor token via `/api/auth/login`
 3. Use token in requests below
@@ -16,10 +12,6 @@
 ## 📋 Test Cases
 
 ### 1. Get All Packages (No Filter)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET http://localhost:5000/api/packages
 ```
@@ -29,10 +21,6 @@ curl -X GET http://localhost:5000/api/packages
 ---
 
 ### 2. Get Packages with Pagination
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?page=1&limit=5"
 ```
@@ -42,10 +30,6 @@ curl "http://localhost:5000/api/packages?page=1&limit=5"
 ---
 
 ### 3. Filter by Destination
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?destination=Everest"
 ```
@@ -55,10 +39,6 @@ curl "http://localhost:5000/api/packages?destination=Everest"
 ---
 
 ### 4. Filter by Price Range
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?minPrice=500&maxPrice=2000"
 ```
@@ -68,10 +48,6 @@ curl "http://localhost:5000/api/packages?minPrice=500&maxPrice=2000"
 ---
 
 ### 5. Filter by Category
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?category=trekking"
 ```
@@ -83,10 +59,6 @@ curl "http://localhost:5000/api/packages?category=trekking"
 ---
 
 ### 6. Filter by Difficulty
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?difficulty=difficult"
 ```
@@ -98,10 +70,6 @@ curl "http://localhost:5000/api/packages?difficulty=difficult"
 ---
 
 ### 7. Combined Filters
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?destination=Everest&minPrice=500&maxPrice=2000&category=trekking&difficulty=difficult&page=1&limit=5"
 ```
@@ -111,10 +79,6 @@ curl "http://localhost:5000/api/packages?destination=Everest&minPrice=500&maxPri
 ---
 
 ### 8. Get Featured Packages
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages/featured?limit=6"
 ```
@@ -124,10 +88,6 @@ curl "http://localhost:5000/api/packages/featured?limit=6"
 ---
 
 ### 9. Get Packages by Destination
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages/destination/Kathmandu?page=1&limit=10"
 ```
@@ -137,10 +97,6 @@ curl "http://localhost:5000/api/packages/destination/Kathmandu?page=1&limit=10"
 ---
 
 ### 10. Search Packages
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages/search?q=trekking&limit=10"
 ```
@@ -150,10 +106,6 @@ curl "http://localhost:5000/api/packages/search?q=trekking&limit=10"
 ---
 
 ### 11. Get Single Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl http://localhost:5000/api/packages/PACKAGE_ID
 ```
@@ -165,10 +117,6 @@ curl http://localhost:5000/api/packages/PACKAGE_ID
 ---
 
 ### 12. Create Package (Admin/Vendor)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/packages \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -190,10 +138,6 @@ curl -X POST http://localhost:5000/api/packages \
 **Expected:** Package created successfully (201)
 
 **Notes:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Requires admin or vendor role
 - Title must be unique
 - Image URL can be any valid URL
@@ -201,10 +145,6 @@ curl -X POST http://localhost:5000/api/packages \
 ---
 
 ### 13. Update Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/packages/PACKAGE_ID \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -218,10 +158,6 @@ curl -X PUT http://localhost:5000/api/packages/PACKAGE_ID \
 **Expected:** Package updated (200)
 
 **Notes:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Must be creator or admin
 - Only creator/admin can update
 - Can update any field
@@ -229,10 +165,6 @@ curl -X PUT http://localhost:5000/api/packages/PACKAGE_ID \
 ---
 
 ### 14. Delete Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X DELETE http://localhost:5000/api/packages/PACKAGE_ID \
   -H "Authorization: Bearer YOUR_TOKEN"
@@ -241,10 +173,6 @@ curl -X DELETE http://localhost:5000/api/packages/PACKAGE_ID \
 **Expected:** Package deleted (200)
 
 **Notes:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Must be creator or admin
 - Returns empty data object
 
@@ -253,37 +181,21 @@ curl -X DELETE http://localhost:5000/api/packages/PACKAGE_ID \
 ## 🔄 Sorting Examples
 
 ### Sort by Price (Ascending)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?sort=price"
 ```
 
 ### Sort by Price (Descending)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?sort=-price"
 ```
 
 ### Sort by Rating (Highest First)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?sort=-rating"
 ```
 
 ### Multiple Sort Fields
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl "http://localhost:5000/api/packages?sort=-price,-rating"
 ```
@@ -293,10 +205,6 @@ curl "http://localhost:5000/api/packages?sort=-price,-rating"
 ## 📊 Response Examples
 
 ### List Response
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -312,11 +220,7 @@ curl "http://localhost:5000/api/packages?sort=-price,-rating"
       "destination": "Mount Everest",
       "price": 1500,
       "discountPrice": 1200,
-<<<<<<< HEAD
-      "duration": { "days": 5, "nights": 4 },
-=======
       "duration": {"days": 5, "nights": 4},
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       "images": ["url1", "url2"],
       "difficulty": "difficult",
       "category": "trekking",
@@ -332,10 +236,6 @@ curl "http://localhost:5000/api/packages?sort=-price,-rating"
 ```
 
 ### Single Package Response
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -347,11 +247,7 @@ curl "http://localhost:5000/api/packages?sort=-price,-rating"
     "destination": "Mount Everest",
     "price": 1500,
     "discountPrice": 1200,
-<<<<<<< HEAD
-    "duration": { "days": 5, "nights": 4 },
-=======
     "duration": {"days": 5, "nights": 4},
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     "images": ["url1", "url2"],
     "highlights": ["scenic views", "local culture"],
     "itinerary": [
@@ -364,11 +260,7 @@ curl "http://localhost:5000/api/packages?sort=-price,-rating"
     ],
     "inclusions": ["Accommodation", "Guide"],
     "exclusions": ["Flights"],
-<<<<<<< HEAD
-    "groupSize": { "min": 2, "max": 12 },
-=======
     "groupSize": {"min": 2, "max": 12},
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     "difficulty": "difficult",
     "category": "trekking",
     "rating": 4.5,
@@ -391,10 +283,6 @@ curl "http://localhost:5000/api/packages?sort=-price,-rating"
 ## ⚠️ Error Examples
 
 ### 400 - Validation Error
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/packages \
   -H "Authorization: Bearer TOKEN" \
@@ -403,10 +291,6 @@ curl -X POST http://localhost:5000/api/packages \
 ```
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -415,19 +299,11 @@ curl -X POST http://localhost:5000/api/packages \
 ```
 
 ### 404 - Package Not Found
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl http://localhost:5000/api/packages/invalid_id
 ```
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -436,20 +312,12 @@ curl http://localhost:5000/api/packages/invalid_id
 ```
 
 ### 403 - Not Authorized
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X DELETE http://localhost:5000/api/packages/package_id \
   -H "Authorization: Bearer DIFFERENT_USER_TOKEN"
 ```
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -470,49 +338,29 @@ const samplePackage = {
   discountPrice: 2000,
   duration: {
     days: 32,
-<<<<<<< HEAD
-    nights: 31,
-  },
-  images: ["https://example.com/annapurna1.jpg", "https://example.com/annapurna2.jpg"],
-=======
     nights: 31
   },
   images: [
     "https://example.com/annapurna1.jpg",
     "https://example.com/annapurna2.jpg"
   ],
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   highlights: [
     "Scenic mountain views",
     "Local village culture",
     "Adventure experience",
-<<<<<<< HEAD
-    "Professional guides",
-=======
     "Professional guides"
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   ],
   itinerary: [
     {
       day: 1,
       title: "Arrival in Pokhara",
       description: "Meet guide and brief introduction",
-<<<<<<< HEAD
-      activities: ["Hotel check-in", "Trek planning"],
-=======
       activities: ["Hotel check-in", "Trek planning"]
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     },
     {
       day: 2,
       title: "Pokhara to Nayapul",
       description: "Start of Annapurna Circuit",
-<<<<<<< HEAD
-      activities: ["Hiking", "Local market visit"],
-    },
-  ],
-  inclusions: ["Professional guide", "All meals", "Basic accommodation", "Emergency medical kit"],
-=======
       activities: ["Hiking", "Local market visit"]
     }
   ],
@@ -522,33 +370,20 @@ const samplePackage = {
     "Basic accommodation",
     "Emergency medical kit"
   ],
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   exclusions: [
     "International flights",
     "Travel insurance",
     "Alcoholic drinks",
-<<<<<<< HEAD
-    "Personal expenses",
-  ],
-  groupSize: {
-    min: 2,
-    max: 15,
-=======
     "Personal expenses"
   ],
   groupSize: {
     min: 2,
     max: 15
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   },
   difficulty: "difficult",
   category: "trekking",
   featured: true,
-<<<<<<< HEAD
-  bestSeason: ["Mar-May", "Sep-Nov"],
-=======
   bestSeason: ["Mar-May", "Sep-Nov"]
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 };
 ```
 

@@ -9,10 +9,6 @@
 ## 📌 Overview
 
 Complete booking management system for travel packages with:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - ✅ Create bookings
 - ✅ View booking history
 - ✅ Cancel bookings with refund policies
@@ -25,69 +21,28 @@ Complete booking management system for travel packages with:
 
 ## 🔑 Booking Statuses
 
-<<<<<<< HEAD
-| Status      | Description                          | Allowed Transitions    |
-| ----------- | ------------------------------------ | ---------------------- |
-| `pending`   | Initial state after booking creation | → confirmed, cancelled |
-| `confirmed` | Admin confirmed the booking          | → completed, cancelled |
-| `cancelled` | User or admin cancelled the booking  | (terminal)             |
-| `completed` | Trip completed successfully          | (terminal)             |
-=======
 | Status | Description | Allowed Transitions |
 |--------|-------------|-------------------|
 | `pending` | Initial state after booking creation | → confirmed, cancelled |
 | `confirmed` | Admin confirmed the booking | → completed, cancelled |
 | `cancelled` | User or admin cancelled the booking | (terminal) |
 | `completed` | Trip completed successfully | (terminal) |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
 ## 💳 Payment Statuses
 
-<<<<<<< HEAD
-| Status     | Description              |
-| ---------- | ------------------------ |
-| `pending`  | Payment not yet received |
-| `partial`  | Partial payment received |
-| `paid`     | Full payment received    |
-| `refunded` | Refund processed         |
-=======
 | Status | Description |
 |--------|-------------|
 | `pending` | Payment not yet received |
 | `partial` | Partial payment received |
 | `paid` | Full payment received |
 | `refunded` | Refund processed |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
 ## 📋 Booking Fields Reference
 
-<<<<<<< HEAD
-| Field             | Type     | Required | Validation                    |
-| ----------------- | -------- | -------- | ----------------------------- |
-| bookingNumber     | String   | Auto     | Unique, generated             |
-| user              | ObjectId | ✅       | User reference                |
-| package           | ObjectId | ✅       | Package reference             |
-| travelDate        | Date     | ✅       | Must be future date           |
-| endDate           | Date     | ✅       | Must be after travelDate      |
-| numberOfTravelers | Number   | ✅       | 1-100 travelers               |
-| travelers         | Array    | ✅       | Min 1 traveler object         |
-| pricePerPerson    | Number   | ✅       | Calculated from package       |
-| totalPrice        | Number   | ✅       | Auto-calculated               |
-| discount          | Number   | ❌       | Default 0                     |
-| discountCode      | String   | ❌       | Optional code                 |
-| taxes             | Number   | Auto     | 10% of totalPrice             |
-| insurance         | Object   | ❌       | Optional insurance info       |
-| bookingStatus     | String   | Auto     | Default: pending              |
-| paymentStatus     | String   | Auto     | Default: pending              |
-| paymentMethod     | String   | ❌       | credit_card, debit_card, etc. |
-| specialRequests   | String   | ❌       | Max 500 chars                 |
-| cancellationDate  | Date     | Auto     | Set on cancellation           |
-| refundAmount      | Number   | Auto     | Calculated on cancel          |
-=======
 | Field | Type | Required | Validation |
 |-------|------|----------|-----------|
 | bookingNumber | String | Auto | Unique, generated |
@@ -109,7 +64,6 @@ Complete booking management system for travel packages with:
 | specialRequests | String | ❌ | Max 500 chars |
 | cancellationDate | Date | Auto | Set on cancellation |
 | refundAmount | Number | Auto | Calculated on cancel |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
@@ -126,10 +80,6 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## 📚 API Endpoints
 
 ### 1. Create Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 POST /api/bookings
 Authorization: Bearer TOKEN
@@ -137,10 +87,6 @@ Content-Type: application/json
 ```
 
 **Request Body:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "packageId": "60d5ec49c1234567890abc",
@@ -176,10 +122,6 @@ Content-Type: application/json
 ```
 
 **Response (201):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -238,10 +180,6 @@ Content-Type: application/json
 **Error Responses:**
 
 400 - Validation Failed:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -250,10 +188,6 @@ Content-Type: application/json
 ```
 
 404 - Package Not Found:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -264,10 +198,6 @@ Content-Type: application/json
 ---
 
 ### 2. Get User's Bookings
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 GET /api/bookings?page=1&limit=10&status=pending&paymentStatus=pending&sort=-createdAt
 Authorization: Bearer TOKEN
@@ -283,10 +213,6 @@ Authorization: Bearer TOKEN
 | sort | string | Field names | -createdAt | `sort=-travelDate` |
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -315,20 +241,12 @@ Authorization: Bearer TOKEN
 ---
 
 ### 3. Get Single Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 GET /api/bookings/:id
 Authorization: Bearer TOKEN
 ```
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -363,10 +281,6 @@ Authorization: Bearer TOKEN
 **Error Responses:**
 
 403 - Not Authorized:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -375,10 +289,6 @@ Authorization: Bearer TOKEN
 ```
 
 404 - Not Found:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -389,10 +299,6 @@ Authorization: Bearer TOKEN
 ---
 
 ### 4. Update Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 PUT /api/bookings/:id
 Authorization: Bearer TOKEN
@@ -400,10 +306,6 @@ Content-Type: application/json
 ```
 
 **Request Body (All optional):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "travelers": [
@@ -422,10 +324,6 @@ Content-Type: application/json
 ```
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -442,10 +340,6 @@ Content-Type: application/json
 ```
 
 **Constraints:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Cannot update cancelled or completed bookings
 - Only booking creator or admin can update
 - Travelers array length must match numberOfTravelers
@@ -454,10 +348,6 @@ Content-Type: application/json
 ---
 
 ### 5. Cancel Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 PUT /api/bookings/:id/cancel
 Authorization: Bearer TOKEN
@@ -465,10 +355,6 @@ Content-Type: application/json
 ```
 
 **Request Body:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "cancellationReason": "Flight got cancelled"
@@ -476,10 +362,6 @@ Content-Type: application/json
 ```
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -497,10 +379,6 @@ Content-Type: application/json
 ```
 
 **Cancellation Policy:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Cannot cancel completed or already cancelled bookings
 - Minimum 14 days before travel date required
 - Refund calculation:
@@ -511,10 +389,6 @@ Content-Type: application/json
 **Error Response:**
 
 400 - Cancellation Not Allowed:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -525,10 +399,6 @@ Content-Type: application/json
 ---
 
 ### 6. Get All Bookings (Admin)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 GET /api/bookings/admin/all?page=1&limit=10&status=pending&paymentStatus=pending&userId=user_id&sort=-createdAt
 Authorization: Bearer ADMIN_TOKEN
@@ -545,10 +415,6 @@ Authorization: Bearer ADMIN_TOKEN
 | sort | string | Sort by field (e.g., -createdAt, travelDate) |
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -575,10 +441,6 @@ Authorization: Bearer ADMIN_TOKEN
 ---
 
 ### 7. Update Booking Status (Admin)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 PUT /api/bookings/:id/status
 Authorization: Bearer ADMIN_TOKEN
@@ -586,10 +448,6 @@ Content-Type: application/json
 ```
 
 **Request Body:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "bookingStatus": "confirmed",
@@ -599,10 +457,6 @@ Content-Type: application/json
 ```
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -620,10 +474,6 @@ Content-Type: application/json
 ---
 
 ### 8. Get Booking History & Analytics (Admin)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 GET /api/bookings/history/analytics?startDate=2026-01-01&endDate=2026-12-31&userId=user_id
 Authorization: Bearer ADMIN_TOKEN
@@ -637,10 +487,6 @@ Authorization: Bearer ADMIN_TOKEN
 | userId | string | Filter by specific user |
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -670,20 +516,12 @@ Authorization: Bearer ADMIN_TOKEN
 ---
 
 ### 9. Get Booking Statistics (Admin)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```http
 GET /api/bookings/stats/overview
 Authorization: Bearer ADMIN_TOKEN
 ```
 
 **Response (200):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -731,31 +569,6 @@ Authorization: Bearer ADMIN_TOKEN
 ## 🧪 Testing Examples
 
 ### JavaScript (Axios)
-<<<<<<< HEAD
-
-```javascript
-// Create booking
-const bookingData = {
-  packageId: "60d5ec49c1234567890abc",
-  travelDate: "2026-07-15",
-  endDate: "2026-07-20",
-  numberOfTravelers: 3,
-  travelers: [
-    {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
-      phone: "+977981234567",
-    },
-  ],
-  paymentMethod: "credit_card",
-};
-
-const res = await axios.post("/api/bookings", bookingData, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-=======
 ```javascript
 // Create booking
 const bookingData = {
@@ -778,15 +591,10 @@ const res = await axios.post('/api/bookings', bookingData, {
   headers: {
     Authorization: `Bearer ${token}`
   }
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 });
 ```
 
 ### cURL
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # Create booking
 curl -X POST http://localhost:5000/api/bookings \
@@ -821,10 +629,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ## ⚠️ Error Responses
 
 ### 400 - Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -833,10 +637,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ```
 
 ### 401 - Unauthorized
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -845,10 +645,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ```
 
 ### 403 - Forbidden
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -857,10 +653,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ```
 
 ### 404 - Not Found
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -877,11 +669,7 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ✅ **Ownership Verification:** Users can only view/edit own bookings  
 ✅ **Input Validation:** Comprehensive validation with express-validator  
 ✅ **Rate Limiting:** Applied via parent middleware  
-<<<<<<< HEAD
-✅ **Logging:** All operations logged for audit trail
-=======
 ✅ **Logging:** All operations logged for audit trail  
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
@@ -901,10 +689,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ## 🎯 Common Workflows
 
 ### Complete Booking Flow
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 1. User creates booking (status: pending, paymentStatus: pending)
 2. User pays (admin updates paymentStatus: paid)
@@ -913,10 +697,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ```
 
 ### Cancellation Flow
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 1. User cancels booking within policy window
 2. cancellationDate set, refund calculated
@@ -939,10 +719,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 ## ✅ Validation Rules
 
 ### Traveler Information
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - ✅ First/Last name: 2-50 characters, required
 - ✅ Email: Valid format, optional
 - ✅ Phone: Valid format, optional
@@ -951,10 +727,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?status=confirmed" \
 - ✅ ID/Passport: Min 5 characters, optional
 
 ### Booking Details
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - ✅ Travel date: Future date required
 - ✅ End date: Must be after travel date
 - ✅ Travelers: Length must match numberOfTravelers

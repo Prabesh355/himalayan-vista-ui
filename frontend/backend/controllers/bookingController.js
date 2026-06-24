@@ -1,16 +1,8 @@
-<<<<<<< HEAD
-const Booking = require("../models/Booking");
-const Package = require("../models/Package");
-const User = require("../models/UserPg");
-const { AppError } = require("../utils/errorHandler");
-const logger = require("../utils/logger");
-=======
 const Booking = require('../models/Booking');
 const Package = require('../models/Package');
 const User = require('../models/UserPg');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 /**
  * @desc    Create a new booking
@@ -19,28 +11,12 @@ const logger = require('../utils/logger');
  */
 exports.createBooking = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const {
-      packageId,
-      travelDate,
-      endDate,
-      numberOfTravelers,
-      travelers,
-      paymentMethod,
-      specialRequests,
-    } = req.body;
-=======
     const { packageId, travelDate, endDate, numberOfTravelers, travelers, paymentMethod, specialRequests } = req.body;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     // Validate package exists
     const pkg = await Package.findById(packageId);
     if (!pkg) {
-<<<<<<< HEAD
-      return next(new AppError("Package not found", 404));
-=======
       return next(new AppError('Package not found', 404));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Validate group size
@@ -48,13 +24,8 @@ exports.createBooking = async (req, res, next) => {
       return next(
         new AppError(
           `Group size must be between ${pkg.groupSize.min} and ${pkg.groupSize.max} travelers`,
-<<<<<<< HEAD
-          400,
-        ),
-=======
           400
         )
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       );
     }
 
@@ -63,13 +34,8 @@ exports.createBooking = async (req, res, next) => {
       return next(
         new AppError(
           `Number of travelers (${numberOfTravelers}) must match travelers array length (${travelers.length})`,
-<<<<<<< HEAD
-          400,
-        ),
-=======
           400
         )
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       );
     }
 
@@ -91,33 +57,19 @@ exports.createBooking = async (req, res, next) => {
       taxes,
       paymentMethod,
       specialRequests,
-<<<<<<< HEAD
-      bookingStatus: "pending",
-      paymentStatus: "pending",
-=======
       bookingStatus: 'pending',
       paymentStatus: 'pending',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     });
 
     // Populate references
     await booking.populate([
       {
-<<<<<<< HEAD
-        path: "user",
-        select: "firstName lastName email phone",
-      },
-      {
-        path: "package",
-        select: "title destination price duration difficulty",
-=======
         path: 'user',
         select: 'firstName lastName email phone',
       },
       {
         path: 'package',
         select: 'title destination price duration difficulty',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       },
     ]);
 
@@ -125,11 +77,7 @@ exports.createBooking = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-<<<<<<< HEAD
-      message: "Booking created successfully",
-=======
       message: 'Booking created successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: booking,
     });
   } catch (error) {
@@ -148,21 +96,12 @@ exports.getBooking = async (req, res, next) => {
     const booking = await Booking.findById(req.params.id);
 
     if (!booking) {
-<<<<<<< HEAD
-      return next(new AppError("Booking not found", 404));
-    }
-
-    // Check ownership (user can see own booking, admin can see all)
-    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return next(new AppError("Not authorized to view this booking", 403));
-=======
       return next(new AppError('Booking not found', 404));
     }
 
     // Check ownership (user can see own booking, admin can see all)
     if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return next(new AppError('Not authorized to view this booking', 403));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     res.status(200).json({
@@ -182,11 +121,7 @@ exports.getBooking = async (req, res, next) => {
  */
 exports.getUserBookings = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const { status, paymentStatus, page = 1, limit = 10, sort = "-createdAt" } = req.query;
-=======
     const { status, paymentStatus, page = 1, limit = 10, sort = '-createdAt' } = req.query;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     // Build filter
     const filter = { user: req.user.id };
@@ -205,21 +140,12 @@ exports.getUserBookings = async (req, res, next) => {
       .limit(limitNum)
       .populate([
         {
-<<<<<<< HEAD
-          path: "user",
-          select: "firstName lastName email",
-        },
-        {
-          path: "package",
-          select: "title destination price duration",
-=======
           path: 'user',
           select: 'firstName lastName email',
         },
         {
           path: 'package',
           select: 'title destination price duration',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
         },
       ]);
 
@@ -248,11 +174,7 @@ exports.getUserBookings = async (req, res, next) => {
  */
 exports.getAllBookings = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const { status, paymentStatus, userId, page = 1, limit = 10, sort = "-createdAt" } = req.query;
-=======
     const { status, paymentStatus, userId, page = 1, limit = 10, sort = '-createdAt' } = req.query;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     // Build filter
     const filter = {};
@@ -272,21 +194,12 @@ exports.getAllBookings = async (req, res, next) => {
       .limit(limitNum)
       .populate([
         {
-<<<<<<< HEAD
-          path: "user",
-          select: "firstName lastName email phone",
-        },
-        {
-          path: "package",
-          select: "title destination price duration",
-=======
           path: 'user',
           select: 'firstName lastName email phone',
         },
         {
           path: 'package',
           select: 'title destination price duration',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
         },
       ]);
 
@@ -320,18 +233,6 @@ exports.updateBooking = async (req, res, next) => {
     let booking = await Booking.findById(req.params.id);
 
     if (!booking) {
-<<<<<<< HEAD
-      return next(new AppError("Booking not found", 404));
-    }
-
-    // Check ownership
-    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return next(new AppError("Not authorized to update this booking", 403));
-    }
-
-    // Cannot update if confirmed or completed
-    if (booking.bookingStatus === "completed" || booking.bookingStatus === "cancelled") {
-=======
       return next(new AppError('Booking not found', 404));
     }
 
@@ -342,7 +243,6 @@ exports.updateBooking = async (req, res, next) => {
 
     // Cannot update if confirmed or completed
     if (booking.bookingStatus === 'completed' || booking.bookingStatus === 'cancelled') {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       return next(new AppError(`Cannot update a ${booking.bookingStatus} booking`, 400));
     }
 
@@ -354,13 +254,8 @@ exports.updateBooking = async (req, res, next) => {
         return next(
           new AppError(
             `Group size must be between ${pkg.groupSize.min} and ${pkg.groupSize.max}`,
-<<<<<<< HEAD
-            400,
-          ),
-=======
             400
           )
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
         );
       }
       booking.numberOfTravelers = numberOfTravelers;
@@ -373,21 +268,12 @@ exports.updateBooking = async (req, res, next) => {
 
     await booking.populate([
       {
-<<<<<<< HEAD
-        path: "user",
-        select: "firstName lastName email",
-      },
-      {
-        path: "package",
-        select: "title destination price",
-=======
         path: 'user',
         select: 'firstName lastName email',
       },
       {
         path: 'package',
         select: 'title destination price',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       },
     ]);
 
@@ -395,11 +281,7 @@ exports.updateBooking = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Booking updated successfully",
-=======
       message: 'Booking updated successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: booking,
     });
   } catch (error) {
@@ -420,21 +302,12 @@ exports.cancelBooking = async (req, res, next) => {
     let booking = await Booking.findById(req.params.id);
 
     if (!booking) {
-<<<<<<< HEAD
-      return next(new AppError("Booking not found", 404));
-    }
-
-    // Check ownership
-    if (booking.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return next(new AppError("Not authorized to cancel this booking", 403));
-=======
       return next(new AppError('Booking not found', 404));
     }
 
     // Check ownership
     if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return next(new AppError('Not authorized to cancel this booking', 403));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Cannot cancel completed or already cancelled bookings
@@ -451,13 +324,8 @@ exports.cancelBooking = async (req, res, next) => {
       return next(
         new AppError(
           `Cancellation must be done at least 14 days before travel. You have ${daysUntilTravel} days.`,
-<<<<<<< HEAD
-          400,
-        ),
-=======
           400
         )
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       );
     }
 
@@ -467,40 +335,16 @@ exports.cancelBooking = async (req, res, next) => {
       refundAmount = booking.totalPrice * 0.5;
     }
 
-<<<<<<< HEAD
-    booking.bookingStatus = "cancelled";
-    booking.cancellationDate = new Date();
-    booking.cancellationReason = cancellationReason || "User requested";
-    booking.refundAmount = refundAmount;
-    booking.refundStatus = "pending";
-=======
     booking.bookingStatus = 'cancelled';
     booking.cancellationDate = new Date();
     booking.cancellationReason = cancellationReason || 'User requested';
     booking.refundAmount = refundAmount;
     booking.refundStatus = 'pending';
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     booking = await booking.save();
 
     await booking.populate([
       {
-<<<<<<< HEAD
-        path: "user",
-        select: "firstName lastName email",
-      },
-      {
-        path: "package",
-        select: "title destination",
-      },
-    ]);
-
-    logger.info(`Booking cancelled: ${booking.bookingNumber}, Refund amount: ${refundAmount}`);
-
-    res.status(200).json({
-      success: true,
-      message: "Booking cancelled successfully",
-=======
         path: 'user',
         select: 'firstName lastName email',
       },
@@ -517,7 +361,6 @@ exports.cancelBooking = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Booking cancelled successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: booking,
     });
   } catch (error) {
@@ -538,20 +381,12 @@ exports.updateBookingStatus = async (req, res, next) => {
     let booking = await Booking.findById(req.params.id);
 
     if (!booking) {
-<<<<<<< HEAD
-      return next(new AppError("Booking not found", 404));
-=======
       return next(new AppError('Booking not found', 404));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Update statuses
     if (bookingStatus) {
-<<<<<<< HEAD
-      const validStatuses = ["pending", "confirmed", "cancelled", "completed"];
-=======
       const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       if (!validStatuses.includes(bookingStatus)) {
         return next(new AppError(`Invalid booking status: ${bookingStatus}`, 400));
       }
@@ -559,11 +394,7 @@ exports.updateBookingStatus = async (req, res, next) => {
     }
 
     if (paymentStatus) {
-<<<<<<< HEAD
-      const validStatuses = ["pending", "partial", "paid", "refunded"];
-=======
       const validStatuses = ['pending', 'partial', 'paid', 'refunded'];
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       if (!validStatuses.includes(paymentStatus)) {
         return next(new AppError(`Invalid payment status: ${paymentStatus}`, 400));
       }
@@ -576,21 +407,12 @@ exports.updateBookingStatus = async (req, res, next) => {
 
     await booking.populate([
       {
-<<<<<<< HEAD
-        path: "user",
-        select: "firstName lastName email",
-      },
-      {
-        path: "package",
-        select: "title destination",
-=======
         path: 'user',
         select: 'firstName lastName email',
       },
       {
         path: 'package',
         select: 'title destination',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       },
     ]);
 
@@ -598,11 +420,7 @@ exports.updateBookingStatus = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Booking status updated successfully",
-=======
       message: 'Booking status updated successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: booking,
     });
   } catch (error) {
@@ -632,17 +450,6 @@ exports.getBookingHistory = async (req, res, next) => {
 
     // Get bookings
     const bookings = await Booking.find(filter)
-<<<<<<< HEAD
-      .sort("-travelDate")
-      .populate([
-        {
-          path: "user",
-          select: "firstName lastName email",
-        },
-        {
-          path: "package",
-          select: "title destination",
-=======
       .sort('-travelDate')
       .populate([
         {
@@ -652,7 +459,6 @@ exports.getBookingHistory = async (req, res, next) => {
         {
           path: 'package',
           select: 'title destination',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
         },
       ]);
 
@@ -660,17 +466,6 @@ exports.getBookingHistory = async (req, res, next) => {
     const analytics = {
       totalBookings: bookings.length,
       totalRevenue: bookings.reduce((sum, b) => sum + b.totalPrice, 0),
-<<<<<<< HEAD
-      completedBookings: bookings.filter((b) => b.bookingStatus === "completed").length,
-      cancelledBookings: bookings.filter((b) => b.bookingStatus === "cancelled").length,
-      confirmedBookings: bookings.filter((b) => b.bookingStatus === "confirmed").length,
-      pendingBookings: bookings.filter((b) => b.bookingStatus === "pending").length,
-      paidBookings: bookings.filter((b) => b.paymentStatus === "paid").length,
-      averageBookingValue:
-        bookings.length > 0
-          ? bookings.reduce((sum, b) => sum + b.totalPrice, 0) / bookings.length
-          : 0,
-=======
       completedBookings: bookings.filter((b) => b.bookingStatus === 'completed').length,
       cancelledBookings: bookings.filter((b) => b.bookingStatus === 'cancelled').length,
       confirmedBookings: bookings.filter((b) => b.bookingStatus === 'confirmed').length,
@@ -678,7 +473,6 @@ exports.getBookingHistory = async (req, res, next) => {
       paidBookings: bookings.filter((b) => b.paymentStatus === 'paid').length,
       averageBookingValue:
         bookings.length > 0 ? bookings.reduce((sum, b) => sum + b.totalPrice, 0) / bookings.length : 0,
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     };
 
     res.status(200).json({
@@ -702,15 +496,9 @@ exports.getBookingStats = async (req, res, next) => {
     const stats = await Booking.aggregate([
       {
         $group: {
-<<<<<<< HEAD
-          _id: "$bookingStatus",
-          count: { $sum: 1 },
-          totalRevenue: { $sum: "$totalPrice" },
-=======
           _id: '$bookingStatus',
           count: { $sum: 1 },
           totalRevenue: { $sum: '$totalPrice' },
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
         },
       },
       {
@@ -721,11 +509,7 @@ exports.getBookingStats = async (req, res, next) => {
     const paymentStats = await Booking.aggregate([
       {
         $group: {
-<<<<<<< HEAD
-          _id: "$paymentStatus",
-=======
           _id: '$paymentStatus',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
           count: { $sum: 1 },
         },
       },
@@ -741,7 +525,4 @@ exports.getBookingStats = async (req, res, next) => {
     next(error);
   }
 };
-<<<<<<< HEAD
-=======
 
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763

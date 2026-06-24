@@ -38,10 +38,6 @@ Copy the following key/value pairs into your Render Web Service (Dashboard) unde
   - Value: 5000 (Render will assign a port automatically if omitted)
 
 Notes & steps
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 1. In Render: New -> Web Service -> Connect your GitHub repo -> select branch.
    - Root Directory: backend
    - Environment: Node

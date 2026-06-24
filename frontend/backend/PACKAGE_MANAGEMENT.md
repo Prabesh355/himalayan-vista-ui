@@ -9,10 +9,6 @@ Complete travel package management module with advanced search, filtering, pagin
 ## Features Implemented
 
 ### ✅ Core Operations
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - **Add Package** (Admin/Vendor only)
 - **Edit Package** (Owner/Admin only)
 - **Delete Package** (Owner/Admin only)
@@ -23,10 +19,6 @@ Complete travel package management module with advanced search, filtering, pagin
 - **Get Packages by Destination** (Filtered list)
 
 ### ✅ Advanced Filtering
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - **Filter by Destination** (Case-insensitive regex)
 - **Filter by Price** (Min/Max range)
 - **Filter by Duration** (Days/Nights)
@@ -36,10 +28,6 @@ Complete travel package management module with advanced search, filtering, pagin
 - **Sort By** (Multiple field sorting)
 
 ### ✅ Features
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - **Full-Text Search** (Title, description, destination)
 - **Pagination** (Default 10 per page, max 100)
 - **Auto-Slug Generation** (From title)
@@ -54,35 +42,6 @@ Complete travel package management module with advanced search, filtering, pagin
 
 ## Package Fields
 
-<<<<<<< HEAD
-| Field           | Type     | Required | Description                                   |
-| --------------- | -------- | -------- | --------------------------------------------- |
-| `title`         | String   | Yes      | Unique package name (5-100 chars)             |
-| `slug`          | String   | Auto     | URL-friendly name (auto-generated from title) |
-| `description`   | String   | Yes      | Detailed description (min 20 chars)           |
-| `destination`   | String   | Yes      | Travel destination                            |
-| `price`         | Number   | Yes      | Package price (> 0)                           |
-| `discountPrice` | Number   | No       | Discounted price (< price)                    |
-| `duration`      | Object   | Yes      | {days, nights}                                |
-| `images`        | Array    | Yes      | At least 1 image URL                          |
-| `highlights`    | Array    | No       | Key highlights of package                     |
-| `itinerary`     | Array    | No       | Day-by-day itinerary                          |
-| `inclusions`    | Array    | No       | What's included                               |
-| `exclusions`    | Array    | No       | What's not included                           |
-| `groupSize`     | Object   | Yes      | {min, max} group sizes                        |
-| `difficulty`    | String   | No       | easy/moderate/difficult/expert                |
-| `category`      | String   | No       | trekking/cultural/adventure/luxury/wildlife   |
-| `bestSeason`    | Array    | No       | Best months to visit                          |
-| `location`      | GeoJSON  | No       | Geographic coordinates                        |
-| `rating`        | Number   | Auto     | Average rating (0-5)                          |
-| `reviewCount`   | Number   | Auto     | Total number of reviews                       |
-| `availability`  | Object   | No       | {startDate, endDate, slots, bookedSlots}      |
-| `featured`      | Boolean  | No       | Is this a featured package                    |
-| `isActive`      | Boolean  | No       | Package visibility (default: true)            |
-| `createdBy`     | ObjectId | Auto     | Package creator (User ref)                    |
-| `createdAt`     | Date     | Auto     | Creation timestamp                            |
-| `updatedAt`     | Date     | Auto     | Last update timestamp                         |
-=======
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `title` | String | Yes | Unique package name (5-100 chars) |
@@ -110,26 +69,17 @@ Complete travel package management module with advanced search, filtering, pagin
 | `createdBy` | ObjectId | Auto | Package creator (User ref) |
 | `createdAt` | Date | Auto | Creation timestamp |
 | `updatedAt` | Date | Auto | Last update timestamp |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
 ## API Endpoints
 
 ### 1. Get All Packages (with Search & Filtering)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages
 ```
 
 **Query Parameters:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - `page` - Page number (default: 1)
 - `limit` - Items per page (default: 10, max: 100)
 - `search` - Search query (title, description, destination)
@@ -142,10 +92,6 @@ GET /api/packages
 - `sort` - Sort by fields (e.g., "price,-rating")
 
 **Examples:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # Get first 10 packages
 GET /api/packages
@@ -170,10 +116,6 @@ GET /api/packages?sort=-price,-rating
 ```
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -201,37 +143,21 @@ GET /api/packages?sort=-price,-rating
 ---
 
 ### 2. Search Packages
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages/search?q=Nepal&page=1&limit=10
 ```
 
 **Features:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Full-text search across title, description, destination
 - Sorted by relevance score
 - Paginated results
 
 **Query Parameters:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - `q` - Search query (required)
 - `page` - Page number (default: 1)
 - `limit` - Items per page (default: 10, max: 100)
 
 **Example:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages/search?q=mountain%20trek&limit=5
 ```
@@ -239,28 +165,16 @@ GET /api/packages/search?q=mountain%20trek&limit=5
 ---
 
 ### 3. Get Featured Packages
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages/featured?limit=6
 ```
 
 **Features:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Only returns active packages with rating >= 4
 - Sorted by rating (highest first)
 - Perfect for homepage display
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -272,19 +186,11 @@ GET /api/packages/featured?limit=6
 ---
 
 ### 4. Get Packages by Destination
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages/destination/Everest?page=1&limit=10
 ```
 
 **Features:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Case-insensitive destination search
 - Paginated results
 - Sorted by creation date (newest first)
@@ -292,28 +198,16 @@ GET /api/packages/destination/Everest?page=1&limit=10
 ---
 
 ### 5. Get Single Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages/:id
 ```
 
 **Example:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 GET /api/packages/60d5ec49c1234567890abc
 ```
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -344,10 +238,6 @@ GET /api/packages/60d5ec49c1234567890abc
 ---
 
 ### 6. Create Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 POST /api/packages
 Authorization: Bearer <token>
@@ -357,10 +247,6 @@ Content-Type: application/json
 **Access:** Admin/Vendor only
 
 **Request Body:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "title": "Everest Base Camp Trek",
@@ -396,31 +282,17 @@ Content-Type: application/json
 ```
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
   "message": "Package created successfully",
-<<<<<<< HEAD
-  "data": {
-    /* created package object */
-  }
-=======
   "data": { /* created package object */ }
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 }
 ```
 
 ---
 
 ### 7. Update Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 PUT /api/packages/:id
 Authorization: Bearer <token>
@@ -430,20 +302,12 @@ Content-Type: application/json
 **Access:** Creator/Admin only
 
 **Features:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Ownership verification
 - Optional fields (all fields are optional)
 - Slug auto-regenerated if title changes
 - CreatedBy cannot be changed
 
 **Request Body:** (Any combination of package fields)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "price": 1600,
@@ -454,10 +318,6 @@ Content-Type: application/json
 ---
 
 ### 8. Delete Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 DELETE /api/packages/:id
 Authorization: Bearer <token>
@@ -466,10 +326,6 @@ Authorization: Bearer <token>
 **Access:** Creator/Admin only
 
 **Response:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -484,23 +340,6 @@ Authorization: Bearer <token>
 
 ### Create Package Validation
 
-<<<<<<< HEAD
-| Field           | Rules                                                         |
-| --------------- | ------------------------------------------------------------- |
-| title           | Required, 5-100 chars, unique                                 |
-| description     | Required, min 20 chars                                        |
-| destination     | Required, min 2 chars                                         |
-| price           | Required, number, > 0                                         |
-| discountPrice   | Optional, number, < price                                     |
-| duration.days   | Required, integer >= 1                                        |
-| duration.nights | Required, integer >= 0                                        |
-| images          | Required, array, min 1 item                                   |
-| groupSize.min   | Required, integer >= 1                                        |
-| groupSize.max   | Required, integer >= 1, >= min                                |
-| difficulty      | Optional, one of: easy/moderate/difficult/expert              |
-| category        | Optional, one of: trekking/cultural/adventure/luxury/wildlife |
-| featured        | Optional, boolean                                             |
-=======
 | Field | Rules |
 |-------|-------|
 | title | Required, 5-100 chars, unique |
@@ -516,7 +355,6 @@ Authorization: Bearer <token>
 | difficulty | Optional, one of: easy/moderate/difficult/expert |
 | category | Optional, one of: trekking/cultural/adventure/luxury/wildlife |
 | featured | Optional, boolean |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
@@ -524,17 +362,6 @@ Authorization: Bearer <token>
 
 ### Common Errors
 
-<<<<<<< HEAD
-| Status | Error                                             | Cause                 |
-| ------ | ------------------------------------------------- | --------------------- |
-| 400    | Validation failed                                 | Invalid input data    |
-| 400    | Minimum group size cannot be greater than maximum | Invalid group size    |
-| 401    | Not authorized to access this route               | Missing/invalid token |
-| 403    | Not authorized to update/delete this package      | Not owner/admin       |
-| 404    | Package not found                                 | ID doesn't exist      |
-| 409    | Duplicate entry                                   | Title already exists  |
-| 500    | Internal Server Error                             | Server error          |
-=======
 | Status | Error | Cause |
 |--------|-------|-------|
 | 400 | Validation failed | Invalid input data |
@@ -544,7 +371,6 @@ Authorization: Bearer <token>
 | 404 | Package not found | ID doesn't exist |
 | 409 | Duplicate entry | Title already exists |
 | 500 | Internal Server Error | Server error |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
@@ -556,17 +382,6 @@ Authorization: Bearer <token>
 // Get all packages with filters
 async function getPackages() {
   try {
-<<<<<<< HEAD
-    const res = await axios.get("/api/packages", {
-      params: {
-        destination: "Everest",
-        minPrice: 500,
-        maxPrice: 2000,
-        category: "trekking",
-        page: 1,
-        limit: 10,
-      },
-=======
     const res = await axios.get('/api/packages', {
       params: {
         destination: 'Everest',
@@ -576,7 +391,6 @@ async function getPackages() {
         page: 1,
         limit: 10
       }
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     });
     console.log(res.data.data);
   } catch (error) {
@@ -587,26 +401,6 @@ async function getPackages() {
 // Create a package
 async function createPackage() {
   try {
-<<<<<<< HEAD
-    const token = localStorage.getItem("token");
-    const res = await axios.post(
-      "/api/packages",
-      {
-        title: "Everest Base Camp Trek",
-        description: "5-day trek to EBC...",
-        destination: "Mount Everest",
-        price: 1500,
-        duration: { days: 5, nights: 4 },
-        images: ["url1"],
-        groupSize: { min: 2, max: 12 },
-        category: "trekking",
-        difficulty: "difficult",
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-=======
     const token = localStorage.getItem('token');
     const res = await axios.post('/api/packages', {
       title: "Everest Base Camp Trek",
@@ -621,7 +415,6 @@ async function createPackage() {
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     console.log(res.data.data);
   } catch (error) {
     console.error(error.response.data.message);
@@ -631,19 +424,6 @@ async function createPackage() {
 // Update package
 async function updatePackage(id) {
   try {
-<<<<<<< HEAD
-    const token = localStorage.getItem("token");
-    const res = await axios.put(
-      `/api/packages/${id}`,
-      {
-        price: 1600,
-        featured: true,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-=======
     const token = localStorage.getItem('token');
     const res = await axios.put(`/api/packages/${id}`, {
       price: 1600,
@@ -651,7 +431,6 @@ async function updatePackage(id) {
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     console.log(res.data.data);
   } catch (error) {
     console.error(error.response.data.message);
@@ -661,15 +440,9 @@ async function updatePackage(id) {
 // Delete package
 async function deletePackage(id) {
   try {
-<<<<<<< HEAD
-    const token = localStorage.getItem("token");
-    const res = await axios.delete(`/api/packages/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-=======
     const token = localStorage.getItem('token');
     const res = await axios.delete(`/api/packages/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     });
     console.log(res.data.message);
   } catch (error) {
@@ -721,46 +494,26 @@ curl -X DELETE http://localhost:5000/api/packages/60d5ec49c1234567890abc \
 ## Security Features
 
 ✅ **Role-Based Access Control**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Admin/Vendor can create packages
 - Only creator/admin can edit/delete
 - Public can view all packages
 
 ✅ **Input Validation**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - All fields validated with express-validator
 - Type checking
 - Range validation
 - Unique constraints
 
 ✅ **Error Handling**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Centralized error handler
 - No sensitive info leaked
 - Proper HTTP status codes
 
 ✅ **Logging**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - All operations logged
 - Error logging with stack traces
 
 ✅ **Authentication**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - JWT token required for create/update/delete
 - Token verification middleware
 
@@ -769,10 +522,6 @@ curl -X DELETE http://localhost:5000/api/packages/60d5ec49c1234567890abc \
 ## Database Indexing
 
 Created indexes for:
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - `destination` - Fast filtering
 - `price` - Price range queries
 - `difficulty` - Category filtering
@@ -810,10 +559,6 @@ Created indexes for:
 ## Summary
 
 **Complete Package Management System with:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - ✅ 8 comprehensive endpoints
 - ✅ Advanced search & filtering
 - ✅ Pagination support

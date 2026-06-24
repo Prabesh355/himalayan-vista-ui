@@ -27,10 +27,6 @@
 ## 📋 Test Cases
 
 ### 1. Create Valid Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/bookings \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -66,10 +62,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ---
 
 ### 2. Get Single Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET http://localhost:5000/api/bookings/BOOKING_ID \
   -H "Authorization: Bearer USER_TOKEN"
@@ -80,10 +72,6 @@ curl -X GET http://localhost:5000/api/bookings/BOOKING_ID \
 ---
 
 ### 3. List User Bookings
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET "http://localhost:5000/api/bookings?page=1&limit=10&sort=-createdAt" \
   -H "Authorization: Bearer USER_TOKEN"
@@ -94,10 +82,6 @@ curl -X GET "http://localhost:5000/api/bookings?page=1&limit=10&sort=-createdAt"
 ---
 
 ### 4. Filter by Status
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET "http://localhost:5000/api/bookings?status=confirmed&paymentStatus=paid" \
   -H "Authorization: Bearer USER_TOKEN"
@@ -108,10 +92,6 @@ curl -X GET "http://localhost:5000/api/bookings?status=confirmed&paymentStatus=p
 ---
 
 ### 5. Update Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -141,19 +121,11 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID \
 
 **Expected:** 200 OK with updated booking
 
-<<<<<<< HEAD
-**Note:** Total price will be recalculated: 1500 \* 3 = 4500
-=======
 **Note:** Total price will be recalculated: 1500 * 3 = 4500
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
 ### 6. Cancel Booking (Valid)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -166,10 +138,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 **Expected:** 200 OK with refund information
 
 **Requirements for success:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - ✅ Travel date > 14 days away
 - ✅ Booking not already cancelled/completed
 - ✅ User is booking owner or admin
@@ -177,10 +145,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ---
 
 ### 7. Try Cancel Too Late (Should Fail)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # Create a booking with travel date 7 days away
 curl -X POST http://localhost:5000/api/bookings \
@@ -202,10 +166,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -216,10 +176,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ---
 
 ### 8. Unauthorized Access (Should Fail)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # User A creates booking
 # User B tries to access it
@@ -228,10 +184,6 @@ curl -X GET http://localhost:5000/api/bookings/OTHER_USER_BOOKING_ID \
 ```
 
 **Expected:** 403 Forbidden
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -242,10 +194,6 @@ curl -X GET http://localhost:5000/api/bookings/OTHER_USER_BOOKING_ID \
 ---
 
 ### 9. Admin: Get All Bookings
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET "http://localhost:5000/api/bookings/admin/all?page=1&limit=20" \
   -H "Authorization: Bearer ADMIN_TOKEN"
@@ -256,10 +204,6 @@ curl -X GET "http://localhost:5000/api/bookings/admin/all?page=1&limit=20" \
 ---
 
 ### 10. Admin: Update Booking Status
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
   -H "Authorization: Bearer ADMIN_TOKEN" \
@@ -276,10 +220,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
 ---
 
 ### 11. Admin: Get Booking History
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET "http://localhost:5000/api/bookings/history/analytics?startDate=2026-01-01&endDate=2026-12-31" \
   -H "Authorization: Bearer ADMIN_TOKEN"
@@ -290,10 +230,6 @@ curl -X GET "http://localhost:5000/api/bookings/history/analytics?startDate=2026
 ---
 
 ### 12. Admin: Get Statistics
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET http://localhost:5000/api/bookings/stats/overview \
   -H "Authorization: Bearer ADMIN_TOKEN"
@@ -306,10 +242,6 @@ curl -X GET http://localhost:5000/api/bookings/stats/overview \
 ## ⚠️ Error Scenarios
 
 ### Invalid Package
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/bookings \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -324,10 +256,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -338,10 +266,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ---
 
 ### Past Travel Date
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/bookings \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -356,10 +280,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -370,10 +290,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ---
 
 ### End Date Before Travel Date
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/bookings \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -388,10 +304,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -402,10 +314,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ---
 
 ### Mismatched Traveler Count
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/bookings \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -422,10 +330,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -436,10 +340,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ---
 
 ### Invalid Email
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X POST http://localhost:5000/api/bookings \
   -H "Authorization: Bearer USER_TOKEN" \
@@ -460,10 +360,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -474,10 +370,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ---
 
 ### Group Size Exceeded
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # Assuming package allows max 5 travelers
 curl -X POST http://localhost:5000/api/bookings \
@@ -504,10 +396,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 **Expected:** 400 Bad Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": false,
@@ -520,10 +408,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ## 🧬 Sample Test Data
 
 ### Complete Booking Request
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "packageId": "60d5ec49c1234567890abc",
@@ -566,10 +450,6 @@ curl -X POST http://localhost:5000/api/bookings \
 ```
 
 ### Expected Calculation
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 Price per person: $1500 (from package)
 Number of travelers: 3
@@ -583,10 +463,6 @@ Total: $4950
 ## 📊 Test Response Examples
 
 ### Successful Creation
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -606,10 +482,6 @@ Total: $4950
 ```
 
 ### Successful Cancellation
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```json
 {
   "success": true,
@@ -631,20 +503,12 @@ Total: $4950
 ## 🔄 Admin Workflow
 
 ### 1. View Pending Bookings
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X GET "http://localhost:5000/api/bookings/admin/all?status=pending&limit=20" \
   -H "Authorization: Bearer ADMIN_TOKEN"
 ```
 
 ### 2. Update Payment Status
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
   -H "Authorization: Bearer ADMIN_TOKEN" \
@@ -656,10 +520,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
 ```
 
 ### 3. Confirm Booking
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
   -H "Authorization: Bearer ADMIN_TOKEN" \
@@ -671,10 +531,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
 ```
 
 ### 4. Complete Booking (After Trip)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
   -H "Authorization: Bearer ADMIN_TOKEN" \
@@ -693,10 +549,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/status \
 
 1. **Create Collection:** "Booking System"
 2. **Environment Variables:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
    ```
    base_url: http://localhost:5000
    user_token: YOUR_USER_JWT_TOKEN

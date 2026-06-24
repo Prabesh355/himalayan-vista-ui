@@ -1,34 +1,21 @@
-<<<<<<< HEAD
-const Package = require("../models/Package");
-const { AppError } = require("../utils/errorHandler");
-const logger = require("../utils/logger");
-=======
 const Package = require('../models/Package');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
+const slugify = require('slugify');
+
+function isOwnedByUser(pkg, user) {
+  if (!pkg || !user) return false;
+  if (user.role === 'admin') return true;
+  if (!pkg.createdBy) return true;
+  return String(pkg.createdBy) === String(user.id);
+}
 
 // @desc Get all packages with search, filter and pagination
 // @route GET /api/packages
 // @access Public
 exports.getAllPackages = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const {
-      search,
-      destination,
-      minPrice,
-      maxPrice,
-      difficulty,
-      category,
-      featured,
-      sort,
-      page = 1,
-      limit = 10,
-    } = req.query;
-=======
     const { search, destination, minPrice, maxPrice, difficulty, category, featured, sort, page = 1, limit = 10 } = req.query;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     // Build filter query
     const filter = { isActive: true };
@@ -40,11 +27,7 @@ exports.getAllPackages = async (req, res, next) => {
 
     // Filter by destination
     if (destination) {
-<<<<<<< HEAD
-      filter.destination = { $regex: destination, $options: "i" };
-=======
       filter.destination = { $regex: destination, $options: 'i' };
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Filter by price range
@@ -65,11 +48,7 @@ exports.getAllPackages = async (req, res, next) => {
     }
 
     // Filter featured packages
-<<<<<<< HEAD
-    if (featured === "true") {
-=======
     if (featured === 'true') {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       filter.featured = true;
     }
 
@@ -83,17 +62,10 @@ exports.getAllPackages = async (req, res, next) => {
 
     // Sorting
     if (sort) {
-<<<<<<< HEAD
-      const sortBy = sort.split(",").join(" ");
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort("-createdAt");
-=======
       const sortBy = sort.split(',').join(' ');
       query = query.sort(sortBy);
     } else {
       query = query.sort('-createdAt');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     const packages = await query.exec();
@@ -120,22 +92,7 @@ exports.getAllPackages = async (req, res, next) => {
 // @access Private/Admin or Vendor
 exports.getAllPackagesAdmin = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const {
-      search,
-      destination,
-      minPrice,
-      maxPrice,
-      difficulty,
-      category,
-      featured,
-      sort,
-      page = 1,
-      limit = 100,
-    } = req.query;
-=======
     const { search, destination, minPrice, maxPrice, difficulty, category, featured, isActive, sort, page = 1, limit = 100 } = req.query;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     const filter = {};
 
@@ -144,11 +101,7 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
     }
 
     if (destination) {
-<<<<<<< HEAD
-      filter.destination = { $regex: destination, $options: "i" };
-=======
       filter.destination = { $regex: destination, $options: 'i' };
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     if (minPrice || maxPrice) {
@@ -165,12 +118,6 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
       filter.category = category;
     }
 
-<<<<<<< HEAD
-    if (featured === "true") {
-      filter.featured = true;
-    }
-
-=======
     if (featured === 'true') {
       filter.featured = true;
     }
@@ -181,7 +128,6 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
       filter.isActive = false;
     }
 
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     const pageNum = Math.max(1, Number(page));
     const limitNum = Math.min(100, Math.max(1, Number(limit)));
     const skip = (pageNum - 1) * limitNum;
@@ -189,15 +135,9 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
     let query = Package.find(filter).skip(skip).limit(limitNum);
 
     if (sort) {
-<<<<<<< HEAD
-      query = query.sort(sort.split(",").join(" "));
-    } else {
-      query = query.sort("-createdAt");
-=======
       query = query.sort(sort.split(',').join(' '));
     } else {
       query = query.sort('-createdAt');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     const packages = await query.exec();
@@ -222,20 +162,10 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
 // @access Public
 exports.getPackage = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const pkg = await Package.findById(req.params.id).populate(
-      "createdBy",
-      "firstName lastName email",
-    );
-
-    if (!pkg) {
-      return next(new AppError("Package not found", 404));
-=======
     const pkg = await Package.findById(req.params.id).populate('createdBy', 'firstName lastName email');
 
     if (!pkg) {
       return next(new AppError('Package not found', 404));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     res.status(200).json({
@@ -248,8 +178,6 @@ exports.getPackage = async (req, res, next) => {
   }
 };
 
-<<<<<<< HEAD
-=======
 // @desc Get single package by slug
 // @route GET /api/packages/slug/:slug
 // @access Public
@@ -271,21 +199,20 @@ exports.getPackageBySlug = async (req, res, next) => {
   }
 };
 
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 // @desc Get featured packages
 // @route GET /api/packages/featured
 // @access Public
 exports.getFeaturedPackages = async (req, res, next) => {
   try {
-    const limit = Number(req.query.limit) || 6;
+    const limit = Number(req.query.limit) || 10;
 
-    const packages = await Package.find({ isActive: true, featured: true, rating: { $gte: 4 } })
+    let packages = await Package.find({ isActive: true, featured: true })
       .limit(limit)
-<<<<<<< HEAD
-      .sort("-rating");
-=======
-      .sort('-rating');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
+      .sort('-createdAt');
+
+    if (!packages.length) {
+      packages = await Package.find({ isActive: true }).limit(limit).sort('-createdAt');
+    }
 
     res.status(200).json({
       success: true,
@@ -314,12 +241,6 @@ exports.getPackagesByDestination = async (req, res, next) => {
 
     const filter = {
       isActive: true,
-<<<<<<< HEAD
-      destination: { $regex: destination, $options: "i" },
-    };
-
-    const packages = await Package.find(filter).skip(skip).limit(limitNum).sort("-createdAt");
-=======
       destination: { $regex: destination, $options: 'i' },
     };
 
@@ -327,7 +248,6 @@ exports.getPackagesByDestination = async (req, res, next) => {
       .skip(skip)
       .limit(limitNum)
       .sort('-createdAt');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     const total = await Package.countDocuments(filter);
 
@@ -353,24 +273,24 @@ exports.createPackage = async (req, res, next) => {
     // Attach user ID
     req.body.createdBy = req.user.id;
 
+    const slug = slugify(String(req.body.title || ''), { lower: true, strict: true });
+    if (slug) {
+      const existing = await Package.findOne({ slug });
+      if (existing) {
+        return next(new AppError('A package with this title already exists. Edit the existing package instead of creating a duplicate.', 409));
+      }
+    }
+
     // Validate that group size is valid
     if (req.body.groupSize.min > req.body.groupSize.max) {
-<<<<<<< HEAD
-      return next(new AppError("Minimum group size cannot be greater than maximum", 400));
-=======
       return next(new AppError('Minimum group size cannot be greater than maximum', 400));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     const pkg = await Package.create(req.body);
 
     res.status(201).json({
       success: true,
-<<<<<<< HEAD
-      message: "Package created successfully",
-=======
       message: 'Package created successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: pkg,
     });
 
@@ -389,30 +309,29 @@ exports.updatePackage = async (req, res, next) => {
     let pkg = await Package.findById(req.params.id);
 
     if (!pkg) {
-<<<<<<< HEAD
-      return next(new AppError("Package not found", 404));
-    }
-
-    // Check ownership (creator or admin)
-    if (pkg.createdBy.toString() !== req.user.id && req.user.role !== "admin") {
-      return next(new AppError("Not authorized to update this package", 403));
-=======
       return next(new AppError('Package not found', 404));
     }
 
-    // Check ownership (creator or admin)
-    if (pkg.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check ownership (creator or admin). Legacy packages without createdBy can be adopted on edit.
+    if (!isOwnedByUser(pkg, req.user)) {
       return next(new AppError('Not authorized to update this package', 403));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
+    }
+
+    if (!pkg.createdBy) {
+      req.body.createdBy = req.user.id;
+    }
+
+    const nextSlug = req.body.title ? slugify(String(req.body.title), { lower: true, strict: true }) : null;
+    if (nextSlug) {
+      const duplicate = await Package.findOne({ slug: nextSlug });
+      if (duplicate && String(duplicate.id || duplicate._id) !== String(pkg.id || pkg._id)) {
+        return next(new AppError('A package with this title already exists. Please edit the existing package instead of creating a duplicate.', 409));
+      }
     }
 
     // Validate group size if provided
     if (req.body.groupSize && req.body.groupSize.min > req.body.groupSize.max) {
-<<<<<<< HEAD
-      return next(new AppError("Minimum group size cannot be greater than maximum", 400));
-=======
       return next(new AppError('Minimum group size cannot be greater than maximum', 400));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Don't allow changing createdBy
@@ -425,11 +344,7 @@ exports.updatePackage = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Package updated successfully",
-=======
       message: 'Package updated successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: pkg,
     });
 
@@ -448,32 +363,19 @@ exports.deletePackage = async (req, res, next) => {
     const pkg = await Package.findById(req.params.id);
 
     if (!pkg) {
-<<<<<<< HEAD
-      return next(new AppError("Package not found", 404));
-    }
-
-    // Check ownership (creator or admin)
-    if (pkg.createdBy.toString() !== req.user.id && req.user.role !== "admin") {
-      return next(new AppError("Not authorized to delete this package", 403));
-=======
       return next(new AppError('Package not found', 404));
     }
 
-    // Check ownership (creator or admin)
-    if (pkg.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check ownership (creator or admin). Legacy packages without createdBy can be deleted by any authorized package editor.
+    if (!isOwnedByUser(pkg, req.user)) {
       return next(new AppError('Not authorized to delete this package', 403));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     await Package.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Package deleted successfully",
-=======
       message: 'Package deleted successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       data: {},
     });
 
@@ -492,11 +394,7 @@ exports.searchPackages = async (req, res, next) => {
     const { q, page = 1, limit = 10 } = req.query;
 
     if (!q) {
-<<<<<<< HEAD
-      return next(new AppError("Please provide a search query", 400));
-=======
       return next(new AppError('Please provide a search query', 400));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     const pageNum = Math.max(1, Number(page));
@@ -505,15 +403,9 @@ exports.searchPackages = async (req, res, next) => {
 
     const packages = await Package.find(
       { $text: { $search: q }, isActive: true },
-<<<<<<< HEAD
-      { score: { $meta: "textScore" } },
-    )
-      .sort({ score: { $meta: "textScore" } })
-=======
       { score: { $meta: 'textScore' } }
     )
       .sort({ score: { $meta: 'textScore' } })
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       .skip(skip)
       .limit(limitNum);
 

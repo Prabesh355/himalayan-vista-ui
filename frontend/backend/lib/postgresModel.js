@@ -1,47 +1,27 @@
-<<<<<<< HEAD
-const crypto = require("crypto");
-const { getPool, query } = require("../config/db");
-const { registerModel, getModel } = require("./modelRegistry");
-=======
 const crypto = require('crypto');
 const { getPool, query } = require('../config/db');
 const { registerModel, getModel } = require('./modelRegistry');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 function deepClone(value) {
   return value === undefined ? value : JSON.parse(JSON.stringify(value));
 }
 
 function isObject(value) {
-<<<<<<< HEAD
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-=======
   return value !== null && typeof value === 'object' && !Array.isArray(value);
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 }
 
 function getValue(obj, path) {
   if (!path) return obj;
-<<<<<<< HEAD
-  const normalized = path === "_id" ? "id" : path;
-  return normalized.split(".").reduce((acc, key) => {
-=======
   const normalized = path === '_id' ? 'id' : path;
   return normalized.split('.').reduce((acc, key) => {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     if (acc == null) return undefined;
     return acc[key];
   }, obj);
 }
 
 function setValue(obj, path, value) {
-<<<<<<< HEAD
-  const normalized = path === "_id" ? "id" : path;
-  const parts = normalized.split(".");
-=======
   const normalized = path === '_id' ? 'id' : path;
   const parts = normalized.split('.');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   let current = obj;
   for (let i = 0; i < parts.length - 1; i += 1) {
     const part = parts[i];
@@ -59,19 +39,11 @@ function matchesText(doc, search) {
   while (stack.length) {
     const value = stack.pop();
     if (value == null) continue;
-<<<<<<< HEAD
-    if (typeof value === "string") {
-      if (value.toLowerCase().includes(needle)) return true;
-      continue;
-    }
-    if (typeof value === "number" || typeof value === "boolean") {
-=======
     if (typeof value === 'string') {
       if (value.toLowerCase().includes(needle)) return true;
       continue;
     }
     if (typeof value === 'number' || typeof value === 'boolean') {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       if (String(value).toLowerCase().includes(needle)) return true;
       continue;
     }
@@ -79,11 +51,7 @@ function matchesText(doc, search) {
       stack.push(...value);
       continue;
     }
-<<<<<<< HEAD
-    if (typeof value === "object") {
-=======
     if (typeof value === 'object') {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       stack.push(...Object.values(value));
     }
   }
@@ -93,11 +61,7 @@ function matchesText(doc, search) {
 function compareOperator(value, condition) {
   if (condition == null || !isObject(condition) || condition instanceof RegExp) {
     if (condition instanceof RegExp) {
-<<<<<<< HEAD
-      return typeof value === "string" && condition.test(value);
-=======
       return typeof value === 'string' && condition.test(value);
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
     if (Array.isArray(value)) {
       return value.some((item) => String(item) === String(condition));
@@ -105,22 +69,6 @@ function compareOperator(value, condition) {
     return String(value) === String(condition);
   }
 
-<<<<<<< HEAD
-  if ("$regex" in condition) {
-    const regex =
-      condition.$regex instanceof RegExp
-        ? condition.$regex
-        : new RegExp(condition.$regex, condition.$options || "i");
-    return typeof value === "string" && regex.test(value);
-  }
-
-  if ("$gte" in condition && !(value >= condition.$gte)) return false;
-  if ("$lte" in condition && !(value <= condition.$lte)) return false;
-  if ("$gt" in condition && !(value > condition.$gt)) return false;
-  if ("$lt" in condition && !(value < condition.$lt)) return false;
-  if ("$in" in condition && !condition.$in.map(String).includes(String(value))) return false;
-  if ("$ne" in condition && String(value) === String(condition.$ne)) return false;
-=======
   if ('$regex' in condition) {
     const regex = condition.$regex instanceof RegExp
       ? condition.$regex
@@ -134,25 +82,12 @@ function compareOperator(value, condition) {
   if ('$lt' in condition && !(value < condition.$lt)) return false;
   if ('$in' in condition && !condition.$in.map(String).includes(String(value))) return false;
   if ('$ne' in condition && String(value) === String(condition.$ne)) return false;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   return true;
 }
 
 function matchesFilter(doc, filter = {}) {
   const entries = Object.entries(filter || {});
   for (const [key, condition] of entries) {
-<<<<<<< HEAD
-    if (key === "$and") {
-      if (!condition.every((clause) => matchesFilter(doc, clause))) return false;
-      continue;
-    }
-    if (key === "$or") {
-      if (!condition.some((clause) => matchesFilter(doc, clause))) return false;
-      continue;
-    }
-    if (key === "$text") {
-      if (!matchesText(doc, condition.$search || "")) return false;
-=======
     if (key === '$and') {
       if (!condition.every((clause) => matchesFilter(doc, clause))) return false;
       continue;
@@ -163,7 +98,6 @@ function matchesFilter(doc, filter = {}) {
     }
     if (key === '$text') {
       if (!matchesText(doc, condition.$search || '')) return false;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       continue;
     }
 
@@ -175,21 +109,6 @@ function matchesFilter(doc, filter = {}) {
 
 function sortDocuments(docs, sortSpec) {
   if (!sortSpec) return docs;
-<<<<<<< HEAD
-  const specs =
-    typeof sortSpec === "string"
-      ? sortSpec
-          .split(/\s+/)
-          .filter(Boolean)
-          .map((part) => ({
-            field: part.startsWith("-") ? part.slice(1) : part,
-            direction: part.startsWith("-") ? -1 : 1,
-          }))
-      : Object.entries(sortSpec).map(([field, direction]) => ({
-          field,
-          direction: String(direction).startsWith("-") || direction === -1 ? -1 : 1,
-        }));
-=======
   const specs = typeof sortSpec === 'string'
     ? sortSpec.split(/\s+/).filter(Boolean).map((part) => ({
       field: part.startsWith('-') ? part.slice(1) : part,
@@ -199,7 +118,6 @@ function sortDocuments(docs, sortSpec) {
       field,
       direction: String(direction).startsWith('-') || direction === -1 ? -1 : 1,
     }));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
   return [...docs].sort((a, b) => {
     for (const { field, direction } of specs) {
@@ -220,20 +138,12 @@ async function populateDocuments(docs, populateSpec, modelClass) {
   const relations = modelClass.relations || {};
 
   for (const spec of specs.filter(Boolean)) {
-<<<<<<< HEAD
-    const path = typeof spec === "string" ? spec : spec.path;
-=======
     const path = typeof spec === 'string' ? spec : spec.path;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     if (!path) continue;
     const relation = relations[path];
     if (!relation) continue;
 
-<<<<<<< HEAD
-    const relationModelName = typeof relation === "string" ? relation : relation.model;
-=======
     const relationModelName = typeof relation === 'string' ? relation : relation.model;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     const many = Boolean(relation && relation.many);
     const relatedModel = getModel(relationModelName);
     if (!relatedModel) continue;
@@ -265,13 +175,8 @@ async function populateDocuments(docs, populateSpec, modelClass) {
 function stripInternal(doc) {
   const result = {};
   for (const [key, value] of Object.entries(doc)) {
-<<<<<<< HEAD
-    if (key.startsWith("_")) continue;
-    if (typeof value === "function") continue;
-=======
     if (key.startsWith('_')) continue;
     if (typeof value === 'function') continue;
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     result[key] = value;
   }
   return result;
@@ -358,38 +263,22 @@ class Query {
 
 class BaseDocument {
   constructor(modelClass, data = {}, isHydrated = false) {
-<<<<<<< HEAD
-    Object.defineProperty(this, "_modelClass", {
-=======
     Object.defineProperty(this, '_modelClass', {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       value: modelClass,
       enumerable: false,
       writable: true,
     });
-<<<<<<< HEAD
-    Object.defineProperty(this, "_original", {
-=======
     Object.defineProperty(this, '_original', {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       value: deepClone(data),
       enumerable: false,
       writable: true,
     });
-<<<<<<< HEAD
-    Object.defineProperty(this, "_includeSensitive", {
-=======
     Object.defineProperty(this, '_includeSensitive', {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       value: false,
       enumerable: false,
       writable: true,
     });
-<<<<<<< HEAD
-    Object.defineProperty(this, "_isHydrated", {
-=======
     Object.defineProperty(this, '_isHydrated', {
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       value: isHydrated,
       enumerable: false,
       writable: true,
@@ -412,19 +301,9 @@ class BaseDocument {
 
   isModified(path) {
     if (!path) {
-<<<<<<< HEAD
-      return (
-        JSON.stringify(stripInternal(this)) !== JSON.stringify(stripInternal(this._original || {}))
-      );
-    }
-    return (
-      JSON.stringify(getValue(this, path)) !== JSON.stringify(getValue(this._original || {}, path))
-    );
-=======
       return JSON.stringify(stripInternal(this)) !== JSON.stringify(stripInternal(this._original || {}));
     }
     return JSON.stringify(getValue(this, path)) !== JSON.stringify(getValue(this._original || {}, path));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   }
 
   select() {
@@ -478,11 +357,7 @@ function createModel(modelName, options = {}) {
       if (options.defaults) {
         for (const [key, value] of Object.entries(options.defaults)) {
           if (this[key] === undefined) {
-<<<<<<< HEAD
-            this[key] = typeof value === "function" ? value() : deepClone(value);
-=======
             this[key] = typeof value === 'function' ? value() : deepClone(value);
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
           }
         }
       }
@@ -508,22 +383,6 @@ function createModel(modelName, options = {}) {
 
     static hydrate(row) {
       if (!row) return null;
-<<<<<<< HEAD
-      return new Model(
-        {
-          id: row.id,
-          _id: row.id,
-          ...row.data,
-          createdAt: row.created_at,
-          updatedAt: row.updated_at,
-        },
-        true,
-      );
-    }
-
-    static async _findRows(filter = {}) {
-      const result = await query("SELECT * FROM app_records WHERE model = $1", [modelName]);
-=======
       return new Model({
         id: row.id,
         _id: row.id,
@@ -535,7 +394,6 @@ function createModel(modelName, options = {}) {
 
     static async _findRows(filter = {}) {
       const result = await query('SELECT * FROM app_records WHERE model = $1', [modelName]);
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       return result.rows
         .map((row) => ({
           id: row.id,
@@ -574,11 +432,7 @@ function createModel(modelName, options = {}) {
     static async findByIdAndDelete(id) {
       const existing = await this.findById(id);
       if (!existing) return null;
-<<<<<<< HEAD
-      await query("DELETE FROM app_records WHERE model = $1 AND id = $2", [modelName, String(id)]);
-=======
       await query('DELETE FROM app_records WHERE model = $1 AND id = $2', [modelName, String(id)]);
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       return existing;
     }
 
@@ -609,11 +463,7 @@ function createModel(modelName, options = {}) {
          VALUES ($1, $2, $3::jsonb, COALESCE($4::timestamptz, NOW()), COALESCE($5::timestamptz, NOW()))
          ON CONFLICT (id)
          DO UPDATE SET model = EXCLUDED.model, data = EXCLUDED.data, updated_at = EXCLUDED.updated_at`,
-<<<<<<< HEAD
-        [doc.id, modelName, JSON.stringify(payload), doc.createdAt, doc.updatedAt],
-=======
         [doc.id, modelName, JSON.stringify(payload), doc.createdAt, doc.updatedAt]
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       );
     }
 

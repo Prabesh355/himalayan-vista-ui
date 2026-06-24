@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-const User = require("../models/UserPg");
-const { AppError } = require("../utils/errorHandler");
-const logger = require("../utils/logger");
-
-function getJwtCookieMaxAge() {
-  const raw = String(process.env.JWT_COOKIE_EXPIRE || "").trim();
-=======
 const User = require('../models/UserPg');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
@@ -22,7 +14,6 @@ function getAdminEmailSet() {
 
 function getJwtCookieMaxAge() {
   const raw = String(process.env.JWT_COOKIE_EXPIRE || '').trim();
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   const days = Number.parseInt(raw, 10);
 
   if (Number.isFinite(days) && days > 0) {
@@ -41,21 +32,13 @@ exports.register = async (req, res, next) => {
 
     // Check if passwords match
     if (password !== passwordConfirm) {
-<<<<<<< HEAD
-      return next(new AppError("Passwords do not match", 400));
-=======
       return next(new AppError('Passwords do not match', 400));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Check if user exists
     const userExists = await User.findOne({ email: email.toLowerCase() });
     if (userExists) {
-<<<<<<< HEAD
-      return next(new AppError("Email is already registered", 400));
-=======
       return next(new AppError('Email is already registered', 400));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Create user
@@ -71,11 +54,7 @@ exports.register = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-<<<<<<< HEAD
-      message: "User registered successfully",
-=======
       message: 'User registered successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       token,
       user: user.toJSON(),
     });
@@ -96,16 +75,6 @@ exports.login = async (req, res, next) => {
 
     // Validate inputs
     if (!email || !password) {
-<<<<<<< HEAD
-      return next(new AppError("Please provide email and password", 400));
-    }
-
-    // Check for user
-    const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
-
-    if (!user) {
-      return next(new AppError("Invalid credentials", 401));
-=======
       return next(new AppError('Please provide email and password', 400));
     }
 
@@ -114,16 +83,12 @@ exports.login = async (req, res, next) => {
 
     if (!user) {
       return next(new AppError('Invalid credentials', 401));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Check if password matches
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-<<<<<<< HEAD
-      return next(new AppError("Invalid credentials", 401));
-=======
       return next(new AppError('Invalid credentials', 401));
     }
 
@@ -133,7 +98,6 @@ exports.login = async (req, res, next) => {
     if (adminEmails.has(user.email) && user.role !== 'admin') {
       user.role = 'admin';
       await user.save();
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Update last login
@@ -144,25 +108,15 @@ exports.login = async (req, res, next) => {
     const token = user.getSignedJwtToken();
 
     // Set cookie
-<<<<<<< HEAD
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-=======
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       maxAge: getJwtCookieMaxAge(),
     });
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Logged in successfully",
-=======
       message: 'Logged in successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       token,
       user: user.toJSON(),
     });
@@ -195,19 +149,11 @@ exports.getMe = async (req, res, next) => {
 // @route POST /api/auth/logout
 // @access Private
 exports.logout = (req, res, next) => {
-<<<<<<< HEAD
-  res.clearCookie("token");
-
-  res.status(200).json({
-    success: true,
-    message: "Logged out successfully",
-=======
   res.clearCookie('token');
 
   res.status(200).json({
     success: true,
     message: 'Logged out successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   });
 
   logger.info(`User logged out: ${req.user.email}`);
@@ -228,20 +174,12 @@ exports.updateProfile = async (req, res, next) => {
         phone,
         address,
       },
-<<<<<<< HEAD
-      { new: true, runValidators: true },
-=======
       { new: true, runValidators: true }
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     );
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Profile updated successfully",
-=======
       message: 'Profile updated successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       user: user.toJSON(),
     });
 
@@ -261,16 +199,6 @@ exports.changePassword = async (req, res, next) => {
 
     // Validate inputs
     if (!currentPassword || !newPassword || !confirmPassword) {
-<<<<<<< HEAD
-      return next(new AppError("Please provide all password fields", 400));
-    }
-
-    if (newPassword !== confirmPassword) {
-      return next(new AppError("New passwords do not match", 400));
-    }
-
-    const user = await User.findById(req.user.id).select("+password");
-=======
       return next(new AppError('Please provide all password fields', 400));
     }
 
@@ -279,16 +207,11 @@ exports.changePassword = async (req, res, next) => {
     }
 
     const user = await User.findById(req.user.id).select('+password');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     // Check current password
     const isMatch = await user.matchPassword(currentPassword);
     if (!isMatch) {
-<<<<<<< HEAD
-      return next(new AppError("Current password is incorrect", 401));
-=======
       return next(new AppError('Current password is incorrect', 401));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Update password
@@ -299,11 +222,7 @@ exports.changePassword = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Password changed successfully",
-=======
       message: 'Password changed successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       token,
     });
 
@@ -324,11 +243,7 @@ exports.forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-<<<<<<< HEAD
-      return next(new AppError("User not found with that email", 404));
-=======
       return next(new AppError('User not found with that email', 404));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Get reset token
@@ -337,11 +252,7 @@ exports.forgotPassword = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Password reset token sent to email",
-=======
       message: 'Password reset token sent to email',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       resetToken, // In production, send this via email
     });
 
@@ -362,13 +273,6 @@ exports.resetPassword = async (req, res, next) => {
 
     // Validate passwords
     if (password !== passwordConfirm) {
-<<<<<<< HEAD
-      return next(new AppError("Passwords do not match", 400));
-    }
-
-    // Hash reset token
-    const resetPasswordToken = require("crypto").createHash("sha256").update(token).digest("hex");
-=======
       return next(new AppError('Passwords do not match', 400));
     }
 
@@ -377,7 +281,6 @@ exports.resetPassword = async (req, res, next) => {
       .createHash('sha256')
       .update(token)
       .digest('hex');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
     const user = await User.findOne({
       resetPasswordToken,
@@ -385,11 +288,7 @@ exports.resetPassword = async (req, res, next) => {
     });
 
     if (!user) {
-<<<<<<< HEAD
-      return next(new AppError("Invalid or expired reset token", 400));
-=======
       return next(new AppError('Invalid or expired reset token', 400));
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
     }
 
     // Set new password
@@ -402,11 +301,7 @@ exports.resetPassword = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      message: "Password reset successfully",
-=======
       message: 'Password reset successfully',
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       token: jwtToken,
     });
 

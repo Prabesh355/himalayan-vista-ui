@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-const { Pool } = require("pg");
-const logger = require("../utils/logger");
-=======
 const { Pool } = require('pg');
 const logger = require('../utils/logger');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 let pool;
 let schemaReady = false;
@@ -22,14 +17,6 @@ function getPool() {
   if (!pool) {
     const connectionString = getConnectionString();
     if (!connectionString) {
-<<<<<<< HEAD
-      throw new Error("DATABASE_URL (or POSTGRES_URL / NEON_DATABASE_URL) is not defined");
-    }
-
-    pool = new Pool({
-      connectionString,
-      ssl: { rejectUnauthorized: false },
-=======
       throw new Error('DATABASE_URL (or POSTGRES_URL / NEON_DATABASE_URL) is not defined');
     }
 
@@ -40,7 +27,6 @@ function getPool() {
     pool = new Pool({
       connectionString,
       ssl: enableSsl ? { rejectUnauthorized: false } : false,
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       max: Number(process.env.DB_POOL_MAX || 10),
       idleTimeoutMillis: 30_000,
     });
@@ -57,11 +43,7 @@ async function query(text, params) {
 async function ensureSchema() {
   if (schemaReady) return;
 
-<<<<<<< HEAD
-  await query("CREATE EXTENSION IF NOT EXISTS pgcrypto");
-=======
   await query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
   await query(`
     CREATE TABLE IF NOT EXISTS app_records (
       id UUID PRIMARY KEY,
@@ -71,19 +53,9 @@ async function ensureSchema() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
-<<<<<<< HEAD
-  await query("CREATE INDEX IF NOT EXISTS idx_app_records_model ON app_records(model)");
-  await query(
-    "CREATE INDEX IF NOT EXISTS idx_app_records_model_created ON app_records(model, created_at DESC)",
-  );
-  await query(
-    "CREATE INDEX IF NOT EXISTS idx_app_records_data_gin ON app_records USING GIN (data)",
-  );
-=======
   await query('CREATE INDEX IF NOT EXISTS idx_app_records_model ON app_records(model)');
   await query('CREATE INDEX IF NOT EXISTS idx_app_records_model_created ON app_records(model, created_at DESC)');
   await query('CREATE INDEX IF NOT EXISTS idx_app_records_data_gin ON app_records USING GIN (data)');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
   schemaReady = true;
 }
@@ -96,19 +68,11 @@ async function connectDB(options = {}) {
     try {
       const clientPool = getPool();
       const client = await clientPool.connect();
-<<<<<<< HEAD
-      await client.query("SELECT 1");
-      client.release();
-
-      await ensureSchema();
-      logger.info("PostgreSQL connected");
-=======
       await client.query('SELECT 1');
       client.release();
 
       await ensureSchema();
       logger.info('PostgreSQL connected');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
       return clientPool;
     } catch (error) {
       logger.error(`Database connection attempt ${attempt} failed: ${error.message}`);
@@ -117,11 +81,7 @@ async function connectDB(options = {}) {
         // eslint-disable-next-line no-await-in-loop
         await new Promise((resolve) => setTimeout(resolve, retryDelay));
       } else {
-<<<<<<< HEAD
-        logger.error("All database connection attempts failed");
-=======
         logger.error('All database connection attempts failed');
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
         throw error;
       }
     }

@@ -10,23 +10,6 @@
 
 ### Core Implementation Files
 
-<<<<<<< HEAD
-| File                               | Type       | Status       | Lines | Purpose                                  |
-| ---------------------------------- | ---------- | ------------ | ----- | ---------------------------------------- |
-| `models/Booking.js`                | Model      | ✅ Updated   | 200+  | Complete booking schema with validation  |
-| `controllers/bookingController.js` | Controller | ✅ Rewritten | 400+  | 9 comprehensive business logic functions |
-| `routes/bookingRoutes.js`          | Routes     | ✅ Updated   | 25    | 9 endpoints with proper middleware       |
-| `validations/bookingValidation.js` | Validation | ✅ NEW       | 120+  | 20+ validation rules                     |
-
-### Documentation Files
-
-| File                           | Status | Lines | Purpose                              |
-| ------------------------------ | ------ | ----- | ------------------------------------ |
-| `BOOKING_API_DOCUMENTATION.md` | ✅ NEW | 600+  | Complete API reference with examples |
-| `BOOKING_TEST_GUIDE.md`        | ✅ NEW | 300+  | 14+ test cases and workflows         |
-| `BOOKING_SYSTEM_SUMMARY.md`    | ✅ NEW | 400+  | Implementation summary               |
-| `BOOKING_COMPLETE.md`          | ✅ NEW | 500+  | Complete implementation overview     |
-=======
 | File | Type | Status | Lines | Purpose |
 |------|------|--------|-------|---------|
 | `models/Booking.js` | Model | ✅ Updated | 200+ | Complete booking schema with validation |
@@ -42,7 +25,6 @@
 | `BOOKING_TEST_GUIDE.md` | ✅ NEW | 300+ | 14+ test cases and workflows |
 | `BOOKING_SYSTEM_SUMMARY.md` | ✅ NEW | 400+ | Implementation summary |
 | `BOOKING_COMPLETE.md` | ✅ NEW | 500+ | Complete implementation overview |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
@@ -51,10 +33,6 @@
 ### Booking Operations (5 User + 4 Admin = 9 Total)
 
 **User Operations:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 ✅ POST   /api/bookings              - Create booking
 ✅ GET    /api/bookings              - List bookings (paginated/filtered)
@@ -64,10 +42,6 @@
 ```
 
 **Admin Operations:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 ✅ GET    /api/bookings/admin/all    - Get all bookings
 ✅ PUT    /api/bookings/:id/status   - Update status
@@ -76,10 +50,6 @@
 ```
 
 ### Booking Statuses
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 ✅ pending     → Initial state
 ✅ confirmed   → Admin confirmed
@@ -88,10 +58,6 @@
 ```
 
 ### Payment Statuses
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 ✅ pending   → Awaiting payment
 ✅ partial   → Partial payment
@@ -100,10 +66,6 @@
 ```
 
 ### Advanced Features
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 ✅ Auto-generated booking numbers (BK260529000001)
 ✅ Intelligent cancellation policy (refunds based on days)
@@ -138,10 +100,6 @@
 ### Endpoints by Category
 
 **Booking Management (5 endpoints):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Create booking: `POST /api/bookings`
 - List bookings: `GET /api/bookings`
 - View booking: `GET /api/bookings/:id`
@@ -149,10 +107,6 @@
 - Cancel booking: `PUT /api/bookings/:id/cancel`
 
 **Admin Management (4 endpoints):**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - List all: `GET /api/bookings/admin/all`
 - Update status: `PUT /api/bookings/:id/status`
 - History: `GET /api/bookings/history/analytics`
@@ -165,28 +119,16 @@
 ### Booking Fields (30+)
 
 **Identifiers:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - bookingNumber (unique, auto-generated)
 - user (ref to User)
 - package (ref to Package)
 
 **Booking Details:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - travelDate, endDate
 - numberOfTravelers (1-100)
 - travelers (array of traveler info)
 
 **Pricing:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - pricePerPerson
 - totalPrice (auto-calculated)
 - discount, discountCode
@@ -194,29 +136,17 @@
 - insurance (optional)
 
 **Status:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - bookingStatus (pending/confirmed/cancelled/completed)
 - paymentStatus (pending/partial/paid/refunded)
 - paymentMethod
 
 **Cancellation:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - cancellationDate
 - cancellationReason
 - refundAmount
 - refundStatus
 
 **Metadata:**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - createdAt, updatedAt
 - specialRequests, notes
 - isActive
@@ -226,10 +156,6 @@
 ## 🧪 Testing
 
 ### Quick Start
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # 1. Create booking
 curl -X POST http://localhost:5000/api/bookings \
@@ -247,10 +173,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ```
 
 ### Test Coverage
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - ✅ 14+ test cases documented
 - ✅ Error scenarios covered
 - ✅ Admin workflows tested
@@ -262,10 +184,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ## 📈 Performance
 
 ### Database Indexes
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```
 ✅ user + createdAt              - Fast user booking retrieval
 ✅ bookingStatus + paymentStatus - Status filtering
@@ -275,10 +193,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ```
 
 ### Optimization
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Pagination: max 100 per page
 - Selective population: only needed fields
 - Query optimization: compound indexes
@@ -288,24 +202,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 
 ## 🎯 Requirements Met
 
-<<<<<<< HEAD
-| Requirement      | Status | Evidence                      |
-| ---------------- | ------ | ----------------------------- |
-| Create booking   | ✅     | POST endpoint with validation |
-| View booking     | ✅     | GET single with auth          |
-| Cancel booking   | ✅     | PUT cancel with policy        |
-| Booking history  | ✅     | GET history with analytics    |
-| Status tracking  | ✅     | 4 statuses implemented        |
-| Admin management | ✅     | 4 admin endpoints             |
-| Mongoose model   | ✅     | Complete schema               |
-| Controllers      | ✅     | 9 functions                   |
-| Routes           | ✅     | 9 endpoints                   |
-| Validation       | ✅     | 20+ rules                     |
-| Protected routes | ✅     | JWT auth                      |
-| Admin APIs       | ✅     | Role-based                    |
-| Booking statuses | ✅     | 4 statuses                    |
-| Booking fields   | ✅     | 30+ fields                    |
-=======
 | Requirement | Status | Evidence |
 |-------------|--------|----------|
 | Create booking | ✅ | POST endpoint with validation |
@@ -322,7 +218,6 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 | Admin APIs | ✅ | Role-based |
 | Booking statuses | ✅ | 4 statuses |
 | Booking fields | ✅ | 30+ fields |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 **100% Complete** ✅
 
@@ -331,20 +226,12 @@ curl -X PUT http://localhost:5000/api/bookings/BOOKING_ID/cancel \
 ## 🚀 Deployment
 
 ### Prerequisites
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Node.js installed
 - MongoDB running
 - Backend dependencies installed
 - JWT secret configured
 
 ### Deployment Steps
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```bash
 # 1. Install dependencies
 npm install
@@ -365,10 +252,6 @@ curl http://localhost:5000/api/bookings \
 ## 📚 Documentation Provided
 
 ### 1. BOOKING_API_DOCUMENTATION.md (600+ lines)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Complete API reference
 - All 9 endpoints documented
 - Request/response examples
@@ -379,10 +262,6 @@ curl http://localhost:5000/api/bookings \
 - Validation rules
 
 ### 2. BOOKING_TEST_GUIDE.md (300+ lines)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - 14+ test cases
 - Error scenarios
 - Admin workflows
@@ -392,10 +271,6 @@ curl http://localhost:5000/api/bookings \
 - Verification checklist
 
 ### 3. BOOKING_SYSTEM_SUMMARY.md (400+ lines)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Implementation summary
 - Requirements checklist
 - Technical details
@@ -404,10 +279,6 @@ curl http://localhost:5000/api/bookings \
 - Integration points
 
 ### 4. BOOKING_COMPLETE.md (500+ lines)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - Complete overview
 - All endpoints listed
 - Fields reference
@@ -421,10 +292,6 @@ curl http://localhost:5000/api/bookings \
 ## ✅ Quality Checklist
 
 ### Code Quality
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [x] ESLint ready
 - [x] Error handling with AppError
 - [x] Comprehensive logging
@@ -432,10 +299,6 @@ curl http://localhost:5000/api/bookings \
 - [x] Type safety via Mongoose
 
 ### Security
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [x] JWT authentication
 - [x] Role-based authorization
 - [x] Ownership verification
@@ -443,10 +306,6 @@ curl http://localhost:5000/api/bookings \
 - [x] XSS/SQL injection prevention
 
 ### Testing
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [x] All endpoints documented
 - [x] Error cases covered
 - [x] Admin features tested
@@ -454,10 +313,6 @@ curl http://localhost:5000/api/bookings \
 - [x] Validation rules verified
 
 ### Documentation
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [x] API documentation
 - [x] Testing guide
 - [x] Implementation summary
@@ -469,10 +324,6 @@ curl http://localhost:5000/api/bookings \
 ## 🎓 Key Learnings
 
 ### Booking Management Patterns
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 1. **Stateful operations** - Track booking through lifecycle
 2. **Policy enforcement** - Cancellation policy validation
 3. **Calculation automation** - Auto-calculate prices, refunds
@@ -480,10 +331,6 @@ curl http://localhost:5000/api/bookings \
 5. **Audit trail** - Log all operations
 
 ### Implementation Best Practices
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 1. **Mongoose hooks** - Pre-save for bookingNumber generation
 2. **Instance methods** - Business logic on model (canBeCancelled)
 3. **Static methods** - Query helpers (getBookingsByDateRange)
@@ -495,10 +342,6 @@ curl http://localhost:5000/api/bookings \
 ## 🔄 Integration Points
 
 ### With Package System
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```javascript
 // Validate group size
 const pkg = await Package.findById(packageId);
@@ -506,25 +349,6 @@ if (numberOfTravelers < pkg.groupSize.min) error();
 ```
 
 ### With User System
-<<<<<<< HEAD
-
-```javascript
-// Auto-attach current user
-booking.user = req.user.id;
-booking.populate("user");
-```
-
-### With Payment System (Future)
-
-```javascript
-// Ready for payment gateway
-paymentMethod: ["credit_card", "debit_card", "bank_transfer"];
-paymentStatus: ["pending", "paid", "refunded"];
-```
-
-### With Notification System (Future)
-
-=======
 ```javascript
 // Auto-attach current user
 booking.user = req.user.id;
@@ -539,7 +363,6 @@ paymentStatus: ['pending', 'paid', 'refunded']
 ```
 
 ### With Notification System (Future)
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 ```javascript
 // Ready for emails
 // - Booking confirmation
@@ -551,19 +374,6 @@ paymentStatus: ['pending', 'paid', 'refunded']
 
 ## 📊 API Statistics
 
-<<<<<<< HEAD
-| Metric           | Value                            |
-| ---------------- | -------------------------------- |
-| Total Endpoints  | 9                                |
-| User Endpoints   | 5                                |
-| Admin Endpoints  | 4                                |
-| HTTP Methods     | 4 (GET, POST, PUT, DELETE)       |
-| Status Codes     | 6 (200, 201, 400, 401, 403, 404) |
-| Validation Rules | 20+                              |
-| Database Indexes | 5                                |
-| Response Fields  | 30+                              |
-| Documentation    | 1800+ lines                      |
-=======
 | Metric | Value |
 |--------|-------|
 | Total Endpoints | 9 |
@@ -575,17 +385,12 @@ paymentStatus: ['pending', 'paid', 'refunded']
 | Database Indexes | 5 |
 | Response Fields | 30+ |
 | Documentation | 1800+ lines |
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
 ## 🎯 Future Enhancements
 
 ### Phase 2
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [ ] Payment gateway integration
 - [ ] Email notifications
 - [ ] SMS notifications
@@ -593,10 +398,6 @@ paymentStatus: ['pending', 'paid', 'refunded']
 - [ ] Multi-language support
 
 ### Phase 3
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [ ] Tour guide assignment
 - [ ] Real-time availability
 - [ ] Dynamic pricing
@@ -604,10 +405,6 @@ paymentStatus: ['pending', 'paid', 'refunded']
 - [ ] Loyalty program
 
 ### Phase 4
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [ ] Mobile app
 - [ ] Real-time notifications
 - [ ] Advanced analytics
@@ -619,20 +416,12 @@ paymentStatus: ['pending', 'paid', 'refunded']
 ## 📞 Support Resources
 
 ### Quick Links
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 - [BOOKING_API_DOCUMENTATION.md](./BOOKING_API_DOCUMENTATION.md) - Full API reference
 - [BOOKING_TEST_GUIDE.md](./BOOKING_TEST_GUIDE.md) - Testing guide
 - [BOOKING_SYSTEM_SUMMARY.md](./BOOKING_SYSTEM_SUMMARY.md) - Implementation details
 - Code comments in model/controller files
 
 ### Common Issues
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 See [BOOKING_API_DOCUMENTATION.md#error-responses](./BOOKING_API_DOCUMENTATION.md) for error handling
 
 ---
@@ -650,11 +439,7 @@ See [BOOKING_API_DOCUMENTATION.md#error-responses](./BOOKING_API_DOCUMENTATION.m
 ✅ **Admin Management** - Full control panel  
 ✅ **Error Handling** - Proper error messages  
 ✅ **Security** - JWT + RBAC + validation  
-<<<<<<< HEAD
-✅ **1800+ Lines of Documentation** - Complete reference
-=======
 ✅ **1800+ Lines of Documentation** - Complete reference  
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 
 ---
 
@@ -672,10 +457,6 @@ See [BOOKING_API_DOCUMENTATION.md#error-responses](./BOOKING_API_DOCUMENTATION.m
 The Booking System is complete, tested, documented, and ready to serve your travel platform users.
 
 **What's Next?**
-<<<<<<< HEAD
-
-=======
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
 1. Deploy to production
 2. Integrate with payment gateway
 3. Set up email notifications
