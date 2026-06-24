@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { siteSettingsService } from "@/services/siteSettingsService";
 import { useCurrency } from "@/context/CurrencyProvider";
-import logo from "@/assets/nomads-logo-official.png";
+import logo from "@/assets/nomads-logo-official-backup.png";
 
 // ─── Static nav structure ────────────────────────────────────────────────────
 
@@ -90,9 +90,9 @@ function PackageLink({ label, slug, onClick }: { label: string; slug: string; on
   );
 }
 
-// ─── Trekking Mega-Dropdown ───────────────────────────────────────────────────
+// ─── Destination Mega-Dropdown ────────────────────────────────────────────────
 
-function TrekkingDropdown({ onClose }: { onClose: () => void }) {
+function DestinationDropdown({ onClose }: { onClose: () => void }) {
   const { open, setOpen, ref } = useDropdown();
 
   return (
@@ -103,21 +103,44 @@ function TrekkingDropdown({ onClose }: { onClose: () => void }) {
           open ? "text-foreground" : "text-foreground/80"
         }`}
       >
-        Trekking
+        Destination
         <ChevronDown
           className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full pt-2 z-50 min-w-[520px]">
+        <div className="absolute left-0 top-full pt-2 z-50 min-w-[700px]">
           <div className="glass-strong rounded-2xl p-4 shadow-elegant border border-border/50 bg-background/95 backdrop-blur-xl">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-6">
+              {/* Expedition */}
+              <div>
+                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
+                  Expedition
+                </p>
+                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Ski Sport Expedition</p>
+                <div className="space-y-0.5">
+                  {EXPEDITIONS.map((exp) => (
+                    <Link
+                      key={exp.slug}
+                      to="/packages/$slug"
+                      params={{ slug: exp.slug }}
+                      onClick={() => { setOpen(false); onClose(); }}
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+                    >
+                      <Mountain className="h-3.5 w-3.5 shrink-0 text-accent" />
+                      {exp.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               {/* Classic Trekking */}
               <div>
                 <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
-                  Classic Trekking
+                  Trekking
                 </p>
+                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Classic Trekking</p>
                 <div className="space-y-0.5">
                   {TREKKING_PACKAGES.map((pkg) => (
                     <PackageLink
@@ -133,9 +156,9 @@ function TrekkingDropdown({ onClose }: { onClose: () => void }) {
               {/* Remote Trekking */}
               <div>
                 <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
-                  Remote Trekking
+                  &nbsp;
                 </p>
-                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Main Objective</p>
+                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Remote Trekking</p>
                 <div className="space-y-0.5">
                   {REMOTE_TREKKING.map((pkg) => (
                     <PackageLink
@@ -166,9 +189,9 @@ function TrekkingDropdown({ onClose }: { onClose: () => void }) {
   );
 }
 
-// ─── Expedition Dropdown ──────────────────────────────────────────────────────
+// ─── About Us Dropdown ────────────────────────────────────────────────────────
 
-function ExpeditionDropdown({ onClose }: { onClose: () => void }) {
+function AboutUsDropdown({ onClose, isAdmin }: { onClose: () => void; isAdmin: boolean }) {
   const { open, setOpen, ref } = useDropdown();
 
   return (
@@ -179,73 +202,71 @@ function ExpeditionDropdown({ onClose }: { onClose: () => void }) {
           open ? "text-foreground" : "text-foreground/80"
         }`}
       >
-        Expedition
+        About Us
         <ChevronDown
           className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full pt-2 z-50 min-w-[220px]">
-          <div className="glass-strong rounded-2xl p-3 shadow-elegant border border-border/50 bg-background/95 backdrop-blur-xl">
-            <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
-              Peak Climbing
-            </p>
-            <div className="space-y-0.5">
-              {EXPEDITIONS.map((exp) => (
+        <div className="absolute right-0 top-full pt-2 z-50 min-w-[280px]">
+          <div className="glass-strong rounded-xl p-3 shadow-elegant border border-border/50 bg-background/95 backdrop-blur-xl">
+            <Link
+              to="/blogs"
+              onClick={() => { setOpen(false); onClose(); }}
+              className="block rounded-lg px-3 py-2 text-sm font-semibold text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+            >
+              Stories
+            </Link>
+            <Link
+              to="/teams"
+              onClick={() => { setOpen(false); onClose(); }}
+              className="block rounded-lg px-3 py-2 text-sm font-semibold text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+            >
+              Our Team
+            </Link>
+            <Link
+              to="/about"
+              onClick={() => { setOpen(false); onClose(); }}
+              className="block rounded-lg px-3 py-2 text-sm font-semibold text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+            >
+              Legal Documents
+            </Link>
+
+            <div className="my-2 border-t border-border/30" />
+            <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Contact Our Expert</p>
+            <div className="px-3 py-2">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <UserCircle className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs font-semibold">Simon Bhattarai</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <UserCircle className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs font-semibold">Nishant Karki</span>
+                </div>
                 <Link
-                  key={exp.slug}
-                  to="/packages/$slug"
-                  params={{ slug: exp.slug }}
+                  to="/contact"
                   onClick={() => { setOpen(false); onClose(); }}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+                  className="mt-2 text-xs text-accent hover:underline font-semibold"
                 >
-                  <Mountain className="h-3.5 w-3.5 shrink-0 text-accent" />
-                  {exp.label}
+                  Contact Form →
                 </Link>
-              ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-    </li>
-  );
-}
 
-// ─── Others Dropdown ──────────────────────────────────────────────────────────
-
-function OthersDropdown({ isAdmin }: { isAdmin: boolean }) {
-  const { open, setOpen, ref } = useDropdown();
-
-  const links = isAdmin
-    ? [...MORE_LINKS, { to: "/admin", label: "Admin" }]
-    : MORE_LINKS;
-
-  return (
-    <li ref={ref} className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 px-2 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider text-foreground/80 transition-colors hover:text-foreground"
-      >
-        Others
-        <ChevronDown
-          className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-
-      {open && (
-        <div className="absolute right-0 top-full pt-2 z-50 min-w-[150px]">
-          <div className="glass-strong rounded-xl p-2 shadow-elegant border border-border/50 bg-background/95 backdrop-blur-xl">
-            {links.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to as any}
-                onClick={() => setOpen(false)}
-                className="block rounded-lg px-3 py-2 text-sm font-semibold text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
-              >
-                {l.label}
-              </Link>
-            ))}
+            {isAdmin && (
+              <>
+                <div className="my-2 border-t border-border/30" />
+                <Link
+                  to="/admin"
+                  onClick={() => { setOpen(false); onClose(); }}
+                  className="block rounded-lg px-3 py-2 text-sm font-semibold text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+                >
+                  Admin Dashboard
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -340,50 +361,8 @@ export function Navbar() {
                   )}
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/destinations"
-                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
-                  activeProps={{ className: "text-foreground" }}
-                >
-                  {({ isActive }) => (
-                    <>
-                      Destinations
-                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
-                    </>
-                  )}
-                </Link>
-              </li>
-              <TrekkingDropdown onClose={closeMobile} />
-              <ExpeditionDropdown onClose={closeMobile} />
-              <li>
-                <Link
-                  to="/teams"
-                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
-                  activeProps={{ className: "text-foreground" }}
-                >
-                  {({ isActive }) => (
-                    <>
-                      Our Teams
-                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
-                    </>
-                  )}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/blogs"
-                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
-                  activeProps={{ className: "text-foreground" }}
-                >
-                  {({ isActive }) => (
-                    <>
-                      Stories
-                      {isActive && <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-gradient-sunset" />}
-                    </>
-                  )}
-                </Link>
-              </li>
+              <DestinationDropdown onClose={closeMobile} />
+              <AboutUsDropdown onClose={closeMobile} isAdmin={isAdmin} />
               <li>
                 <Link
                   to="/shop"
@@ -398,7 +377,6 @@ export function Navbar() {
                   )}
                 </Link>
               </li>
-              <OthersDropdown isAdmin={isAdmin} />
             </ul>
           </div>
 
@@ -492,86 +470,102 @@ export function Navbar() {
                     Home
                   </Link>
 
-                  {/* Destinations */}
-                  <Link to="/destinations" onClick={closeMobile} className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground">
-                    Destinations
-                  </Link>
-
-                  {/* Trekking accordion */}
+                  {/* Destination accordion */}
                   <div>
                     <button
-                      onClick={() => setMobileExpanded(mobileExpanded === "trekking" ? null : "trekking")}
+                      onClick={() => setMobileExpanded(mobileExpanded === "destination" ? null : "destination")}
                       className="w-full flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10"
                     >
-                      Trekking
-                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileExpanded === "trekking" ? "rotate-180" : ""}`} />
+                      Destination
+                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileExpanded === "destination" ? "rotate-180" : ""}`} />
                     </button>
-                    {mobileExpanded === "trekking" && (
-                      <div className="mx-2 mb-2 rounded-xl bg-white/5 p-2">
-                        <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Classic Trekking</p>
-                        {TREKKING_PACKAGES.map((pkg) => (
-                          <Link key={pkg.slug} to="/packages/$slug" params={{ slug: pkg.slug }} onClick={closeMobile}
-                            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
-                            <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />{pkg.label}
-                          </Link>
-                        ))}
-                        <div className="my-2 border-t border-border/20" />
-                        <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Remote Trekking</p>
-                        {REMOTE_TREKKING.map((pkg) => (
-                          <Link key={pkg.slug} to="/packages/$slug" params={{ slug: pkg.slug }} onClick={closeMobile}
-                            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
-                            <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />{pkg.label}
-                          </Link>
-                        ))}
+                    {mobileExpanded === "destination" && (
+                      <div className="mx-2 mb-2 rounded-xl bg-white/5 p-2 space-y-4">
+                        {/* Expedition */}
+                        <div>
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Expedition</p>
+                          <p className="px-3 mb-1 text-[10px] text-muted-foreground italic">Ski Sport Expedition</p>
+                          {EXPEDITIONS.map((exp) => (
+                            <Link key={exp.slug} to="/packages/$slug" params={{ slug: exp.slug }} onClick={closeMobile}
+                              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
+                              <Mountain className="h-3.5 w-3.5 text-accent shrink-0" />{exp.label}
+                            </Link>
+                          ))}
+                        </div>
+
+                        {/* Trekking */}
+                        <div>
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Trekking</p>
+                          <p className="px-3 mb-1 text-[10px] text-muted-foreground italic">Classic Trekking</p>
+                          {TREKKING_PACKAGES.map((pkg) => (
+                            <Link key={pkg.slug} to="/packages/$slug" params={{ slug: pkg.slug }} onClick={closeMobile}
+                              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
+                              <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />{pkg.label}
+                            </Link>
+                          ))}
+                          
+                          <div className="my-2 border-t border-border/20 mx-3" />
+                          <p className="px-3 mb-1 text-[10px] text-muted-foreground italic">Remote Trekking</p>
+                          {REMOTE_TREKKING.map((pkg) => (
+                            <Link key={pkg.slug} to="/packages/$slug" params={{ slug: pkg.slug }} onClick={closeMobile}
+                              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
+                              <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />{pkg.label}
+                            </Link>
+                          ))}
+                        </div>
+
+                        <Link to="/packages" onClick={closeMobile} className="block mt-2 px-3 py-2 text-xs font-semibold text-accent hover:underline">
+                          View All Packages →
+                        </Link>
                       </div>
                     )}
                   </div>
 
-                  {/* Expedition accordion */}
+                  {/* About Us accordion */}
                   <div>
                     <button
-                      onClick={() => setMobileExpanded(mobileExpanded === "expedition" ? null : "expedition")}
+                      onClick={() => setMobileExpanded(mobileExpanded === "about" ? null : "about")}
                       className="w-full flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10"
                     >
-                      Expedition
-                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileExpanded === "expedition" ? "rotate-180" : ""}`} />
+                      About Us
+                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileExpanded === "about" ? "rotate-180" : ""}`} />
                     </button>
-                    {mobileExpanded === "expedition" && (
+                    {mobileExpanded === "about" && (
                       <div className="mx-2 mb-2 rounded-xl bg-white/5 p-2">
-                        <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Peak Climbing</p>
-                        {EXPEDITIONS.map((exp) => (
-                          <Link key={exp.slug} to="/packages/$slug" params={{ slug: exp.slug }} onClick={closeMobile}
-                            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
-                            <Mountain className="h-3.5 w-3.5 text-accent shrink-0" />{exp.label}
-                          </Link>
-                        ))}
+                        <Link to="/blogs" onClick={closeMobile} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
+                          Stories
+                        </Link>
+                        <Link to="/teams" onClick={closeMobile} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
+                          Our Team
+                        </Link>
+                        <Link to="/about" onClick={closeMobile} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
+                          Legal Documents
+                        </Link>
+                        
+                        <div className="my-2 border-t border-border/20 mx-3" />
+                        <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Contact Our Expert</p>
+                        <div className="px-3 py-2 text-xs text-foreground/80">
+                          <p className="font-semibold">Simon Bhattarai</p>
+                          <p className="mt-1 font-semibold">Nishant Karki</p>
+                          <Link to="/contact" onClick={closeMobile} className="mt-2 inline-block text-accent hover:underline">Contact Form →</Link>
+                        </div>
+                        
+                        {isAdmin && (
+                           <>
+                             <div className="my-2 border-t border-border/20 mx-3" />
+                             <Link to="/admin" onClick={closeMobile} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-accent hover:bg-white/10">
+                               Admin Dashboard
+                             </Link>
+                           </>
+                        )}
                       </div>
                     )}
                   </div>
-
-                  {/* Our Teams */}
-                  <Link to="/teams" onClick={closeMobile} className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground">
-                    Our Teams
-                  </Link>
-
-                  {/* Stories */}
-                  <Link to="/blogs" onClick={closeMobile} className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground">
-                    Stories
-                  </Link>
 
                   {/* Shop */}
                   <Link to="/shop" onClick={closeMobile} className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground">
                     Shop
                   </Link>
-
-                  {/* Others */}
-                  <div className="my-2 border-t border-border/30" />
-                  {(isAdmin ? [...MORE_LINKS, { to: "/admin", label: "Admin" }] : MORE_LINKS).map((l) => (
-                    <Link key={l.to} to={l.to as any} onClick={closeMobile}
-                      className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground">
-                      {l.label}
-                    </Link>
-                  ))}
 
                   <div className="my-2 border-t border-border/30" />
                   <div className="flex flex-wrap gap-2">
