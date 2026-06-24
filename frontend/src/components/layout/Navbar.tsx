@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { siteSettingsService } from "@/services/siteSettingsService";
 import { useCurrency } from "@/context/CurrencyProvider";
-import logo from "@/assets/nomads-logo-official-backup.png";
+import logo from "@/assets/logo.png";
 
 // ─── Static nav structure ────────────────────────────────────────────────────
 

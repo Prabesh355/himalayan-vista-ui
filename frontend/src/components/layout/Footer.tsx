@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Twitter, Youtube, Mail } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { siteSettingsService, CmsLink } from "@/services/siteSettingsService";
-import logo from "@/assets/nomads-logo-official.png";
+import logo from "@/assets/logo.png";
 
 function isExternalLink(href: string) {
   return /^https?:\/\//i.test(href) || href.startsWith("mailto:") || href.startsWith("tel:");
