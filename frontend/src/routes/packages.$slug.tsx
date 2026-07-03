@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { type ComponentType, useEffect, useMemo, useRef } from "react";
+import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import {
   BadgeCheck,
   BedDouble,
@@ -9,6 +9,7 @@ import {
   Check,
   CirclePlus,
   Clock3,
+  ChevronDown,
   Minus,
   Plane,
   ShieldCheck,
@@ -455,6 +456,7 @@ export const Route = createFileRoute("/packages/$slug")({
 function PackageDetails() {
   const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
+  const [openDay, setOpenDay] = useState<number | null>(null);
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
 
@@ -686,24 +688,27 @@ function PackageDetails() {
               </div>
             )}
 
-            <div className="relative mt-8 pl-3 sm:pl-6">
-              <div className="absolute left-4 top-0 h-full w-px bg-gradient-to-b from-accent via-border to-transparent sm:left-6" />
-              <div className="space-y-5">
-                {itinerary.days.map((day, index) => (
+            <div className="mt-8 space-y-4">
+              {itinerary.days.map((day, index) => {
+                const isOpen = openDay === index;
+
+                return (
                   <motion.article
                     key={`${day.day}-${day.title}`}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.25 }}
                     transition={{ duration: 0.35, delay: index * 0.03 }}
-                    whileHover={{ y: -3 }}
-                    className="relative rounded-[1.75rem] border border-border/70 bg-background/95 p-5 pl-5 shadow-soft backdrop-blur-md sm:p-6 sm:pl-6"
+                    className="overflow-hidden rounded-[1.75rem] border border-border/70 bg-background/95 shadow-soft backdrop-blur-md"
                   >
-                    <span className="absolute -left-1 top-6 grid h-8 w-8 place-items-center rounded-full border-4 border-background bg-gradient-sunset text-xs font-bold text-white shadow-glow sm:-left-2 sm:h-10 sm:w-10">
-                      {day.day}
-                    </span>
-
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <button
+                      type="button"
+                      className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-secondary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                      aria-expanded={isOpen}
+                      aria-controls={`itinerary-panel-${index}`}
+                      id={`itinerary-trigger-${index}`}
+                      onClick={() => setOpenDay(isOpen ? null : index)}
+                    >
                       <div className="min-w-0">
                         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
                           Day {day.day}
@@ -712,39 +717,66 @@ function PackageDetails() {
                           {day.title}
                         </h3>
                       </div>
-                      <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground">
-                        <Clock3 className="h-3.5 w-3.5 text-accent" />
-                        <span>Structured trek day</span>
-                      </div>
-                    </div>
+                      <ChevronDown
+                        className={`h-5 w-5 text-accent transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
+                        aria-hidden="true"
+                      />
+                    </button>
 
-                    {(day.meta.length > 0 || day.highlights.length > 0) && (
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {day.meta.slice(0, 4).map((item) => (
-                          <span
-                            key={item}
-                            className="inline-flex items-center rounded-full border border-border/70 bg-secondary/10 px-3 py-1 text-[11px] font-medium text-foreground"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                        {day.highlights.slice(0, 3).map((item) => (
-                          <span
-                            key={item}
-                            className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-foreground"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    <motion.div
+                      id={`itinerary-panel-${index}`}
+                      role="region"
+                      aria-labelledby={`itinerary-trigger-${index}`}
+                      initial={false}
+                      animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                      transition={{ duration: 0.35, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="border-t border-border/70 px-5 pb-5 pt-4 sm:px-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
+                              Day {day.day}
+                            </p>
+                            <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
+                              {day.title}
+                            </h3>
+                          </div>
+                          <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground">
+                            <Clock3 className="h-3.5 w-3.5 text-accent" />
+                            <span>Structured trek day</span>
+                          </div>
+                        </div>
 
-                    <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">
-                      {day.detail}
-                    </p>
+                        {(day.meta.length > 0 || day.highlights.length > 0) && (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {day.meta.slice(0, 4).map((item) => (
+                              <span
+                                key={item}
+                                className="inline-flex items-center rounded-full border border-border/70 bg-secondary/10 px-3 py-1 text-[11px] font-medium text-foreground"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                            {day.highlights.slice(0, 3).map((item) => (
+                              <span
+                                key={item}
+                                className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-foreground"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">
+                          {day.detail}
+                        </p>
+                      </div>
+                    </motion.div>
                   </motion.article>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </section>
         ) : (

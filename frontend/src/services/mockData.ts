@@ -68,27 +68,255 @@ export const destinations: Destination[] = [
     tagline: "Walk in the footsteps of legends",
     description:
       "The classic trek to the foot of the world's highest mountain, through Sherpa villages, Buddhist monasteries and surreal high-altitude landscapes.",
-    itinerary: `## Everest Base Camp Trek — 14 Days
+    itinerary: `# Annapurna Circuit Trek via Tilicho Lake – 15 Days
 
-  The classic Everest Base Camp route is a Himalayan bucket-list journey through the Khumbu Valley. Trek through Sherpa towns, ancient monasteries, and rugged high-altitude landscapes with the South Face of Everest as the backdrop.
+## Trek Overview
 
-  1. **Day 1 — Arrival Kathmandu (1,400 m):** Airport pickup, welcome dinner, and trek briefing.
-  2. **Day 2 — Kathmandu to Lukla; trek to Phakding (2,650 m):** Short mountain flight to Lukla, then gentle walk along the Dudh Koshi.
-  3. **Day 3 — Phakding to Namche Bazaar (3,440 m):** Enter Sagarmatha National Park and climb to the bustling Sherpa town of Namche.
-  4. **Day 4 — Acclimatization in Namche Bazaar:** Short hikes, museum visit, and rest day for altitude adjustment.
-  5. **Day 5 — Namche Bazaar to Tengboche (3,860 m):** Walk past pine forests and Mani walls to the famous Tengboche monastery.
-  6. **Day 6 — Tengboche to Dingboche (4,410 m):** High alpine trekking with excellent views of Lhotse, Ama Dablam and Nuptse.
-  7. **Day 7 — Acclimatization in Dingboche:** Hike to Nagarjun Hill or Chukung for clearer mountain views.
-  8. **Day 8 — Dingboche to Lobuche (4,940 m):** A strong climb to Lobuche with glacier views ahead.
-  9. **Day 9 — Lobuche to Gorak Shep (5,170 m) and Everest Base Camp (5,364 m):** Reach the famous camp and return to Gorak Shep.
-  10. **Day 10 — Hike to Kala Patthar (5,545 m) and descend to Pheriche:** Sunrise mountain panorama and gradual descent to lower altitude.
-  11. **Day 11 — Pheriche to Namche Bazaar:** Trek back through Sherpa villages and alpine meadows.
-  12. **Day 12 — Namche Bazaar to Lukla:** Final trek through the Khumbu Valley.
-  13. **Day 13 — Fly Lukla to Kathmandu:** Return flight and farewell evening in Kathmandu.
-  14. **Day 14 — Departure:** Transfer to the airport for your onward journey.
+The *Annapurna Circuit Trek via Tilicho Lake* is a premium Himalayan journey that blends the classic Annapurna Circuit with an unforgettable side trip to Tilicho Lake—one of the world’s highest alpine lakes.
 
-  **Highlights:** Everest Base Camp, Kala Patthar sunrise view, Tengboche monastery, Sherpa culture, Sagarmatha National Park.
-`,
+This itinerary leads trekkers through richly varied landscapes: subtropical forests, glacial rivers, high mountain deserts, ancient villages, and the iconic Thorong La Pass at 5,416m. Along the way, you will experience Gurung, Manangi, and Tibetan-influenced cultures in villages that have changed little for generations.
+
+---
+
+### Trek Duration:
+
+15 Days
+
+### Maximum Elevation:
+
+Thorong La Pass – 5,416m
+
+### Trek Difficulty:
+
+Moderate to Challenging
+
+### Accommodation:
+
+Tea Houses / Mountain Lodges / Hotels
+
+### Starting Point:
+
+Kathmandu → Besisahar → Chame
+
+### Ending Point:
+
+Jomsom → Pokhara → Kathmandu
+
+---
+
+# Trek Highlights
+
+* Walk the full Annapurna Circuit with the Tilicho Lake extension
+* Cross the iconic Thorong La Pass at 5,416m
+* Visit sacred Muktinath Temple and ancient Mustang-style villages
+* Hike to Tilicho Lake (4,919m), one of the highest freshwater lakes in the world
+* Enjoy rich mountain cultures and traditional tea-house hospitality
+* Scan the Annapurna, Dhaulagiri, Tilicho, and Gangapurna ranges
+* Relax in lakeside Pokhara after the trek
+
+---
+
+# Detailed Day-by-Day Itinerary
+
+---
+
+## Day 1: Arrival in Kathmandu (1,400m)
+
+Arrive in Kathmandu and transfer to your hotel.
+
+### Activities:
+
+* Airport pickup
+* Trek briefing
+* Explore Thamel bazaar
+* Final gear checks
+
+*Accommodation:* Hotel in Kathmandu
+
+---
+
+## Day 2: Drive Kathmandu to Chame (2,670m)
+
+Duration: 8–10 hours
+
+Drive through terraced river valleys and the Marsyangdi Gorge, arriving in Chame for your first mountain night.
+
+*Highlights:*
+
+* Mountain villages and riverside scenery
+* View of Annapurna II and Lamjung Himal
+
+*Accommodation:* Tea house
+
+---
+
+## Day 3: Trek Chame to Upper Pisang (3,300m)
+
+Duration: 5–6 hours
+
+Trek through forests and high pastures before reaching the scenic village of Upper Pisang.
+
+*Highlights:*
+
+* View of Annapurna II and Pisang Peak
+* Braga Monastery and local prayer walls
+
+*Accommodation:* Tea house
+
+---
+
+## Day 4: Trek Upper Pisang to Manang (3,540m)
+
+Duration: 5–6 hours
+
+Continue across spectacular high terraces and narrow canyons into the vibrant trekking hub of Manang.
+
+*Highlights:*
+
+* Dramatic mountain views
+* Manang village culture and markets
+
+*Accommodation:* Tea house
+
+---
+
+## Day 5: Acclimatization Day in Manang
+
+Rest and acclimatize with an optional day hike to local viewpoints.
+
+### Optional hikes:
+
+* Gangapurna Lake
+* Ice Lake
+* Local monastery visit
+
+*Accommodation:* Tea house
+
+---
+
+## Day 6: Trek Manang to Shree Kharka (4,060m)
+
+Duration: 4–5 hours
+
+Leave Manang and enter the high alpine landscape on the route toward Tilicho Lake.
+
+*Accommodation:* Tea house
+
+---
+
+## Day 7: Trek Shree Kharka to Tilicho Base Camp (4,150m)
+
+Duration: 5–6 hours
+
+Continue through alpine meadows and high ridges, reaching Tilicho Base Camp for the night.
+
+*Accommodation:* Tea house
+
+---
+
+## Day 8: Tilicho Lake Excursion (4,919m) & Return to Shree Kharka
+
+Duration: 7–8 hours
+
+Hike to the turquoise shores of Tilicho Lake and return through quiet high pastures.
+
+*Highlights:*
+
+* Tilicho Lake and mountain reflections
+* Alpine landscapes and remote trails
+
+*Accommodation:* Tea house
+
+---
+
+## Day 9: Trek Shree Kharka to Yak Kharka (4,050m)
+
+Duration: 5–6 hours
+
+Descend from Tilicho and reconnect with the classic Annapurna Circuit route.
+
+*Accommodation:* Tea house
+
+---
+
+## Day 10: Trek Yak Kharka to Thorong Phedi (4,525m)
+
+Duration: 4–5 hours
+
+Approach the high pass base camp and rest in preparation for the crossing.
+
+*Accommodation:* Tea house
+
+---
+
+## Day 11: Cross Thorong La Pass (5,416m) → Muktinath (3,800m)
+
+Duration: 8–10 hours
+
+Cross the iconic Thorong La Pass and descend to the sacred valley of Muktinath.
+
+*Highlights:*
+
+* Thorong La Pass and panoramic Himalayan views
+* Muktinath Temple and pilgrimage atmosphere
+
+*Accommodation:* Tea house
+
+---
+
+## Day 12: Trek/Drive Muktinath to Jomsom (2,720m)
+
+Duration: 5–6 hours
+
+Descend through Mustang-style landscapes and enjoy the wide-open valley of Jomsom.
+
+*Accommodation:* Tea house
+
+---
+
+## Day 13: Drive or Flight Jomsom to Pokhara
+
+Relax in lakeside Pokhara after the trek with a scenic transfer or flight.
+
+### Activities:
+
+* Lakeside walk
+* Boat ride or paragliding booking
+* Relaxing in hilltop cafés
+
+*Accommodation:* Hotel
+
+---
+
+## Day 14: Drive/Fly Pokhara to Kathmandu
+
+Return to Kathmandu by road or flight and enjoy a final evening in the capital.
+
+*Accommodation:* Hotel
+
+---
+
+## Day 15: Final Departure
+
+Airport transfer for your international flight.
+
+*Highlights:*
+
+* Final souvenir shopping
+* Departure assistance
+
+
+# Best Time to Trek
+
+### Spring (March–May)
+
+Best weather, clear mountain views and blooming rhododendrons.
+
+### Autumn (September–November)
+
+Stable skies, crisp air and the best visibility in the Annapurna range.
+
+---`,
     image: everest,
     altitude: "5,364 m",
     bestSeason: "Mar–May · Sep–Nov",
@@ -742,11 +970,1314 @@ export const destinations: Destination[] = [
     altitude: "5,200 m",
     bestSeason: "Mar–May · Sep–Nov",
     difficulty: "Strenuous",
-    duration: "18 days",
-    priceFrom: 1999,
+    duration: "19 days",
+    priceFrom: 1850,
     rating: 4.9,
     reviews: 64,
     tags: ["Trekking", "High Altitude", "Adventure"],
+    itinerary: `# Everest Three Passes Trek – 19 Days
+
+## The Ultimate Himalayan Adventure Through Everest's Three Legendary High Passes
+
+*Challenge yourself on Nepal's most complete and rewarding trekking experience as you cross the three legendary high mountain passes—Kongma La (5,535m), Cho La (5,420m), and Renjo La (5,360m)—while visiting Everest Base Camp (5,364m), Kala Patthar (5,545m), and the breathtaking Gokyo Lakes.*
+
+The Everest Three Passes Trek is the ultimate journey through the heart of the Khumbu region, combining everything that makes the Everest region world-famous into one unforgettable expedition. This incredible adventure takes you beyond the classic Everest Base Camp route, leading you through remote alpine valleys, pristine glacial lakes, high mountain passes, and authentic Sherpa villages surrounded by the highest peaks on Earth.
+
+Designed for experienced trekkers seeking a greater challenge, this trek rewards every step with spectacular Himalayan scenery, rich Sherpa culture, and an unmatched sense of achievement.
+
+---
+
+# Why Choose the Everest Three Passes Trek?
+
+If you're looking for the most complete trekking experience in the Everest region, the Everest Three Passes Trek is the perfect choice.
+
+Unlike the traditional Everest Base Camp Trek, this route explores three spectacular mountain passes, offering dramatic landscapes, quieter trails, and panoramic viewpoints that few trekkers experience.
+
+You'll stand at the foot of Mount Everest, witness sunrise from Kala Patthar, admire the crystal-clear Gokyo Lakes, and cross some of the highest trekking passes in the Himalayas—all within one incredible journey.
+
+Every day brings new scenery, from dense pine forests and roaring rivers to glaciers, icefalls, turquoise lakes, and snow-covered peaks.
+
+For serious trekking enthusiasts, this is widely regarded as Nepal's greatest trekking adventure.
+
+---
+
+# Book Your Everest Three Passes Adventure
+
+### Duration
+
+*19 Days / 18 Nights*
+
+### Trek Region
+
+Everest (Khumbu Region)
+
+### Maximum Altitude
+
+*Kala Patthar – 5,545m (18,192 ft)*
+
+### Highest Mountain Pass
+
+*Kongma La Pass – 5,535m (18,159 ft)*
+
+### Everest Base Camp
+
+*5,364m (17,598 ft)*
+
+### Difficulty
+
+*Challenging to Strenuous*
+
+### Group Size
+
+2–10 People
+
+### Accommodation
+
+3-Star Hotel in Kathmandu & Traditional Mountain Tea Houses
+
+### Meals
+
+Breakfast, Lunch & Dinner During Trek
+
+### Transportation
+
+Domestic Flight (Kathmandu/Ramechhap – Lukla – Kathmandu/Ramechhap)
+
+### Trek Starts
+
+Kathmandu
+
+### Trek Ends
+
+Kathmandu
+
+### Best Seasons
+
+* Spring (March–May)
+* Autumn (September–November)
+
+---
+
+# Trek Highlights
+
+✔️ Cross the legendary *Kongma La Pass (5,535m)*
+
+✔️ Conquer the spectacular *Cho La Pass (5,420m)*
+
+✔️ Experience the breathtaking *Renjo La Pass (5,360m)*
+
+✔️ Reach *Everest Base Camp (5,364m)*
+
+✔️ Hike to *Kala Patthar (5,545m)* for the best panoramic view of Mount Everest
+
+✔️ Explore the stunning turquoise *Gokyo Lakes*
+
+✔️ Climb *Gokyo Ri (5,357m)* for one of the finest viewpoints in Nepal
+
+✔️ Experience the thrilling flight to Lukla
+
+✔️ Discover the vibrant Sherpa town of Namche Bazaar
+
+✔️ Visit the historic Tengboche Monastery
+
+✔️ Walk beside the Khumbu Glacier and Ngozumpa Glacier
+
+✔️ Trek through Sagarmatha National Park, a UNESCO World Heritage Site
+
+✔️ Experience authentic Sherpa hospitality and Buddhist culture
+
+✔️ Enjoy breathtaking views of Everest, Lhotse, Makalu, Cho Oyu, Ama Dablam, Nuptse, Pumori, Thamserku, and many more Himalayan peaks
+
+✔️ Complete Nepal's most comprehensive Everest trekking circuit
+
+---
+
+# Trek Overview
+
+The Everest Three Passes Trek is widely recognized as the ultimate trekking adventure in the Everest region.
+
+Beginning with a scenic mountain flight to Lukla, your journey follows the classic Everest trail through Phakding and Namche Bazaar before branching into more remote sections of the Khumbu.
+
+The trek takes you across three challenging mountain passes, each offering unforgettable views and unique landscapes.
+
+You'll visit Everest Base Camp, where climbers begin their ascent of the world's highest mountain, before hiking to Kala Patthar for an unforgettable sunrise over Everest.
+
+The adventure continues into the breathtaking Gokyo Valley, home to shimmering glacial lakes and the immense Ngozumpa Glacier, the longest glacier in Nepal.
+
+Crossing Renjo La Pass rewards you with one of the finest panoramic mountain views in the Himalayas, stretching across Everest, Lhotse, Makalu, Cho Oyu, and countless surrounding peaks.
+
+Combining high-altitude adventure, Sherpa culture, ancient monasteries, glacier crossings, and pristine alpine landscapes, this trek delivers the most complete Himalayan experience available.
+
+---
+
+# Why Choose This Trek?
+
+The Everest Three Passes Trek offers everything the Everest Base Camp Trek does—and much more.
+
+This journey allows you to:
+
+* Complete Nepal's most famous trekking circuit.
+* Cross three legendary Himalayan mountain passes.
+* Visit Everest Base Camp.
+* Watch sunrise from Kala Patthar.
+* Explore the magnificent Gokyo Lakes.
+* Hike to Gokyo Ri.
+* Experience quieter and less crowded trails.
+* Discover traditional Sherpa villages.
+* Visit ancient Buddhist monasteries.
+* Challenge yourself with one of the world's finest high-altitude trekking adventures.
+
+For experienced trekkers seeking the ultimate Everest experience, no other trek compares.
+
+---
+
+# Quick Facts
+
+| Trek Information    | Details                   |
+| ------------------- | ------------------------- |
+| Trek Name           | Everest Three Passes Trek |
+| Duration            | 19 Days                   |
+| Maximum Elevation   | 5,545m (Kala Patthar)     |
+| Highest Pass        | Kongma La – 5,535m        |
+| Second Pass         | Cho La – 5,420m           |
+| Third Pass          | Renjo La – 5,360m         |
+| Everest Base Camp   | 5,364m                    |
+| Gokyo Ri            | 5,357m                    |
+| Region              | Khumbu (Everest Region)   |
+| Difficulty          | Challenging to Strenuous  |
+| Walking Hours       | 6–9 Hours Daily           |
+| Total Trek Distance | Approximately 170 km      |
+| Accommodation       | Tea Houses                |
+| Meals               | Breakfast, Lunch & Dinner |
+| Best Season         | Spring & Autumn           |
+| National Park       | Sagarmatha National Park  |
+| Starting Point      | Kathmandu                 |
+| Trek Start          | Lukla                     |
+| Trek End            | Lukla                     |
+| Fitness Level       | Excellent                 |
+
+---
+
+# Why Travel with Nomads Navigate Nepal?
+
+The Everest Three Passes Trek demands careful planning, experienced leadership, and a strong commitment to safety.
+
+At *Nomads Navigate Nepal*, we provide professional trekking experiences led by licensed guides who know every trail, pass, and village throughout the Khumbu region.
+
+### Why Choose Us?
+
+✔️ Government-Registered Trekking Company
+
+✔️ Licensed & Experienced Trekking Guides
+
+✔️ Expert High-Altitude Support
+
+✔️ Ethical Porter Welfare
+
+✔️ Small Group Departures
+
+✔️ Personalized Itineraries
+
+✔️ Transparent Pricing
+
+✔️ High Safety Standards
+
+✔️ Daily Health Monitoring
+
+✔️ 24/7 Customer Support
+
+✔️ Sustainable & Responsible Tourism
+
+✔️ Authentic Himalayan Experiences
+
+---
+
+# Is This Trek Right for You?
+
+The Everest Three Passes Trek is ideal for trekkers who:
+
+* Have previous multi-day trekking experience.
+* Enjoy physically demanding adventures.
+* Want to explore beyond the standard Everest Base Camp route.
+* Dream of crossing high Himalayan passes.
+* Love mountain photography and dramatic landscapes.
+* Seek a true wilderness experience with fewer crowds.
+* Are in excellent physical condition and prepared for high-altitude trekking.
+
+If you're looking for the most rewarding and complete trekking experience in Nepal, the Everest Three Passes Trek is the adventure of a lifetime.
+
+---
+
+# Begin Your Ultimate Everest Journey
+
+The Everest Three Passes Trek is more than a trek—it's a true Himalayan expedition.
+
+Every mountain pass crossed, every glacier traversed, and every summit viewed becomes part of a story you'll carry for the rest of your life.
+
+Join *Nomads Navigate Nepal* and experience Nepal's most iconic trekking circuit with a team dedicated to your safety, comfort, and success.
+
+## *Explore Nepal Beyond Maps.*
+
+---
+
+# Everest Three Passes Trek – 19 Days Detailed Itinerary
+
+## Day 1: Arrival in Kathmandu (1,400m / 4,593 ft)
+
+*Accommodation:* 3-Star Hotel
+*Meals:* Welcome Dinner
+*Transportation:* Airport Transfer
+
+Welcome to Nepal!
+
+Upon arrival at Tribhuvan International Airport, a representative from *Nomads Navigate Nepal* will greet you and transfer you to your hotel in Kathmandu.
+
+After check-in, you can relax or explore the vibrant streets of Thamel, famous for its trekking shops, cafés, restaurants, and lively atmosphere.
+
+In the evening, meet your trekking guide for a detailed trip briefing covering the itinerary, weather, safety procedures, altitude awareness, and equipment check.
+
+Enjoy a traditional Nepali welcome dinner as you prepare for the adventure ahead.
+
+### Today's Highlights
+
+* Airport meet & greet
+* Hotel check-in
+* Explore Thamel
+* Pre-trek briefing
+* Traditional Nepali welcome dinner
+
+---
+
+## Day 2: Fly to Lukla (2,846m) – Trek to Phakding (2,610m)
+
+*Flight:* 30–35 Minutes
+*Walking:* 3–4 Hours
+*Distance:* 8 km
+
+After an unforgettable mountain flight to Lukla, meet your porter team and begin trekking through beautiful Sherpa villages alongside the Dudh Koshi River.
+
+Cross suspension bridges decorated with colorful prayer flags before reaching the peaceful village of Phakding.
+
+### Highlights
+
+* Scenic Himalayan flight
+* Lukla Airport
+* Dudh Koshi River
+* Sherpa villages
+* First Himalayan trekking experience
+
+---
+
+## Day 3: Trek to Namche Bazaar (3,440m)
+
+*Walking:* 6–7 Hours
+*Distance:* 11 km
+
+Today's trail follows the Dudh Koshi River through pine forests and across several suspension bridges, including the iconic Hillary Bridge.
+
+After entering Sagarmatha National Park, begin the steep climb to Namche Bazaar.
+
+If weather permits, enjoy your first view of Mount Everest.
+
+### Highlights
+
+* Sagarmatha National Park
+* Hillary Suspension Bridge
+* First Everest View
+* Namche Bazaar
+
+---
+
+## Day 4: Acclimatization Day – Namche Bazaar
+
+*Walking:* 3–4 Hours
+
+To help your body adjust to the altitude, enjoy an acclimatization hike to the famous Everest View Hotel.
+
+Marvel at spectacular views of Everest, Lhotse, Ama Dablam, Nuptse, and Thamserku before returning to Namche.
+
+Spend the afternoon exploring local museums, cafés, and markets.
+
+### Highlights
+
+* Everest View Hotel
+* Sherpa Museum
+* Acclimatization hike
+* Mountain cafés
+
+---
+
+## Day 5: Trek to Tengboche (3,867m)
+
+*Walking:* 5–6 Hours
+
+Follow scenic ridgelines with breathtaking Himalayan panoramas before descending to the Dudh Koshi River and climbing through rhododendron forests to Tengboche.
+
+Visit the famous Tengboche Monastery, the spiritual center of the Khumbu region.
+
+### Highlights
+
+* Everest panorama
+* Ama Dablam views
+* Tengboche Monastery
+* Buddhist culture
+
+---
+
+## Day 6: Trek to Dingboche (4,410m)
+
+*Walking:* 5–6 Hours
+
+Pass through Pangboche Village before ascending into the spectacular Imja Valley.
+
+As vegetation becomes sparse, the dramatic alpine landscape begins to dominate the scenery.
+
+### Highlights
+
+* Pangboche
+* Imja Valley
+* Ama Dablam close-up views
+* Sherpa villages
+
+---
+
+## Day 7: Acclimatization at Dingboche
+
+*Walking:* 4 Hours
+
+Today's hike to Nagarjun Hill helps improve acclimatization while offering panoramic views of Makalu, Lhotse, Ama Dablam, Cholatse, and Island Peak.
+
+### Highlights
+
+* Acclimatization hike
+* Himalayan viewpoints
+* Photography opportunities
+
+---
+
+## Day 8: Cross Kongma La Pass (5,535m) – Trek to Lobuche (4,940m)
+
+*Walking:* 8–9 Hours
+
+Today is one of the most challenging and rewarding days of the trek.
+
+Climb steadily to Kongma La Pass, the highest of the three passes, where you'll enjoy breathtaking views of glaciers and towering Himalayan peaks.
+
+Descend carefully into Lobuche for the night.
+
+### Highlights
+
+* Kongma La Pass (5,535m)
+* Khumbu Glacier views
+* High alpine landscapes
+* First of the Three Passes completed
+
+---
+
+## Day 9: Trek to Everest Base Camp (5,364m) – Return to Gorak Shep (5,164m)
+
+*Walking:* 7–8 Hours
+
+Follow the Khumbu Glacier to the legendary Everest Base Camp.
+
+Spend time exploring the base camp area and admiring the mighty Khumbu Icefall before returning to Gorak Shep.
+
+### Highlights
+
+* Everest Base Camp
+* Khumbu Icefall
+* Expedition camps (spring season)
+* Lifetime achievement
+
+---
+
+## Day 10: Kala Patthar (5,545m) – Trek to Dzongla (4,830m)
+
+*Walking:* 7–8 Hours
+
+Before sunrise, hike to Kala Patthar for the finest panoramic view of Mount Everest.
+
+After descending for breakfast, continue toward Dzongla, preparing for tomorrow's crossing of Cho La Pass.
+
+### Highlights
+
+* Sunrise over Everest
+* Kala Patthar summit
+* Pumori views
+* Dzongla village
+
+---
+
+## Day 11: Cross Cho La Pass (5,420m) – Trek to Thagnak (4,700m)
+
+*Walking:* 8–9 Hours
+
+Today's trail crosses the spectacular Cho La Pass, famous for its rugged terrain, glacier crossing, and dramatic mountain scenery.
+
+Descend carefully into the peaceful village of Thagnak.
+
+### Highlights
+
+* Cho La Pass
+* Glacier crossing
+* Snow-covered landscapes
+* Second high pass completed
+
+---
+
+## Day 12: Trek to Gokyo (4,790m)
+
+*Walking:* 3–4 Hours
+
+Today's shorter trek follows the Ngozumpa Glacier before arriving at the stunning Gokyo Lakes.
+
+The turquoise glacial lakes surrounded by snow-covered peaks create one of Nepal's most breathtaking landscapes.
+
+### Highlights
+
+* Ngozumpa Glacier
+* Gokyo Lakes
+* Peaceful alpine scenery
+
+---
+
+## Day 13: Gokyo Ri (5,357m) – Explore Gokyo
+
+*Walking:* 4–5 Hours
+
+Climb Gokyo Ri early in the morning for one of the finest panoramic viewpoints in the Himalayas.
+
+Enjoy incredible views of Everest, Lhotse, Makalu, and Cho Oyu before spending a relaxing afternoon beside the beautiful lakes.
+
+### Highlights
+
+* Gokyo Ri summit
+* Four 8,000-meter peaks visible
+* Gokyo Lakes
+* Outstanding photography
+
+---
+
+## Day 14: Cross Renjo La Pass (5,360m) – Trek to Lungden (4,380m)
+
+*Walking:* 8 Hours
+
+The final high pass of the expedition offers perhaps the finest panoramic views of the entire trek.
+
+Renjo La provides unforgettable vistas across the Gokyo Lakes, Everest, Makalu, and Cho Oyu before descending into Lungden.
+
+### Highlights
+
+* Renjo La Pass
+* Third high pass completed
+* Panoramic Himalayan views
+* Remote trekking trails
+
+---
+
+## Day 15: Trek to Namche Bazaar
+
+*Walking:* 6–7 Hours
+
+Descend gradually through traditional Sherpa villages before rejoining the classic Everest trekking route back to Namche Bazaar.
+
+Enjoy a comfortable evening celebrating the successful completion of all three passes.
+
+### Highlights
+
+* Sherpa villages
+* Easier descent
+* Celebration in Namche
+
+---
+
+## Day 16: Trek to Lukla
+
+*Walking:* 6–7 Hours
+
+Retrace your steps through forests and suspension bridges to Lukla.
+
+Celebrate your successful expedition with your trekking team.
+
+### Highlights
+
+* Final trekking day
+* Dudh Koshi River
+* Farewell celebration
+
+---
+
+## Day 17: Fly to Kathmandu
+
+*Flight:* 30–35 Minutes
+
+Return to Kathmandu on a scenic mountain flight.
+
+The remainder of the day is free for shopping, sightseeing, or relaxing.
+
+In the evening, enjoy a farewell dinner with your trekking team.
+
+---
+
+## Day 18: Free Day in Kathmandu
+
+This extra day is reserved as a contingency for possible weather delays affecting Lukla flights.
+
+If flights operate as scheduled, enjoy exploring Kathmandu's UNESCO World Heritage Sites, shopping for souvenirs, visiting cafés, or simply relaxing after your adventure.
+
+### Optional Activities
+
+* Kathmandu Sightseeing Tour
+* Spa & Massage
+* Local Markets
+* Cultural Heritage Tours
+* Traditional Nepali Cooking Class
+
+---
+
+## Day 19: Final Departure
+
+After breakfast, our team will transfer you to Tribhuvan International Airport for your onward flight.
+
+As your incredible Himalayan journey comes to an end, you'll leave Nepal with unforgettable memories of crossing three legendary mountain passes, standing at Everest Base Camp, witnessing sunrise from Kala Patthar, and discovering the breathtaking beauty of the Gokyo Lakes.
+
+Thank you for choosing *Nomads Navigate Nepal*.
+
+We look forward to welcoming you back for another unforgettable Himalayan adventure.
+
+*Explore Nepal Beyond Maps.*
+
+---
+
+# Everest Three Passes Trek – Complete Packing List, Altitude Sickness, Safety, Sherpa Culture, Flora & Fauna, Photography & Essential Travel Information
+
+---
+
+# Complete Packing List
+
+The Everest Three Passes Trek is one of Nepal's most demanding high-altitude adventures. Packing the right equipment is essential for your comfort, safety, and success.
+
+Temperatures can vary from warm afternoons in the lower valleys to well below freezing on the high passes, so dressing in layers is highly recommended.
+
+---
+
+# Clothing
+
+### Base Layers
+
+* 2–3 moisture-wicking thermal tops
+* 2 thermal bottoms
+* 4 quick-dry trekking T-shirts
+* 2 long-sleeve trekking shirts
+
+### Insulation Layers
+
+* Fleece jacket
+* Lightweight insulated jacket
+* High-quality down jacket (rated for temperatures below *-15°C*)
+
+### Outer Layers
+
+* Waterproof and windproof shell jacket
+* Waterproof trekking pants
+
+### Trekking Pants
+
+* 2 pairs of trekking trousers
+* Thermal leggings
+* Comfortable camp trousers (optional)
+
+### Headwear
+
+* Warm beanie
+* Sun hat or trekking cap
+* Buff or neck gaiter
+
+### Gloves
+
+* Lightweight trekking gloves
+* Waterproof insulated gloves
+
+### Socks
+
+* 4–5 pairs of warm trekking socks
+* 2 pairs of liner socks (optional)
+
+---
+
+# Footwear
+
+Proper footwear is critical, especially when crossing snow-covered mountain passes.
+
+Recommended:
+
+* Waterproof trekking boots with excellent ankle support
+* Camp shoes or sandals
+* Lightweight sneakers (optional)
+* Spare boot laces
+
+Always ensure your boots are well broken in before your trek.
+
+---
+
+# Backpack & Bags
+
+* 35–45L daypack
+* Duffel bag (carried by porter)
+* Rain cover
+* Waterproof dry bags or packing cubes
+
+---
+
+# Sleeping Equipment
+
+Although tea houses provide blankets, we recommend bringing:
+
+* Sleeping bag rated to *-20°C*
+* Sleeping bag liner (optional)
+* Inflatable travel pillow (optional)
+
+---
+
+# Trekking Equipment
+
+* Trekking poles
+* Headlamp with spare batteries
+* Reusable water bottles (minimum 2 liters)
+* Thermos flask
+* UV-protection sunglasses
+* Sunscreen (SPF 50+)
+* Lip balm with SPF
+* Camera or smartphone
+* Spare batteries
+* Extra memory cards
+* Power bank (20,000–30,000mAh recommended)
+* Universal travel adapter
+* Waterproof phone pouch
+
+---
+
+# Personal Toiletries
+
+* Toothbrush and toothpaste
+* Soap and shampoo
+* Quick-dry towel
+* Wet wipes
+* Hand sanitizer
+* Toilet paper
+* Moisturizer
+* Nail clippers
+* Personal hygiene products
+
+---
+
+# Personal First Aid Kit
+
+Your trekking guide carries a comprehensive first aid kit, but you should also bring personal medical supplies.
+
+Recommended items:
+
+* Prescription medications
+* Pain relievers
+* Blister treatment
+* Antiseptic cream
+* Anti-diarrheal medication
+* Allergy medicine
+* Motion sickness tablets
+* Oral Rehydration Salts (ORS)
+* Water purification tablets
+
+---
+
+# Weather Conditions
+
+Weather in the Everest region changes rapidly, especially above 5,000 meters.
+
+## Spring (March–May)
+
+* Mild daytime temperatures
+* Cold nights
+* Blooming rhododendrons
+* Excellent mountain visibility
+
+## Autumn (September–November)
+
+* Stable weather
+* Crisp mountain air
+* Clear skies
+* Comfortable trekking conditions
+
+## Winter (December–February)
+
+* Heavy snowfall on high passes
+* Very cold mornings and nights
+* Quiet trekking trails
+* Spectacular snow-covered scenery
+
+## Monsoon (June–August)
+
+* Frequent rain
+* Slippery trails
+* Cloud cover
+* Possible flight delays
+
+Spring and autumn are strongly recommended for the best overall trekking experience.
+
+---
+
+# Altitude Sickness
+
+The Everest Three Passes Trek reaches elevations above *5,500 meters*, making proper acclimatization essential.
+
+Altitude sickness can affect anyone, regardless of age or fitness.
+
+### Common Symptoms
+
+* Persistent headache
+* Fatigue
+* Nausea
+* Dizziness
+* Difficulty sleeping
+* Shortness of breath
+* Loss of appetite
+
+### Our Acclimatization Strategy
+
+Our itinerary includes acclimatization days in Namche Bazaar and Dingboche, giving your body time to adapt before crossing the high passes.
+
+We also recommend:
+
+* Drinking at least 3–4 liters of water daily
+* Walking slowly and steadily
+* Eating nutritious meals
+* Avoiding alcohol and smoking
+* Getting adequate rest
+* Reporting symptoms to your guide immediately
+
+Your guide will monitor your health daily using a pulse oximeter and will make itinerary adjustments if necessary.
+
+---
+
+# Safety Measures
+
+Your safety is our highest priority.
+
+Every Everest Three Passes Trek with *Nomads Navigate Nepal* includes:
+
+* Government-licensed trekking guide
+* Experienced high-altitude trekking staff
+* Daily health monitoring
+* Pulse oximeter
+* Comprehensive first aid kit
+* Emergency communication support
+* Flexible itinerary adjustments if required
+* Assistance with emergency helicopter evacuation arrangements
+
+We strongly recommend travel insurance covering high-altitude trekking up to *6,000 meters*.
+
+---
+
+# Sherpa Culture
+
+The Khumbu region is home to the Sherpa people, whose traditions, hospitality, and mountaineering expertise have earned worldwide respect.
+
+Throughout the trek you'll experience:
+
+* Traditional Sherpa villages
+* Ancient Buddhist monasteries
+* Prayer wheels
+* Mani walls
+* Chortens and stupas
+* Colorful prayer flags
+* Local festivals (seasonal)
+* Authentic Sherpa hospitality
+
+Visitors are encouraged to respect local customs, remove shoes before entering monasteries, ask permission before photographing people, and always walk clockwise around mani walls and stupas.
+
+---
+
+# Flora & Fauna
+
+The trek passes through the diverse ecosystems of *Sagarmatha National Park*, a UNESCO World Heritage Site.
+
+## Flora
+
+You'll encounter:
+
+* Rhododendron forests
+* Pine forests
+* Fir forests
+* Juniper shrubs
+* Alpine meadows
+* Mosses and lichens
+
+## Wildlife
+
+You may be fortunate enough to see:
+
+* Himalayan Tahr
+* Musk Deer
+* Himalayan Monal (Nepal's national bird)
+* Blood Pheasant
+* Himalayan Griffon
+* Snow Pigeon
+* Himalayan Marmot
+* Langur Monkeys
+
+The elusive Snow Leopard also inhabits the region but is rarely spotted.
+
+---
+
+# Photography Guide
+
+The Everest Three Passes Trek offers some of the finest mountain photography opportunities in the world.
+
+## Best Photography Locations
+
+* Lukla Airport
+* Namche Bazaar
+* Everest View Hotel
+* Tengboche Monastery
+* Kongma La Pass
+* Everest Base Camp
+* Kala Patthar
+* Cho La Pass
+* Gokyo Lakes
+* Gokyo Ri
+* Renjo La Pass
+
+## Best Photography Subjects
+
+* Mount Everest
+* Ama Dablam
+* Lhotse
+* Makalu
+* Cho Oyu
+* Nuptse
+* Pumori
+* Ngozumpa Glacier
+* Khumbu Glacier
+* Turquoise Gokyo Lakes
+* Yak caravans
+* Prayer flags
+* Sherpa villages
+* Monasteries
+* Sunrise and sunset landscapes
+
+### Photography Tips
+
+* Carry extra batteries, as cold temperatures reduce battery life.
+* Use waterproof protection for your camera.
+* Photograph during sunrise and sunset for the best lighting.
+* Respect local customs when taking photographs of people or religious sites.
+
+---
+
+# Electricity & Charging
+
+Electricity is available in most tea houses, though charging electronic devices often requires a small fee.
+
+We recommend carrying:
+
+* High-capacity power bank
+* Spare camera batteries
+* Universal travel adapter
+
+---
+
+# Internet & Mobile Network
+
+Wi-Fi is available in many villages but may require an additional charge.
+
+Mobile network coverage is available in several areas, though signals become weaker at higher elevations and on remote sections of the route.
+
+Many trekkers appreciate the opportunity to disconnect and fully immerse themselves in the Himalayan environment.
+
+---
+
+# Currency & Spending Money
+
+The local currency is the *Nepalese Rupee (NPR)*.
+
+ATMs are available in Kathmandu and Namche Bazaar but are not available in most higher villages.
+
+Bring enough cash for:
+
+* Snacks
+* Drinks
+* Wi-Fi
+* Device charging
+* Hot showers
+* Souvenirs
+* Tips for guides and porters
+
+Credit cards are rarely accepted along the trekking route.
+
+---
+
+# Equipment Rental
+
+If you don't have all the necessary trekking gear, high-quality equipment can be rented in Kathmandu before the trek.
+
+Common rental items include:
+
+* Down jackets
+* Sleeping bags
+* Trekking poles
+* Duffel bags
+* Gaiters
+* Microspikes (seasonal)
+* Waterproof jackets
+* Waterproof trekking pants
+
+Our team can help you choose the right equipment before departure.
+
+---
+
+# Responsible Tourism
+
+At *Nomads Navigate Nepal*, we are committed to sustainable trekking and protecting the fragile Himalayan environment.
+
+We encourage every trekker to:
+
+* Carry reusable water bottles.
+* Reduce single-use plastics.
+* Stay on marked trails.
+* Respect Sherpa traditions and Buddhist culture.
+* Support local tea houses and communities.
+* Protect wildlife and natural habitats.
+* Dispose of waste responsibly.
+* Leave no trace of your visit.
+
+Together, we can preserve the Everest region for future generations while supporting the people who call these mountains home.
+
+---
+
+# Why Choose Nomads Navigate Nepal?
+
+The Everest Three Passes Trek is a demanding adventure that requires careful planning, experienced leadership, and unwavering attention to safety.
+
+When you travel with *Nomads Navigate Nepal*, you'll benefit from:
+
+* Government-registered trekking company
+* Licensed and experienced high-altitude guides
+* Ethical porter welfare
+* Small group departures
+* Personalized itineraries
+* Transparent pricing
+* Daily health monitoring
+* High safety standards
+* Sustainable tourism practices
+* 24/7 customer support
+
+From your arrival in Nepal to your departure, our team is dedicated to making your Three Passes adventure safe, rewarding, and truly unforgettable.
+
+*Nomads Navigate Nepal*
+
+*Explore Nepal Beyond Maps.*
+
+---
+
+# Everest Three Passes Trek – Package Includes, Excludes, Pricing, Booking Information & FAQs
+
+---
+
+# What's Included
+
+When you book the *Everest Three Passes Trek – 19 Days* with *Nomads Navigate Nepal*, we take care of every essential detail so you can fully enjoy your Himalayan adventure.
+
+## Airport Services
+
+* Airport pick-up upon arrival in Kathmandu
+* Airport drop-off before your international departure
+* Private tourist vehicle for all airport transfers
+
+---
+
+## Accommodation
+
+* 3 nights in a comfortable 3-Star Hotel in Kathmandu (Twin Sharing with Breakfast)
+* Traditional Tea House accommodation during the trek (Twin Sharing)
+
+---
+
+## Meals During the Trek
+
+* Daily Breakfast
+* Daily Lunch
+* Daily Dinner
+* Fresh seasonal fruits (where available)
+* Tea or coffee with breakfast
+
+---
+
+## Transportation
+
+* Domestic Flight: Kathmandu (or Ramechhap during peak season) → Lukla
+* Domestic Flight: Lukla → Kathmandu (or Ramechhap)
+* Private airport transfers
+
+---
+
+## Professional Trekking Staff
+
+* Government Licensed English-speaking Trekking Guide
+* Experienced Sherpa Support Team
+* Porter Service (1 porter for every 2 trekkers, carrying up to 20 kg)
+* Guide & Porter salaries
+* Meals and accommodation for trekking staff
+* Staff insurance
+
+---
+
+## Trekking Permits
+
+* Sagarmatha National Park Entry Permit
+* Khumbu Pasang Lhamu Rural Municipality Permit
+* All required government taxes and permit processing fees
+
+---
+
+## Safety & Support
+
+* Comprehensive First Aid Kit
+* Pulse Oximeter for daily health monitoring
+* Emergency communication support
+* Pre-trek briefing in Kathmandu
+* Trek Completion Certificate
+* 24/7 customer support before and during your trek
+
+---
+
+# What's Not Included
+
+The following expenses are not included in the package price:
+
+* International airfare
+* Nepal Entry Visa fee
+* Personal travel insurance
+* Emergency helicopter evacuation costs
+* Personal trekking equipment
+* Sleeping bag & down jacket rental (available upon request)
+* Lunch & Dinner in Kathmandu
+* Alcoholic beverages
+* Soft drinks & bottled beverages
+* Snacks, chocolates & energy bars
+* Hot showers
+* Wi-Fi charges
+* Battery charging fees
+* Laundry services
+* Personal shopping & expenses
+* Tips for guides and porters (customary but appreciated)
+* Additional accommodation or transportation due to weather delays, flight cancellations, natural disasters, or other unforeseen circumstances
+
+---
+
+# Group Pricing
+
+### Everest Three Passes Trek – 19 Days
+
+| Group Size     | Price Per Person (USD) |
+| -------------- | ---------------------: |
+| *2–4 People* |           *US$1,850* |
+| *5–6 People* |           *US$1,750* |
+| *7–8 People* |           *US$1,650* |
+
+*For private groups larger than 8 people, please contact us for a customized quotation and special group discounts.*
+
+---
+
+# Optional Add-On Services
+
+Make your Himalayan adventure even more memorable with our optional services:
+
+* Private airport transfers
+* Luxury hotel upgrades in Kathmandu
+* Single-room accommodation
+* Additional acclimatization day
+* Helicopter return from Gokyo or Gorak Shep
+* Everest Scenic Mountain Flight
+* Private trekking guide
+* Additional porter service
+* Trekking equipment rental
+* Kathmandu sightseeing tour
+* Chitwan National Park extension
+* Pokhara extension
+* Island Peak Climbing
+* Lobuche Peak Climbing
+
+---
+
+# Booking Process
+
+Booking your Everest Three Passes Trek is easy and secure.
+
+### Step 1 – Send Your Inquiry
+
+Contact us through our website, WhatsApp, email, or social media with your preferred travel dates and group size.
+
+### Step 2 – Confirm Your Trip
+
+Our travel specialists will confirm availability, answer your questions, and help finalize your itinerary.
+
+### Step 3 – Secure Your Booking
+
+A booking deposit is required to reserve your trek. Once confirmed, we will arrange your flights, permits, accommodation, and all trekking logistics.
+
+### Step 4 – Receive Your Pre-Trek Information
+
+We'll send you a detailed information package covering your itinerary, equipment checklist, travel advice, and arrival details.
+
+### Step 5 – Begin Your Adventure
+
+Upon arrival in Nepal, our team will welcome you at the airport and take care of everything until your departure.
+
+---
+
+# Payment Information
+
+We accept:
+
+* Bank Transfer
+* Secure Online Payment (where available)
+* Cash Payment in Kathmandu before departure
+
+The remaining balance is payable before your trek begins.
+
+---
+
+# Cancellation Policy
+
+We understand that plans can change.
+
+* Cancellations made well in advance may qualify for a partial refund after deducting non-refundable expenses.
+* Date changes are generally possible, subject to availability.
+* No refunds are available for unused services once the trek has started.
+
+Please read our Terms & Conditions before confirming your booking.
+
+---
+
+# Travel Insurance
+
+Comprehensive travel insurance is *mandatory* for this trek.
+
+Your policy should include:
+
+* High-altitude trekking coverage up to *6,000 meters*
+* Emergency helicopter evacuation
+* Medical treatment
+* Trip cancellation
+* Personal accident coverage
+* Lost or delayed baggage
+
+Please provide your insurance details before the trek begins.
+
+---
+
+# Frequently Asked Questions (FAQs)
+
+### 1. How difficult is the Everest Three Passes Trek?
+
+It is one of Nepal's most challenging tea house treks, suitable for trekkers with excellent fitness and preferably previous multi-day trekking experience.
+
+### 2. How long is the trek?
+
+The standard itinerary is *19 days*, including arrival, departure, and acclimatization.
+
+### 3. What is the highest point of the trek?
+
+Kala Patthar at *5,545 meters (18,192 ft)*.
+
+### 4. Which is the highest pass?
+
+Kongma La Pass at *5,535 meters*.
+
+### 5. How many hours do we walk each day?
+
+Most trekking days involve *6–9 hours* of walking.
+
+### 6. Is previous trekking experience required?
+
+It is highly recommended, although strong beginners with excellent fitness and determination may also complete the trek with proper preparation.
+
+### 7. What is the best season?
+
+Spring (March–May) and Autumn (September–November).
+
+### 8. Are guides included?
+
+Yes. Every trek includes an experienced, government-licensed trekking guide.
+
+### 9. Is porter service included?
+
+Yes. One porter is provided for every two trekkers.
+
+### 10. Is drinking water available?
+
+Yes. Boiled, filtered, and purified drinking water is available throughout the trek.
+
+### 11. Can I charge my phone?
+
+Yes. Most tea houses provide charging facilities for an additional fee.
+
+### 12. Is Wi-Fi available?
+
+Yes, in many villages, though speeds vary and charges may apply.
+
+### 13. Are vegetarian meals available?
+
+Yes. Most tea houses offer vegetarian and vegan-friendly meals.
+
+### 14. Can I rent trekking equipment in Kathmandu?
+
+Yes. Down jackets, sleeping bags, trekking poles, and other equipment can be rented before departure.
+
+### 15. Is travel insurance compulsory?
+
+Yes. Insurance covering high-altitude trekking and emergency evacuation is mandatory.
+
+---
+
+# Why Book with Nomads Navigate Nepal?
+
+The Everest Three Passes Trek is an extraordinary expedition that deserves expert planning and local knowledge.
+
+At *Nomads Navigate Nepal*, we combine professional service, experienced local guides, and genuine Himalayan hospitality to ensure every trek is safe, enjoyable, and unforgettable.
+
+### Why Travelers Choose Us
+
+* Government-registered trekking company
+* Licensed local guides
+* Experienced Sherpa team
+* Small group departures
+* Ethical porter welfare
+* Transparent pricing
+* Personalized service
+* High safety standards
+* Sustainable tourism practices
+* 24/7 customer support
+
+We don't just guide you across three legendary Himalayan passes—we help create memories that last a lifetime.
+
+---
+
+# Ready for Nepal's Ultimate Trekking Adventure?
+
+The Everest Three Passes Trek is the ultimate challenge for passionate trekkers, combining rugged mountain passes, ancient Sherpa culture, breathtaking glaciers, turquoise alpine lakes, and unforgettable views of the world's highest peaks.
+
+Whether you're standing at Everest Base Camp, watching sunrise from Kala Patthar, crossing the dramatic Cho La Pass, or overlooking the sparkling Gokyo Lakes from Renjo La, every day offers a new achievement and a new story to tell.
+
+Join *Nomads Navigate Nepal* and experience the Himalayas beyond the ordinary.
+
+## Contact Nomads Navigate Nepal Today
+
+Start planning your Everest Three Passes Trek with our experienced local team.
+
+*Explore Nepal Beyond Maps.*
+
+*Your Ultimate Himalayan Adventure Begins Here.*
+`,
   },
   {
     id: "9",
