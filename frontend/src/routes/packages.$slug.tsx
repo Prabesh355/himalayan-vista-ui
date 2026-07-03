@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   BadgeCheck,
   BedDouble,
@@ -41,6 +43,7 @@ type ParsedItinerary = {
   summary: string;
   highlights: string[];
   days: ItineraryDay[];
+  fullMarkdown: string;
 };
 
 type DayDraft = {
@@ -778,6 +781,15 @@ function PackageDetails() {
                 );
               })}
             </div>
+
+            {itinerary.fullMarkdown && (
+              <div className="mt-8">
+                <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">Full itinerary</p>
+                <div className="mt-3 prose max-w-none text-muted-foreground">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{itinerary.fullMarkdown}</ReactMarkdown>
+                </div>
+              </div>
+            )}
           </section>
         ) : (
           <div className="rounded-[2rem] border border-border/70 bg-card p-6 text-center text-muted-foreground">
