@@ -2202,7 +2202,7 @@ Yes. Coverage for high-altitude trekking and emergency evacuation is mandatory.
 
 Experience, local knowledge, ethical porter care, restricted area expertise, and personalized service make this trek both safe and unforgettable.
 
-*Explore Nepal Beyond Maps.*`,`
+*Explore Nepal Beyond Maps.*`,
     image: narPhu,
     altitude: "5,320 m",
     bestSeason: "Mar–May · Sep–Nov",
