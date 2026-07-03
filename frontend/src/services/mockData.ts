@@ -2056,96 +2056,159 @@ Start planning your Everest Three Passes Trek with our experienced local team.
     name: "Nar Phu Valley Trek",
     region: "Annapurna",
     tagline: "Explore the hidden valleys of Nar and Phu",
-    description: "Trek through ancient Tibetan-influenced villages, dramatic canyons, centuries-old monasteries, and the spectacular Kang La Pass connecting Nar Valley with the Annapurna Circuit.",
-    itinerary: `# Nar Phu Valley Trek – 15 Days
+    description: "A 12-day adventure into the remote Nar and Phu Valleys, crossing Kang La Pass and returning via the Annapurna Circuit.",
+    itinerary: `# Nar Phu Valley Trek – 12 Days
 
-Nar Phu Valley Trek is one of Nepal's most remote and culturally preserved trekking destinations. Opened to foreign trekkers only in 2002, the trail takes you through ancient Tibetan-influenced villages, dramatic canyons, centuries-old monasteries, and the spectacular Kang La Pass.
+Discover Nepal's hidden Himalayan kingdom on a remote 12-day journey through the restricted Nar and Phu Valleys. This authentic trek combines Tibetan Buddhist culture, medieval stone villages, dramatic canyons, and the high-altitude Kang La Pass.
+
+---
+
+## Why Choose the Nar Phu Valley Trek?
+
+Nar Phu Valley is one of Nepal's most remote trekking regions, offering solitude, cultural immersion, and spectacular Annapurna range views. This itinerary is designed for trekkers who want an off-the-beaten-path experience with a strong safety and acclimatization profile.
+
+---
+
+## Trek Highlights
+
+* Explore the remote Nar and Phu Valleys.
+* Cross Kang La Pass (5,320m).
+* Visit traditional Tibetan-style villages and monasteries.
+* Trek through deep canyons, pine forests, and alpine pastures.
+* Enjoy panoramic views of Annapurna II, Gangapurna, Tilicho Peak, and Himlung Himal.
+* Experience local culture far from crowded trekking routes.
+
+---
+
+## Trek Overview
+
+A scenic drive from Kathmandu brings you to Koto, the gateway to the hidden valley. From there, the trail climbs through Meta, Phu, and Nar before reaching the Kang La Pass. After the pass, you descend to Ngawal and reconnect with the Annapurna Circuit for the return to Kathmandu.
 
 ---
 
 ## Detailed Itinerary
 
-### Day 01: Drive Kathmandu – Koto (2,610m)
-Drive through the scenic Marsyangdi Valley via Besisahar and Chame to Koto, the gateway to Nar Phu Valley.
-*Driving:* 9–10 hrs
+### Day 1: Arrival in Kathmandu (1,400m)
+Airport pickup, hotel check-in, and a pre-trek briefing. Relax in Thamel and enjoy a traditional welcome dinner.
 
-### Day 02: Trek Koto – Meta (3,560m)
-Enter the restricted Nar Phu Valley, trekking through dense pine forests, narrow canyons, and suspension bridges.
-*Walking:* 6–7 hrs
+### Day 2: Drive Kathmandu – Koto (2,600m)
+Long scenic drive along the Marsyangdi River to Koto, the Nar Phu gateway. Permit checks and trek preparation.
 
-### Day 03: Trek Meta – Phu Village (4,080m)
-Follow rugged trails alongside ancient chortens and spectacular rock formations before reaching the medieval village of Phu.
-*Walking:* 6–7 hrs
+### Day 3: Trek Koto – Meta (3,560m)
+Enter the Nar Phu Valley, crossing suspension bridges and trekking through pine forests and narrow gorges.
 
-### Day 04: Acclimatization Day at Phu
-Explore the historic Tashi Lhakhang Monastery and enjoy stunning views of Himlung Himal and surrounding peaks.
+### Day 4: Trek Meta – Phu Village (4,080m)
+Follow the upper valley to the ancient village of Phu, passing chortens, mani walls, and yak pastures.
 
-### Day 05: Trek Phu – Nar Phedi (3,490m)
-Descend through yak pastures and remote settlements to Nar Phedi Monastery.
-*Walking:* 5–6 hrs
+### Day 5: Acclimatization in Phu
+Explore Tashi Lhakhang Monastery, hike locally, and enjoy views of Himlung Himal while acclimatizing.
 
-### Day 06: Trek Nar Phedi – Nar Village (4,110m)
-A short ascent leads to the beautiful village of Nar, known for its unique Tibetan culture and traditional stone houses.
-*Walking:* 3–4 hrs
+### Day 6: Trek Phu – Nar Phedi (3,490m)
+Descend into a quieter valley and visit the remote Nar Phedi monastery beneath dramatic cliffs.
 
-### Day 07: Acclimatization & Exploration at Nar
-Spend the day acclimatizing and exploring the surrounding ridges and monasteries.
+### Day 7: Trek Nar Phedi – Nar Village (4,110m)
+Climb to Nar Village, a traditional settlement with iconic prayer wheels, mani walls, and Himalayan panoramas.
 
-### Day 08: Trek Nar – Kang La Pass (5,320m) – Ngawal (3,660m)
-Cross the spectacular Kang La Pass, one of the major highlights of the trek, offering panoramic views of Annapurna II, Gangapurna, and Tilicho Peak.
-*Walking:* 8–9 hrs
+### Day 8: Acclimatization & Exploration in Nar
+Spend the day hiking around Nar, visiting nearby viewpoints, and preparing for the pass crossing.
 
-### Day 09: Trek Ngawal – Manang (3,540m)
-Join the Annapurna Circuit trail and trek through traditional villages to Manang.
-*Walking:* 4–5 hrs
+### Day 9: Trek Nar – Kang La Pass (5,320m) – Ngawal (3,660m)
+Summit Kang La Pass before descending to Ngawal on the Annapurna Circuit. Enjoy one of the trek’s most spectacular mountain views.
 
-### Day 10: Acclimatization Day in Manang
-Explore Gangapurna Lake, local monasteries, and viewpoints around Manang.
+### Day 10: Trek Ngawal – Chame (2,670m)
+Descend through Annapurna Circuit villages and forests to Chame, celebrating the Nar Phu crossing.
 
-### Day 11: Trek Manang – Yak Kharka (4,110m)
-Gradual ascent through alpine terrain and grazing pastures.
-*Walking:* 4–5 hrs
+### Day 11: Drive Chame – Kathmandu
+Return drive to Kathmandu with scenic views of the Marsyangdi Valley and a farewell evening in the city.
 
-### Day 12: Trek Yak Kharka – Thorong Phedi (4,600m)
-Continue toward the base of Thorong La Pass.
-*Walking:* 4–5 hrs
-
-### Day 13: Cross Thorong La Pass (5,416m) – Muktinath (3,800m)
-A challenging yet rewarding day crossing one of the world's highest trekking passes before descending to the sacred pilgrimage site of Muktinath.
-*Walking:* 8–10 hrs
-
-### Day 14: Drive Muktinath – Pokhara
-Scenic drive through Jomsom, Marpha, and Tatopani to Pokhara.
-
-### Day 15: Drive or Fly Pokhara – Kathmandu
-End of the trek.
+### Day 12: Departure
+Airport transfer and departure. Finish your journey with lasting memories of Nar Phu's hidden Himalayan culture.
 
 ---
 
-# Cost Per Person (USD)
+## Route & Difficulty
 
-| Group Size | Cost Per Person |
-| ---------- | --------------: |
-| 1 Pax      |          $1,750 |
-| 2 Pax      |          $1,550 |
-| 3–4 Pax    |          $1,450 |
-| 5–6 Pax    |          $1,350 |
-| 7–8 Pax    |          $1,250 |
+Route: Kathmandu → Koto → Meta → Phu → Nar Phedi → Nar → Kang La Pass → Ngawal → Chame → Kathmandu.
 
-### Trek Highlights
+Difficulty: Moderate to Challenging. This trek requires good fitness, steady hiking ability, and readiness for high altitude.
 
-* Explore the hidden valleys of Nar and Phu.
-* Experience authentic Tibetan Buddhist culture.
-* Visit the ancient Tashi Lhakhang Monastery.
-* Cross the spectacular Kang La Pass (5,320m).
-* Stunning views of Himlung Himal, Annapurna II, Gangapurna, and Tilicho Peak.
-* Combine the remote Nar Phu Valley with the iconic Annapurna Circuit.`,
+---
+
+## Accommodation & Meals
+
+Stay in a 3-star hotel in Kathmandu and traditional mountain tea houses during the trek. Meals include breakfast, lunch, and dinner on trekking days, with a focus on nutritious local cuisine.
+
+---
+
+## Permits & Best Time to Visit
+
+This trek requires the Nar Phu Restricted Area Permit and Annapurna Conservation Area Permit (ACAP). The best seasons are Spring (March–May) and Autumn (September–November).
+
+---
+
+## Package Includes
+
+* Airport transfers in Kathmandu.
+* 3-star hotel accommodation in Kathmandu.
+* Tea house accommodation during the trek.
+* Breakfast, lunch, and dinner on trekking days.
+* Licensed English-speaking trekking guide and porter support.
+* Staff meals, accommodation, and insurance.
+* Nar Phu restricted area permit and ACAP permit.
+* First aid kit and health monitoring.
+* Pre-trek briefing and trek completion certificate.
+
+---
+
+## Package Excludes
+
+* International airfare.
+* Nepal visa fee.
+* Personal travel insurance.
+* Helicopter evacuation.
+* Personal trekking gear and equipment rental.
+* Meals in Kathmandu.
+* Drinks, snacks, and personal expenses.
+* Tips for guides and porters.
+
+---
+
+## Pricing
+
+This trek is priced from US$1,350 per person for small groups. Group rates may vary depending on size and travel dates.
+
+---
+
+## Frequently Asked Questions
+
+### How difficult is the Nar Phu Valley Trek?
+Moderate to challenging; good fitness and previous trekking experience are helpful.
+
+### What is the highest point?
+Kang La Pass at 5,320 meters.
+
+### Is a guide required?
+Yes. Nar Phu is a restricted area and licensed guides are mandatory.
+
+### When is the best season?
+Spring (March–May) and Autumn (September–November).
+
+### Is travel insurance compulsory?
+Yes. Coverage for high-altitude trekking and emergency evacuation is mandatory.
+
+---
+
+## Why Book with Nomads Navigate Nepal?
+
+Experience, local knowledge, ethical porter care, restricted area expertise, and personalized service make this trek both safe and unforgettable.
+
+*Explore Nepal Beyond Maps.*`,`
     image: narPhu,
     altitude: "5,320 m",
     bestSeason: "Mar–May · Sep–Nov",
     difficulty: "Challenging",
-    duration: "15 days",
-    priceFrom: 1250,
+    duration: "12 days",
+    priceFrom: 1350,
     rating: 4.8,
     reviews: 14,
     tags: ["Trekking", "Remote", "Cultural"],
@@ -2171,17 +2234,137 @@ End of the trek.
   {
     id: "11",
     slug: "kanchenjunga-base-camp",
-    name: "Kanchenjunga Base Camp",
+    name: "Kanchenjunga Base Camp Trek",
     region: "Everest",
     tagline: "Journey to the world's third highest peak",
-    description: "Trek through pristine forests and remote villages to the base of Mt. Kanchenjunga, experiencing unique cultures and breathtaking vistas.",
-    itinerary: "# Coming Soon...",
+    description: "A 24-day expedition to the remote North and South Base Camps of Mount Kanchenjunga, offering rare wilderness, rich culture, and dramatic Himalayan scenery.",
+    itinerary: `# Kanchenjunga Base Camp Trek – 24 Days
+
+Explore the remote wilderness of eastern Nepal on a 24-day expedition to both North Base Camp (Pangpema – 5,143m) and South Base Camp (Oktang – 4,730m) of Mount Kanchenjunga. This journey travels through the protected Kanchenjunga Conservation Area, ancient village communities, rhododendron forests, alpine meadows, and glacial valleys.
+
+---
+
+## Why Choose the Kanchenjunga Base Camp Trek?
+
+This trek is one of Nepal’s most untouched wilderness expeditions. It is ideal for experienced trekkers seeking solitude, rich mountain culture, and dramatic Himalayan views far from the crowds.
+
+Highlights include:
+* Visiting both North and South Kanchenjunga Base Camps
+* Trekking through the Kanchenjunga Conservation Area
+* Crossing scenic passes such as Sele La and Mirgin La
+* Experiencing traditional Rai, Limbu, Sherpa, and Tibetan cultures
+* Observing rare Himalayan wildlife and diverse flora
+* Staying in local tea houses and mountain lodges
+
+---
+
+## Detailed Itinerary
+
+### Day 1: Arrival in Kathmandu (1,400m)
+Arrive at Tribhuvan International Airport, transfer to your hotel, and receive a pre-trek briefing with the guide. Enjoy a welcome dinner and rest before the journey.
+
+### Day 2: Fly to Bhadrapur & Drive to Taplejung (1,820m)
+Take a morning domestic flight to Bhadrapur and then drive through eastern hill country to Taplejung, the gateway to the Kanchenjunga region.
+
+### Day 3: Drive to Sekathum (1,650m) & Trek to Amjilosa (2,510m)
+Drive to Sekathum, then begin the trek along the Ghunsa Khola through forests and traditional villages, arriving in Amjilosa.
+
+### Day 4: Trek Amjilosa – Gyabla (2,730m)
+Trek through bamboo and rhododendron forests to Gyabla, a remote village with Tibetan-style culture and scenic mountain views.
+
+### Day 5: Trek Gyabla – Ghunsa (3,430m)
+Continue the ascent through lush forest and alpine meadow to Ghunsa, the largest village in the region and an important cultural stop.
+
+### Day 6: Acclimatization Day in Ghunsa
+Take a rest day for acclimatization. Optional hikes and monastery visits help you adjust while enjoying beautiful mountain scenery.
+
+### Day 7: Trek Ghunsa – Kambachen (4,050m)
+Climb along the Ghunsa Valley into high alpine terrain, passing waterfalls and glacier-fed streams before arriving in Kambachen.
+
+### Day 8: Acclimatization Day at Kambachen
+Acclimatize in Kambachen with an optional hike to view the north face of Jannu (Kumbhakarna) and surrounding peaks.
+
+### Day 9: Trek Kambachen – Lhonak (4,780m)
+Trek onto the high glacial plateau toward Lhonak, surrounded by dramatic icefalls and high mountain peaks.
+
+### Day 10: Excursion to Pangpema (5,143m) & Return to Lhonak
+Hike to Pangpema, the North Base Camp of Kanchenjunga. Enjoy unforgettable views of the north face before returning to Lhonak.
+
+### Day 11: Trek Lhonak – Ghunsa (3,430m)
+Descend back to Ghunsa through alpine landscapes, celebrating the success of the northern base camp visit.
+
+### Day 12: Trek Ghunsa – Sele La Kharka (4,290m)
+Head toward Sele La Kharka, crossing rivers and forested trails to reach the secluded meadow at Sele La.
+
+### Day 13: Cross Sele La Pass – Mirgin La – Cheram (3,870m)
+Cross three high passes, including Sele La and Mirgin La, and descend into the beautiful village of Cheram.
+
+### Day 14: Excursion to Oktang (4,730m) & Return to Cheram
+Visit the South Base Camp at Oktang and enjoy close-up views of the Kanchenjunga south face and Yalung Glacier.
+
+### Day 15: Trek Cheram – Tortong (2,995m)
+Descend from Cheram through forested valleys and meadows to the village of Tortong.
+
+### Day 16: Trek Tortong – Yamphudin (2,080m)
+Continue descending through traditional villages and farmland to Yamphudin.
+
+### Day 17: Trek Yamphudin – Khebang (1,915m)
+Walk through river valleys and terraced farmland, arriving in the welcoming village of Khebang.
+
+### Day 18: Trek Khebang – Taplejung (1,820m)
+Complete the trek with a final descent to Taplejung, where the team celebrates the expedition’s success.
+
+### Day 19: Drive to Bhadrapur
+Drive back through eastern Nepal’s scenic hills and tea gardens to Bhadrapur.
+
+### Day 20: Fly to Kathmandu
+Take a domestic flight from Bhadrapur to Kathmandu and enjoy a free afternoon in the city.
+
+### Day 21: Leisure Day in Kathmandu
+Spend the day exploring Kathmandu, shopping, or resting after your trek.
+
+### Day 22: Buffer Day
+A contingency day for possible weather or transportation delays, or extra rest.
+
+### Day 23: Farewell Dinner
+Enjoy a final evening dinner with the guide team to celebrate the expedition.
+
+### Day 24: Final Departure
+Transfer to Tribhuvan International Airport for your onward international flight.
+
+---
+
+## Route & Difficulty
+
+Route: Kathmandu → Bhadrapur → Taplejung → Sekathum → Amjilosa → Gyabla → Ghunsa → Kambachen → Lhonak → Pangpema → Ghunsa → Sele La Kharka → Cheram → Oktang → Tortong → Yamphudin → Khebang → Taplejung → Bhadrapur → Kathmandu.
+
+Difficulty: Challenging. This expedition requires strong fitness, endurance, and a readiness for remote high-altitude trekking.
+
+---
+
+## Accommodation & Meals
+
+Accommodation includes hotel stays in Kathmandu and traditional tea houses or local lodges during the trek. Meals are provided as breakfast, lunch, and dinner on trekking days.
+
+---
+
+## Permits & Best Season
+
+This trek requires the Kanchenjunga Restricted Area Permit (RAP) and the Kanchenjunga Conservation Area Permit (KCAP). The best seasons are Spring (March–May) and Autumn (September–November).
+
+---
+
+## Why Book with Nomads Navigate Nepal?
+
+Book with a registered local operator that specializes in remote Himalayan expeditions, offers ethical porter support, and delivers expert local guidance on one of Nepal’s most extraordinary treks.
+
+*Explore Nepal Beyond Maps.*`,
     image: kanchenjunga,
     altitude: "5,143 m",
     bestSeason: "Mar–May · Sep–Nov",
-    difficulty: "Strenuous",
-    duration: "21 days",
-    priceFrom: 2200,
+    difficulty: "Challenging",
+    duration: "24 days",
+    priceFrom: 3200,
     rating: 4.9,
     reviews: 24,
     tags: ["Trekking", "Expedition", "Remote"],
@@ -2190,19 +2373,89 @@ End of the trek.
     id: "12",
     slug: "tsho-rolpa-valley-trek",
     name: "Tsho Rolpa Valley Trek",
-    region: "Langtang",
-    tagline: "Discover one of Nepal's largest glacial lakes",
-    description: "Trek through the beautiful Rolwaling Valley to the stunning Tsho Rolpa glacial lake, surrounded by towering peaks.",
-    itinerary: "# Coming Soon...",
+    region: "Kathmandu Valley",
+    tagline: "Discover Nepal's largest glacial lake in the Rolwaling Himal",
+    description:
+      "A 10-day Himalayan journey through the Rolwaling Valley to Tsho Rolpa Lake (4,580m), blending alpine scenery, Sherpa culture, and remote wilderness.",
+    itinerary: `# Tsho Rolpa Valley Trek — 10 Days
+
+Discover Nepal's largest glacial lake in the heart of the Rolwaling Valley. This 10-day trek combines pristine forests, roaring rivers, traditional Sherpa villages, and the spectacular turquoise waters of Tsho Rolpa Lake.
+
+---
+
+## Why Choose the Tsho Rolpa Valley Trek?
+
+Unlike the busy Everest and Annapurna regions, this trek offers solitude, untouched landscapes, and authentic mountain culture. It is a perfect adventure for trekkers who want an off-the-beaten-path experience with stunning Himalayan scenery.
+
+Highlights include:
+* Visiting Tsho Rolpa Lake, Nepal’s largest glacial lake (4,580m)
+* Trekking through the remote Rolwaling Valley
+* Experiencing Sherpa culture in traditional mountain villages
+* Crossing suspension bridges over glacial rivers
+* Walking through rhododendron, pine, bamboo, and oak forests
+* Enjoying panoramic views of Gauri Shankar, Melungtse, Chobutse, and the Rolwaling Himal
+
+---
+
+## Detailed Itinerary
+
+### Day 1 — Kathmandu to Chetchet
+Drive from Kathmandu to Chetchet, the gateway to the Rolwaling Valley. Overnight at a lodge and prepare for the trek ahead.
+
+### Day 2 — Chetchet to Simigaon (2,020m)
+Begin the trek along the Rolwaling River, crossing suspension bridges and passing through lush forest to reach the Sherpa village of Simigaon.
+
+### Day 3 — Simigaon to Dongang (2,800m)
+Trek through bamboo and pine forest as the valley narrows, arriving in Dongang with its peaceful riverside setting.
+
+### Day 4 — Dongang to Beding (3,690m)
+Ascend to Beding, one of the main settlements in the Rolwaling region, with stunning views of the high Andes and traditional Sherpa culture.
+
+### Day 5 — Acclimatization Day in Beding
+Rest and acclimatize in Beding. Optional hikes, village exploration, and a visit to nearby monasteries support safe altitude adjustment.
+
+### Day 6 — Beding to Na Village (4,180m)
+Continue trekking into higher alpine terrain, passing yak pastures and glacial streams before reaching Na Village.
+
+### Day 7 — Na Village to Tsho Rolpa Lake (4,580m)
+Hike to the magnificent Tsho Rolpa Lake. Enjoy the turquoise waters, panoramic mountain views, and the quiet beauty of this glacial landscape.
+
+### Day 8 — Return to Na Village
+Retrace your steps back to Na Village, soaking in the alpine scenery and mountain vistas along the return route.
+
+### Day 9 — Na Village to Beding
+Descend back to Beding through the forested valley, with more opportunities to experience local Sherpa hospitality.
+
+### Day 10 — Beding to Chetchet and drive to Kathmandu
+Descend to Chetchet and drive back to Kathmandu, completing your memorable Rolwaling Valley adventure.
+
+---
+
+## Practical Info
+
+*Duration:* 10 Days / 9 Nights
+*Maximum Altitude:* 4,580m
+*Difficulty:* Moderate to Challenging
+*Best Seasons:* Mar–May · Sep–Nov
+*Accommodation:* 3-star hotel in Kathmandu and traditional tea houses on trek
+*Meals:* Breakfast, lunch, and dinner during the trek
+*Group Size:* 2–10 people
+
+---
+
+## Why Travel with Nomads Navigate Nepal?
+
+Enjoy a local team with experienced Sherpa guides, ethical porter support, personalized service, and careful logistics for remote trekking in the Rolwaling Valley.
+`,
     image: tshoRolpa,
     altitude: "4,580 m",
     bestSeason: "Mar–May · Sep–Nov",
-    difficulty: "Moderate",
-    duration: "14 days",
-    priceFrom: 1350,
+    difficulty: "Moderate to Challenging",
+    duration: "10 days",
+    priceFrom: 890,
     rating: 4.8,
     reviews: 12,
-    tags: ["Trekking", "Lakes", "Scenic"],
+    tags: ["Trekking", "Lake", "Remote"],
   },
 ];
 
