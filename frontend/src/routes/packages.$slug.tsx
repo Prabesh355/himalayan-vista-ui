@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
@@ -183,9 +183,11 @@ function extractItinerary(markdown: string): ParsedItinerary {
     // Ignore includes/excludes and other general trailing sections
     if (
       hasSeenDays &&
-      (line.match(/^(?:#{1,3}\s*|\*\*)?(Cost Includes|Cost Excludes|Package Cost|Why Choose|Why Tsho Rolpa|Recommended Selling Price)\b/i) ||
-       line.startsWith("✅") ||
-       line.startsWith("❌"))
+      (line.match(
+        /^(?:#{1,3}\s*|\*\*)?(Cost Includes|Cost Excludes|Package Cost|Why Choose|Why Tsho Rolpa|Recommended Selling Price)\b/i,
+      ) ||
+        line.startsWith("✅") ||
+        line.startsWith("❌"))
     ) {
       ignoreRemaining = true;
       continue;
@@ -354,6 +356,7 @@ function extractItinerary(markdown: string): ParsedItinerary {
         meta: Array.from(new Set(day.meta)).filter(Boolean),
         highlights: Array.from(new Set(day.highlights)).filter(Boolean),
       })),
+    fullMarkdown: markdown,
   };
 }
 
@@ -462,6 +465,9 @@ function PackageDetails() {
   const [openDay, setOpenDay] = useState<number | null>(null);
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
+  const search = useRouterState({
+    select: (state) => state.location.search as Record<string, unknown>,
+  });
 
   const packageQuery = useQuery({
     queryKey: ["package", slug],
@@ -494,7 +500,7 @@ function PackageDetails() {
                 itinerary: fallback.itinerary || "",
                 rating: fallback.rating || 0,
                 reviewCount: fallback.reviews || 0,
-              }
+              },
             };
           }
         }
@@ -506,6 +512,8 @@ function PackageDetails() {
   const pkg = packageQuery.data?.data;
 
   const itinerary = useMemo(() => (pkg?.itinerary ? extractItinerary(pkg.itinerary) : null), [pkg]);
+  const isFullItineraryView = search.view === "itinerary";
+  const previewDays = itinerary?.days.slice(0, 5) || [];
 
   const reviewsQuery = useQuery({
     queryKey: ["package-reviews", slug],
@@ -581,6 +589,29 @@ function PackageDetails() {
     );
   }
 
+  if (isFullItineraryView) {
+    return (
+      <section className="mx-auto mt-16 max-w-4xl bg-background px-4 py-12">
+        <div className="mb-8">
+          <a href={`/packages/${slug}`} className="text-sm text-accent hover:underline">
+            ← Back to package overview
+          </a>
+          <p className="mt-6 text-sm font-medium uppercase tracking-[0.28em] text-accent">
+            Full itinerary
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">{pkg.title}</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Complete day-by-day details and all updated itinerary parts.
+          </p>
+        </div>
+
+        <article className="prose max-w-none rounded-[2rem] border border-border/70 bg-card p-6 text-muted-foreground shadow-elegant md:p-8">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{itinerary?.fullMarkdown || ""}</ReactMarkdown>
+        </article>
+      </section>
+    );
+  }
+
   return (
     <section
       id="package-details"
@@ -607,7 +638,10 @@ function PackageDetails() {
 
       <header className="mb-8">
         <div className="hidden lg:block mb-4">
-          <Link to="/packages" className="text-sm text-accent hover:underline flex items-center gap-1">
+          <Link
+            to="/packages"
+            className="text-sm text-accent hover:underline flex items-center gap-1"
+          >
             ← Back to all trekking packages
           </Link>
         </div>
@@ -618,13 +652,16 @@ function PackageDetails() {
             <strong>Region:</strong> <span className="text-foreground">{pkg.destination}</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <strong>Duration:</strong> <span className="text-foreground">{pkg.duration?.days || 0} Days</span>
+            <strong>Duration:</strong>{" "}
+            <span className="text-foreground">{pkg.duration?.days || 0} Days</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <strong>Difficulty:</strong> <span className="text-foreground">{pkg.difficulty || "Moderate"}</span>
+            <strong>Difficulty:</strong>{" "}
+            <span className="text-foreground">{pkg.difficulty || "Moderate"}</span>
           </span>
           <span className="inline-flex items-center gap-1">
-            <strong>Price:</strong> <span className="text-accent font-semibold">{formatPrice(pkg.price)}</span>
+            <strong>Price:</strong>{" "}
+            <span className="text-accent font-semibold">{formatPrice(pkg.price)}</span>
           </span>
         </div>
 
@@ -692,7 +729,7 @@ function PackageDetails() {
             )}
 
             <div className="mt-8 space-y-4">
-              {itinerary.days.map((day, index) => {
+              {previewDays.map((day, index) => {
                 const isOpen = openDay === index;
 
                 return (
@@ -783,11 +820,19 @@ function PackageDetails() {
             </div>
 
             {itinerary.fullMarkdown && (
-              <div className="mt-8">
-                <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">Full itinerary</p>
-                <div className="mt-3 prose max-w-none text-muted-foreground">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{itinerary.fullMarkdown}</ReactMarkdown>
+              <div className="mt-8 flex flex-col gap-3 rounded-3xl border border-accent/20 bg-secondary/10 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Need the complete route?</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Open every updated itinerary part on a clean page without the package overview.
+                  </p>
                 </div>
+                <a
+                  href={`/packages/${slug}?view=itinerary`}
+                  className="inline-flex w-fit items-center justify-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow transition hover:opacity-95"
+                >
+                  View full itinerary
+                </a>
               </div>
             )}
           </section>
