@@ -8,12 +8,24 @@ import {
   BadgeCheck,
   BedDouble,
   BusFront,
+  CalendarDays,
   Check,
+  CheckCircle2,
   CirclePlus,
   Clock3,
   ChevronDown,
+  Compass,
+  Footprints,
+  HelpCircle,
+  Home,
+  Info,
+  ListChecks,
+  Map,
+  MapPinned,
   Minus,
+  Mountain,
   Plane,
+  Route as RouteIcon,
   ShieldCheck,
   Sparkles,
   Ticket,
@@ -44,6 +56,12 @@ type ParsedItinerary = {
   highlights: string[];
   days: ItineraryDay[];
   fullMarkdown: string;
+};
+
+type TrekDetailSection = {
+  id: string;
+  title: string;
+  body: string;
 };
 
 type DayDraft = {
@@ -96,6 +114,195 @@ const optionalAddOns: PriceItem[] = [
   },
   { label: "Helicopter return", detail: "Fast-track exit for selected routes", icon: CirclePlus },
 ];
+
+const detailSectionIcons: Record<string, ComponentType<{ className?: string }>> = {
+  overview: Info,
+  "why-choose-this-trek": Compass,
+  "why-choose": Compass,
+  "trek-overview": Map,
+  "trip-overview": Map,
+  "trip-facts": ListChecks,
+  "cost-includes": CheckCircle2,
+  "cost-excludes": Minus,
+  includes: CheckCircle2,
+  excludes: Minus,
+  "best-time-to-trek": CalendarDays,
+  "recommended-selling-price": Ticket,
+  "package-cost": Ticket,
+  faqs: HelpCircle,
+  faq: HelpCircle,
+};
+
+const highlightIcons = [Mountain, MapPinned, Compass, Footprints, Sparkles, ShieldCheck];
+const dayIcons = [CalendarDays, Mountain, Footprints, Home, MapPinned, Compass];
+
+const cleanMarkdownText = (value: string) =>
+  value
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^[-*•]\s+/, "")
+    .replace(/^\d+\.\s+/, "")
+    .replace(/^\*+/, "")
+    .replace(/\*+$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const slugify = (value: string) =>
+  cleanMarkdownText(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const getSectionTitle = (line: string) => {
+  const trimmed = line.trim();
+  const markdownHeading = trimmed.match(/^#{1,4}\s+(.+)$/);
+  if (markdownHeading) return cleanMarkdownText(markdownHeading[1]);
+
+  const boldHeading = trimmed.match(/^\*\*(.+?)\*\*:?\s*$/);
+  if (boldHeading) return cleanMarkdownText(boldHeading[1]);
+
+  const plainHeading = trimmed.match(
+    /^(Overview|Why Choose(?: This Trek)?\??|Why Choose .+\??|Trek Highlights|Trip Highlights|Trek Overview|Trip Overview|Trip Facts|Detailed Itinerary|Detailed Day-by-Day Itinerary|Cost Includes|Cost Excludes|Includes|Excludes|Package Cost|Recommended Selling Price|Best Time to Trek|FAQs?|Frequently Asked Questions)\s*:?\s*$/i,
+  );
+  if (plainHeading) return cleanMarkdownText(plainHeading[1]);
+
+  return null;
+};
+
+const parseDayHeading = (line: string) => {
+  const cleanedLine = line
+    .trim()
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^\d+\.\s+/, "");
+  const match = cleanedLine.match(
+    /^(?:[-*]\s*)?(?:\*\*)?Day\s*(\d+)(?:\s*[:—–-]\s*|\s+)(.+?)\*?$/i,
+  );
+  if (!match) return null;
+
+  const rest = match[2].replace(/\*\*/g, "").trim();
+  const detailSplit = rest.match(/^(.+?)(?::\s+)(.+)$/);
+
+  return {
+    day: Number(match[1]),
+    title: cleanMarkdownText(detailSplit ? detailSplit[1] : rest),
+    detail: detailSplit ? detailSplit[2].trim() : "",
+  };
+};
+
+function parseTrekSections(markdown: string, packageTitle: string) {
+  const lines = markdown.split(/\r?\n/);
+  const sections: TrekDetailSection[] = [];
+  let current: TrekDetailSection | null = null;
+  let autoOverviewStarted = false;
+
+  const pushSection = () => {
+    if (!current) return;
+    const body = current.body.trim();
+    if (body || current.title) {
+      sections.push({ ...current, body });
+    }
+    current = null;
+  };
+
+  for (const line of lines) {
+    const dayHeading = parseDayHeading(line);
+    if (dayHeading) {
+      pushSection();
+      current = {
+        id: "detailed-itinerary",
+        title: "Detailed Itinerary",
+        body: line,
+      };
+      autoOverviewStarted = true;
+      continue;
+    }
+
+    const title = getSectionTitle(line);
+    if (title) {
+      pushSection();
+      const id = slugify(title);
+      current = {
+        id: title === packageTitle ? "overview" : id || "overview",
+        title: title === packageTitle ? "Overview" : title,
+        body: title === packageTitle ? "" : "",
+      };
+      autoOverviewStarted = true;
+      continue;
+    }
+
+    if (!current && line.trim()) {
+      current = {
+        id: "overview",
+        title: "Overview",
+        body: "",
+      };
+      autoOverviewStarted = true;
+    }
+
+    if (current) {
+      current.body += `${current.body ? "\n" : ""}${line}`;
+    } else if (!autoOverviewStarted && line.trim()) {
+      current = {
+        id: "overview",
+        title: "Overview",
+        body: line,
+      };
+    }
+  }
+
+  pushSection();
+
+  const highlightSection = sections.find((section) =>
+    /^(trek|trip)?\s*highlights$/i.test(section.title),
+  );
+  const highlightItems =
+    highlightSection?.body
+      .split(/\r?\n/)
+      .map((line) => cleanMarkdownText(line))
+      .filter(Boolean) || [];
+
+  return {
+    sections: sections.filter(
+      (section) =>
+        section.id !== "detailed-itinerary" &&
+        !/^(trek|trip)?\s*highlights$/i.test(section.title) &&
+        section.body.trim(),
+    ),
+    highlightItems,
+  };
+}
+
+function DetailCard({ section, index }: { section: TrekDetailSection; index: number }) {
+  const Icon = detailSectionIcons[section.id] || Info;
+
+  return (
+    <motion.section
+      id={section.id}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.2) }}
+      className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-card/80 p-6 shadow-elegant backdrop-blur-xl md:p-8"
+    >
+      <div className="mb-5 flex items-center gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-sunset shadow-glow">
+          <Icon className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
+            Trek details
+          </p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+            {section.title}
+          </h2>
+        </div>
+      </div>
+
+      <div className="prose prose-invert max-w-none text-muted-foreground prose-p:max-w-3xl prose-p:leading-8 prose-li:leading-8 prose-headings:text-foreground prose-strong:text-foreground">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.body}</ReactMarkdown>
+      </div>
+    </motion.section>
+  );
+}
 
 function extractItinerary(markdown: string): ParsedItinerary {
   const lines = markdown.split(/\r?\n/).map((line) => line.trim());
@@ -462,7 +669,7 @@ export const Route = createFileRoute("/packages/$slug")({
 function PackageDetails() {
   const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
-  const [openDay, setOpenDay] = useState<number | null>(null);
+  const [openDay, setOpenDay] = useState<number | null>(0);
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
   const search = useRouterState({
@@ -476,7 +683,7 @@ function PackageDetails() {
         const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${slug}`);
         return res.data;
       } catch (err: any) {
-        if (err.response?.status === 404) {
+        if (err.response?.status === 404 || !err.response) {
           const mockModule = await import("@/services/mockData");
           const fallback = mockModule.destinations.find((d) => d.slug === slug);
           if (fallback) {
@@ -512,6 +719,25 @@ function PackageDetails() {
   const pkg = packageQuery.data?.data;
 
   const itinerary = useMemo(() => (pkg?.itinerary ? extractItinerary(pkg.itinerary) : null), [pkg]);
+  const trekDetails = useMemo(
+    () =>
+      pkg?.itinerary
+        ? parseTrekSections(pkg.itinerary, pkg?.title || "")
+        : { sections: [], highlightItems: [] },
+    [pkg?.itinerary, pkg?.title],
+  );
+  const fullHighlightItems =
+    trekDetails.highlightItems.length > 0
+      ? trekDetails.highlightItems
+      : itinerary?.highlights || [];
+  const tocItems = [
+    ...trekDetails.sections.slice(0, 6).map((section) => ({
+      id: section.id,
+      label: section.title,
+    })),
+    ...(fullHighlightItems.length > 0 ? [{ id: "highlights", label: "Highlights" }] : []),
+    ...(itinerary?.days.length ? [{ id: "itinerary", label: "Itinerary" }] : []),
+  ];
   const isFullItineraryView = search.view === "itinerary";
   const previewDays = itinerary?.days.slice(0, 5) || [];
 
@@ -574,6 +800,21 @@ function PackageDetails() {
     return () => cancelAnimationFrame(frame);
   }, [slug, pkg]);
 
+  if (packageQuery.isLoading) {
+    return (
+      <section className="mx-auto mt-16 max-w-4xl px-4 py-20">
+        <div className="rounded-[2rem] border border-white/10 bg-card/80 p-8 text-center shadow-elegant backdrop-blur-xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-accent">
+            Loading trek details
+          </p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Preparing the full itinerary and route information.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   if (!pkg) {
     return (
       <section className="mx-auto max-w-4xl px-4 py-20">
@@ -591,23 +832,222 @@ function PackageDetails() {
 
   if (isFullItineraryView) {
     return (
-      <section className="mx-auto mt-16 max-w-4xl bg-background px-4 py-12">
+      <section className="mx-auto mt-16 max-w-7xl bg-background px-4 py-12 lg:px-6">
         <div className="mb-8">
           <a href={`/packages/${slug}`} className="text-sm text-accent hover:underline">
             ← Back to package overview
           </a>
-          <p className="mt-6 text-sm font-medium uppercase tracking-[0.28em] text-accent">
-            Full itinerary
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">{pkg.title}</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Complete day-by-day details and all updated itinerary parts.
-          </p>
         </div>
 
-        <article className="prose max-w-none rounded-[2rem] border border-border/70 bg-card p-6 text-muted-foreground shadow-elegant md:p-8">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{itinerary?.fullMarkdown || ""}</ReactMarkdown>
-        </article>
+        <motion.header
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-card via-background to-primary/35 p-6 shadow-elegant md:p-10"
+        >
+          <div className="max-w-4xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-accent">
+              Premium trek details
+            </p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
+              {pkg.title}
+            </h1>
+            {itinerary?.summary && (
+              <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground md:text-lg">
+                {itinerary.summary}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: "Region", value: pkg.destination || "Nepal", icon: MapPinned },
+              {
+                label: "Duration",
+                value: `${pkg.duration?.days || itinerary?.days.length || 0} Days`,
+                icon: CalendarDays,
+              },
+              { label: "Difficulty", value: pkg.difficulty || "Moderate", icon: Mountain },
+              { label: "From", value: formatPrice(pkg.price), icon: Ticket },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.label}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md transition hover:-translate-y-0.5 hover:border-accent/30 hover:bg-white/10"
+                >
+                  <Icon className="h-5 w-5 text-accent" />
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-foreground">{item.value}</p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.header>
+
+        <div className="mt-10 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 rounded-[1.75rem] border border-white/10 bg-card/70 p-5 shadow-soft backdrop-blur-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
+                Explore
+              </p>
+              <nav className="mt-4 space-y-1">
+                {tocItems.map((item) => (
+                  <a
+                    key={`${item.id}-${item.label}`}
+                    href={`#${item.id}`}
+                    className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary/10 hover:text-foreground"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          </aside>
+
+          <div className="space-y-8">
+            {trekDetails.sections.map((section, index) => (
+              <DetailCard key={`${section.id}-${index}`} section={section} index={index} />
+            ))}
+
+            {fullHighlightItems.length > 0 && (
+              <motion.section
+                id="highlights"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.35 }}
+                className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-card/80 p-6 shadow-elegant backdrop-blur-xl md:p-8"
+              >
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-sunset shadow-glow">
+                    <Sparkles className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
+                      Signature moments
+                    </p>
+                    <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+                      Trek Highlights
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {fullHighlightItems.map((item, index) => {
+                    const Icon = highlightIcons[index % highlightIcons.length];
+                    return (
+                      <div
+                        key={`${item}-${index}`}
+                        className="group rounded-2xl border border-white/10 bg-background/70 p-5 transition hover:-translate-y-1 hover:border-accent/30 hover:bg-secondary/10 hover:shadow-soft"
+                      >
+                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent transition group-hover:bg-accent group-hover:text-white">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <p className="mt-4 text-sm leading-7 text-muted-foreground">{item}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.section>
+            )}
+
+            {itinerary?.days.length ? (
+              <motion.section
+                id="itinerary"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.35 }}
+                className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-card/80 p-6 shadow-elegant backdrop-blur-xl md:p-8"
+              >
+                <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
+                      Timeline
+                    </p>
+                    <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+                      Detailed Itinerary
+                    </h2>
+                  </div>
+                  <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/20 bg-secondary/10 px-4 py-2 text-sm font-medium text-foreground">
+                    <RouteIcon className="h-4 w-4 text-accent" />
+                    {itinerary.days.length} days
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {itinerary.days.map((day, index) => {
+                    const isOpen = openDay === index;
+                    const Icon = dayIcons[index % dayIcons.length];
+
+                    return (
+                      <article
+                        key={`${day.day}-${day.title}-${index}`}
+                        className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-background/75 transition hover:border-accent/25"
+                      >
+                        <button
+                          type="button"
+                          className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-secondary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                          aria-expanded={isOpen}
+                          aria-controls={`full-itinerary-panel-${index}`}
+                          onClick={() => setOpenDay(isOpen ? null : index)}
+                        >
+                          <div className="flex min-w-0 items-center gap-4">
+                            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent">
+                              <Icon className="h-5 w-5" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-accent">
+                                Day {day.day}
+                              </p>
+                              <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
+                                {day.title}
+                              </h3>
+                            </div>
+                          </div>
+                          <ChevronDown
+                            className={`h-5 w-5 shrink-0 text-accent transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
+                            aria-hidden="true"
+                          />
+                        </button>
+
+                        <motion.div
+                          id={`full-itinerary-panel-${index}`}
+                          initial={false}
+                          animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                          transition={{ duration: 0.35, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="border-t border-white/10 px-5 pb-5 pt-4">
+                            {(day.meta.length > 0 || day.highlights.length > 0) && (
+                              <div className="mb-4 flex flex-wrap gap-2">
+                                {[...day.meta, ...day.highlights].map((item) => (
+                                  <span
+                                    key={item}
+                                    className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-medium text-foreground"
+                                  >
+                                    {item}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <p className="max-w-3xl text-sm leading-8 text-muted-foreground md:text-base">
+                              {day.detail}
+                            </p>
+                          </div>
+                        </motion.div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </motion.section>
+            ) : null}
+          </div>
+        </div>
       </section>
     );
   }
