@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -33,7 +33,11 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 
-import { ReviewsSection, type Review as ReviewCard } from "@/components/ReviewsSection";
+import {
+  ReviewsSection,
+  type Review as ReviewCard,
+  type ReviewFormValues,
+} from "@/components/ReviewsSection";
 import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
 
@@ -75,11 +79,14 @@ type DayDraft = {
 
 type ReviewApiItem = {
   _id: string;
+  id?: string;
   title?: string;
   comment?: string;
   rating?: number;
   verifiedPurchase?: boolean;
   createdAt?: string;
+  guestName?: string;
+  guestEmail?: string;
   user?:
     | {
         firstName?: string;
@@ -400,40 +407,10 @@ function extractItinerary(markdown: string): ParsedItinerary {
       continue;
     }
 
-    const dayNumberMatch = line.match(/Day\s*(\d+)/i);
-    if (dayNumberMatch) {
-      const dayNum = Number(dayNumberMatch[1]);
-      const afterDayIndex = line.search(/Day\s*\d+/i);
-      const dashIndex = Math.max(
-        line.indexOf("—", afterDayIndex),
-        line.indexOf("–", afterDayIndex),
-        line.indexOf("-", afterDayIndex),
-      );
-
-      let title = "";
-      let detailPart = "";
-
-      if (dashIndex > -1) {
-        const colonIndex = line.indexOf(":", dashIndex + 1);
-        if (colonIndex > -1) {
-          title = clean(line.slice(dashIndex + 1, colonIndex));
-          detailPart = line.slice(colonIndex + 1);
-        } else {
-          title = clean(line.slice(dashIndex + 1));
-        }
-      } else {
-        const after = line.slice(afterDayIndex + dayNumberMatch[0].length).trim();
-        const colonIndex = after.indexOf(":");
-        if (colonIndex > -1) {
-          title = clean(after.slice(0, colonIndex));
-          detailPart = after.slice(colonIndex + 1);
-        } else {
-          title = clean(after);
-        }
-      }
-
-      startDay(dayNum, title || `Day ${dayNum}`);
-      if (detailPart && currentDay) addToCurrent(currentDay, detailPart);
+    const parsedDayHeading = parseDayHeading(line);
+    if (parsedDayHeading) {
+      startDay(parsedDayHeading.day, parsedDayHeading.title || `Day ${parsedDayHeading.day}`);
+      if (parsedDayHeading.detail && currentDay) addToCurrent(currentDay, parsedDayHeading.detail);
       continue;
     }
 
@@ -669,7 +646,10 @@ export const Route = createFileRoute("/packages/$slug")({
 function PackageDetails() {
   const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
+  const queryClient = useQueryClient();
   const [openDay, setOpenDay] = useState<number | null>(0);
+  const [reviewSubmitMessage, setReviewSubmitMessage] = useState("");
+  const [reviewSubmitError, setReviewSubmitError] = useState("");
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
   const search = useRouterState({
@@ -749,6 +729,27 @@ function PackageDetails() {
     enabled: !!pkg,
   });
 
+  const reviewMutation = useMutation({
+    mutationFn: async (values: ReviewFormValues) => {
+      const res = await api.post(`/reviews/package-slug/${slug}`, values);
+      return res.data;
+    },
+    onMutate: () => {
+      setReviewSubmitMessage("");
+      setReviewSubmitError("");
+    },
+    onSuccess: async () => {
+      setReviewSubmitMessage("Your review has been published. Thank you for sharing it.");
+      await queryClient.invalidateQueries({ queryKey: ["package-reviews", slug] });
+    },
+    onError: (error: any) => {
+      setReviewSubmitError(
+        error?.response?.data?.message ||
+          "We could not publish your review right now. Please try again.",
+      );
+    },
+  });
+
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "+9779769364689";
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.title || "trek")}%20package.`;
@@ -760,12 +761,14 @@ function PackageDetails() {
       const author =
         typeof review.user === "string"
           ? review.user
-          : [review.user?.firstName, review.user?.lastName].filter(Boolean).join(" ").trim() ||
+          : review.guestName ||
+            [review.user?.firstName, review.user?.lastName].filter(Boolean).join(" ").trim() ||
             review.user?.email ||
+            review.guestEmail ||
             "Guest Traveler";
 
       return {
-        id: review._id || String(index),
+        id: review._id || review.id || String(index),
         author,
         rating: review.rating || 0,
         date: review.createdAt
@@ -1281,6 +1284,18 @@ function PackageDetails() {
             No itinerary details available for this package.
           </div>
         )}
+      </div>
+
+      <div className="mt-10">
+        <ReviewsSection
+          reviews={reviewCards}
+          averageRating={averageRating}
+          totalReviews={reviewCards.length}
+          isSubmitting={reviewMutation.isPending}
+          submitMessage={reviewSubmitMessage}
+          submitError={reviewSubmitError}
+          onSubmitReview={(values) => reviewMutation.mutateAsync(values)}
+        />
       </div>
 
       <div className="mt-12 text-center lg:text-left">

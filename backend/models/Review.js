@@ -9,7 +9,7 @@ const Review = createModel('Review', {
   },
   validate: async (doc) => {
     if (!doc.package) throw new AppError('Please provide a package', 400);
-    if (!doc.user) throw new AppError('Please provide a user', 400);
+    if (!doc.user && !doc.guestName) throw new AppError('Please provide your name', 400);
     if (!doc.rating) throw new AppError('Please provide a rating', 400);
     if (Number(doc.rating) < 1) throw new AppError('Rating must be at least 1', 400);
     if (Number(doc.rating) > 5) throw new AppError('Rating cannot be more than 5', 400);
@@ -25,6 +25,7 @@ const Review = createModel('Review', {
 });
 
 Review._validateUniqueReview = async function validateUniqueReview(doc) {
+  if (!doc.user) return;
   const existing = await Review.findOne({ user: doc.user, package: doc.package });
   if (existing && existing.id !== doc.id) {
     throw new AppError('Review already exists for this user and package', 400);

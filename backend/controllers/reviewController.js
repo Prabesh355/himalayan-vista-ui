@@ -46,6 +46,42 @@ exports.getPackageReviewsBySlug = async (req, res, next) => {
   }
 };
 
+// @desc    Create and publish a visitor review for a package by slug
+// @route   POST /api/reviews/package-slug/:slug
+// @access  Public
+exports.createPublicPackageReviewBySlug = async (req, res, next) => {
+  try {
+    const pkg = await Package.findOne({ slug: req.params.slug });
+
+    if (!pkg) {
+      return res.status(404).json({ success: false, message: 'Package not found' });
+    }
+
+    const { guestName, guestEmail, title, rating, comment } = req.body;
+    const review = await Review.create({
+      package: pkg.id,
+      guestName,
+      guestEmail,
+      title,
+      rating,
+      comment,
+      status: 'approved',
+      verifiedPurchase: false,
+    });
+
+    const approvedReviews = await Review.find({ package: pkg.id, status: 'approved' });
+    const totalRating = approvedReviews.reduce((sum, item) => sum + Number(item.rating || 0), 0);
+    await Package.findByIdAndUpdate(pkg.id, {
+      rating: approvedReviews.length ? totalRating / approvedReviews.length : 0,
+      reviewCount: approvedReviews.length,
+    });
+
+    res.status(201).json({ success: true, data: review });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Create new review
 // @route   POST /api/reviews
 // @access  Private
