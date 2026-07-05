@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
@@ -9,7 +9,18 @@ import { stats, testimonials } from "@/services/uiData";
 import { packageService } from "@/services/packageService";
 import { homeContentService } from "@/services/homeContentService";
 import { DestinationCard } from "@/components/DestinationCard";
-import { defaultImageFallback, resolveImageUrl, resolvePackageImage, useFallbackImage } from "@/lib/imageUrl";
+import {
+  defaultImageFallback,
+  resolveImageUrl,
+  resolvePackageImage,
+  useFallbackImage,
+} from "@/lib/imageUrl";
+import {
+  ReviewsSection,
+  type Review as ReviewCard,
+  type ReviewFormValues,
+} from "@/components/ReviewsSection";
+import api from "@/services/api";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,15 +55,37 @@ function Index() {
       <FeaturedDestinations />
       <Why data={homeData?.why} />
       <Testimonials data={homeData?.testimonials} />
+      <HomeReviews />
       <CTA data={homeData?.cta} />
     </div>
   );
 }
 
+type ReviewApiItem = {
+  _id?: string;
+  id?: string;
+  title?: string;
+  comment?: string;
+  rating?: number;
+  verifiedPurchase?: boolean;
+  createdAt?: string;
+  guestName?: string;
+  guestEmail?: string;
+  user?:
+    | {
+        firstName?: string;
+        lastName?: string;
+        email?: string;
+      }
+    | string;
+};
+
 function Hero({ data }: { data?: any }) {
   const badgeText = data?.badgeText || "Elite IFMGA Guides · Private Camp Logistics";
   const title = data?.title || "EXPLORE THE SUMMIT STANDARDS";
-  const description = data?.description || "Bespoke high-altitude expeditions and luxury Himalayan treks crafted for discerning explorers.";
+  const description =
+    data?.description ||
+    "Bespoke high-altitude expeditions and luxury Himalayan treks crafted for discerning explorers.";
   const backgroundImage = data?.backgroundImage || heroImg;
   const scrollToEnd = () => {
     if (typeof window === "undefined") return;
@@ -137,7 +170,9 @@ function Hero({ data }: { data?: any }) {
               to="/contact"
               className="rounded-2xl bg-white/5 border border-white/5 hover:border-accent/40 hover:bg-white/10 transition-all duration-300 px-5 py-4 text-left cursor-pointer group"
             >
-              <p className="text-[9px] uppercase tracking-[0.15em] font-bold text-accent group-hover:text-white transition-colors">{f.label}</p>
+              <p className="text-[9px] uppercase tracking-[0.15em] font-bold text-accent group-hover:text-white transition-colors">
+                {f.label}
+              </p>
               <p className="mt-1 text-sm font-semibold text-white tracking-wide">{f.value}</p>
             </Link>
           ))}
@@ -178,9 +213,13 @@ function Stats({ data }: { data?: any[] }) {
             transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="glass rounded-3xl p-8 text-center border border-white/5 hover:border-accent/20 transition-all duration-300"
           >
-            <p className="text-4xl md:text-5xl font-display font-semibold text-gradient-sunset">{s.value}</p>
+            <p className="text-4xl md:text-5xl font-display font-semibold text-gradient-sunset">
+              {s.value}
+            </p>
             <div className="mt-3 mx-auto h-[1px] w-8 bg-accent/30" />
-            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{s.label}</p>
+            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              {s.label}
+            </p>
           </motion.div>
         ))}
       </div>
@@ -223,7 +262,8 @@ function FeaturedDestinations() {
             Choose Your Next <span className="text-gradient-sunset">Summit</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground font-light tracking-wide leading-relaxed">
-            Crafted for those who seek the highest points on earth. Expert high-altitude logistics, elite guiding, and unparalleled safety infrastructure.
+            Crafted for those who seek the highest points on earth. Expert high-altitude logistics,
+            elite guiding, and unparalleled safety infrastructure.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -250,8 +290,14 @@ function FeaturedDestinations() {
           <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Swipe to explore high-altitude routes
           </p>
-          {isLoading && <p className="text-xs text-muted-foreground animate-pulse">Retrieving itineraries…</p>}
-          {isError && <p className="text-xs text-red-500">Logistics feed offline.</p>}
+          {isLoading && (
+            <p className="text-xs text-muted-foreground animate-pulse">Retrieving itineraries…</p>
+          )}
+          {isError && (
+            <p className="text-xs text-red-400">
+              Trips could not be loaded right now. Please refresh or contact us.
+            </p>
+          )}
         </div>
         <HorizontalScroller destinations={featuredDestinations} />
       </div>
@@ -412,20 +458,23 @@ function Why({ data }: { data?: any[] }) {
     Sparkles,
   };
 
-  const items = data && data.length > 0 
-    ? data.map((item: any) => ({
-        icon: iconMap[item.icon] || Compass,
-        title: item.title,
-        body: item.body,
-      }))
-    : defaultItems;
+  const items =
+    data && data.length > 0
+      ? data.map((item: any) => ({
+          icon: iconMap[item.icon] || Compass,
+          title: item.title,
+          body: item.body,
+        }))
+      : defaultItems;
 
   return (
     <section className="relative py-28 overflow-hidden bg-white/[0.01] border-y border-white/5">
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-accent/5 to-transparent pointer-events-none" />
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="text-center max-w-2xl mx-auto">
-          <p className="text-xs font-bold text-accent uppercase tracking-[0.25em]">The Summit Standard</p>
+          <p className="text-xs font-bold text-accent uppercase tracking-[0.25em]">
+            The Summit Standard
+          </p>
           <h2 className="mt-3 text-4xl md:text-5xl font-display font-semibold tracking-tight uppercase leading-[1.1]">
             Unrivaled Experience, Uncompromising Safety
           </h2>
@@ -447,8 +496,12 @@ function Why({ data }: { data?: any[] }) {
                   <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-sunset shadow-glow">
                     <IconComponent className="h-5 w-5 text-white" />
                   </div>
-                  <h3 className="mt-6 text-xl font-display font-semibold tracking-wide">{it.title}</h3>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed font-light">{it.body}</p>
+                  <h3 className="mt-6 text-xl font-display font-semibold tracking-wide">
+                    {it.title}
+                  </h3>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed font-light">
+                    {it.body}
+                  </p>
                 </div>
               </motion.div>
             );
@@ -489,7 +542,9 @@ function Testimonials({ data }: { data?: any[] }) {
                   <Star key={k} className="h-3.5 w-3.5 fill-current" />
                 ))}
               </div>
-              <blockquote className="text-foreground/90 leading-relaxed font-light italic">"{t.quote}"</blockquote>
+              <blockquote className="text-foreground/90 leading-relaxed font-light italic">
+                "{t.quote}"
+              </blockquote>
             </div>
             <figcaption className="mt-8 flex items-center gap-3 pt-6 border-t border-white/5">
               <img
@@ -513,9 +568,108 @@ function Testimonials({ data }: { data?: any[] }) {
   );
 }
 
+function HomeReviews() {
+  const queryClient = useQueryClient();
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
+  const reviewsQuery = useQuery({
+    queryKey: ["site-reviews"],
+    queryFn: async () =>
+      (await api.get<{ success: boolean; data: ReviewApiItem[] }>("/reviews")).data,
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: async (values: ReviewFormValues) => {
+      const res = await api.post("/reviews/site", values);
+      return res.data;
+    },
+    onMutate: () => {
+      setSubmitMessage("");
+      setSubmitError("");
+    },
+    onSuccess: async () => {
+      setSubmitMessage("Your review has been published. Thank you for sharing it.");
+      await queryClient.invalidateQueries({ queryKey: ["site-reviews"] });
+    },
+    onError: (error: any) => {
+      setSubmitError(
+        error?.response?.data?.message ||
+          "We could not publish your review right now. Please check your details and try again.",
+      );
+    },
+  });
+
+  const reviewCards: ReviewCard[] =
+    reviewsQuery.data?.data?.map((review, index) => {
+      const author =
+        typeof review.user === "string"
+          ? review.user
+          : review.guestName ||
+            [review.user?.firstName, review.user?.lastName].filter(Boolean).join(" ").trim() ||
+            review.user?.email ||
+            review.guestEmail ||
+            "Guest Traveler";
+
+      return {
+        id: review._id || review.id || String(index),
+        author,
+        rating: review.rating || 0,
+        date: review.createdAt
+          ? new Date(review.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "Recently",
+        title: review.title || `Rated ${review.rating || 0}/5`,
+        content: review.comment || "",
+        verified: Boolean(review.verifiedPurchase),
+      };
+    }) || [];
+
+  const averageRating = reviewCards.length
+    ? reviewCards.reduce((sum, review) => sum + review.rating, 0) / reviewCards.length
+    : 0;
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-24">
+      <div className="mb-10 max-w-2xl">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent">
+          Traveler Reviews
+        </p>
+        <h2 className="mt-3 text-4xl font-display font-semibold uppercase tracking-tight md:text-5xl">
+          Share Your Experience
+        </h2>
+        <p className="mt-4 text-muted-foreground leading-relaxed">
+          Read real traveler feedback or post your own review directly from the homepage.
+        </p>
+      </div>
+
+      {reviewsQuery.isError && (
+        <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-300">
+          Reviews could not be loaded right now. You can still submit your review below.
+        </div>
+      )}
+
+      <ReviewsSection
+        reviews={reviewCards}
+        averageRating={averageRating}
+        totalReviews={reviewCards.length}
+        isSubmitting={reviewMutation.isPending}
+        submitMessage={submitMessage}
+        submitError={submitError}
+        onSubmitReview={(values) => reviewMutation.mutateAsync(values)}
+      />
+    </section>
+  );
+}
+
 function CTA({ data }: { data?: any }) {
   const title = data?.title || "BEGIN YOUR JOURNEY TO THE SUMMIT.";
-  const subtitle = data?.subtitle || "Consult with our logistics team to design a bespoke Himalayan climb or high-altitude luxury trek. Guided by world-record holder Sherpas.";
+  const subtitle =
+    data?.subtitle ||
+    "Consult with our logistics team to design a bespoke Himalayan climb or high-altitude luxury trek. Guided by world-record holder Sherpas.";
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-28">
@@ -523,9 +677,11 @@ function CTA({ data }: { data?: any }) {
         {/* Ambient glow details */}
         <div className="absolute -top-40 -right-40 h-[400px] w-[400px] rounded-full bg-accent/20 blur-[100px] pointer-events-none" />
         <div className="absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-black/60 blur-[100px] pointer-events-none" />
-        
+
         <div className="relative max-w-3xl text-white">
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-4">Elite Logistics & Guiding</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-4">
+            Elite Logistics & Guiding
+          </p>
           <h2 className="text-4xl md:text-6xl font-display font-semibold tracking-tight uppercase leading-[1.05]">
             {title}
           </h2>

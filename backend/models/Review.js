@@ -8,7 +8,6 @@ const Review = createModel('Review', {
     helpful: 0,
   },
   validate: async (doc) => {
-    if (!doc.package) throw new AppError('Please provide a package', 400);
     if (!doc.user && !doc.guestName) throw new AppError('Please provide your name', 400);
     if (!doc.rating) throw new AppError('Please provide a rating', 400);
     if (Number(doc.rating) < 1) throw new AppError('Rating must be at least 1', 400);

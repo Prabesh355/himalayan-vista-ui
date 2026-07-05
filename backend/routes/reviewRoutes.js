@@ -8,6 +8,7 @@ router.get('/', reviewController.getAllReviews);
 router.get('/package/:packageId', reviewController.getPackageReviews);
 router.get('/package-slug/:slug', reviewController.getPackageReviewsBySlug);
 router.post('/package-slug/:slug', reviewController.createPublicPackageReviewBySlug);
+router.post('/site', reviewController.createPublicSiteReview);
 
 // Private Routes (Users)
 router.post('/', protect, reviewController.createReview);

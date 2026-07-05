@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Users } from "lucide-react";
 import { teamMembers } from "@/services/uiData";
 import { api } from "@/services/api";
-import { resolveTeamImage } from "@/lib/imageUrl";
+import { defaultImageFallback, resolveTeamImage, useFallbackImage } from "@/lib/imageUrl";
 import type { TeamItem } from "@/services/adminService";
 
 export const Route = createFileRoute("/teams")({
@@ -27,9 +27,11 @@ export const Route = createFileRoute("/teams")({
 });
 
 function TeamsPage() {
+  const handleImageError = useFallbackImage(defaultImageFallback);
   const { data } = useQuery({
     queryKey: ["team-members", "public"],
-    queryFn: async () => (await api.get<{ success: boolean; data: TeamItem[] }>("/team-members")).data,
+    queryFn: async () =>
+      (await api.get<{ success: boolean; data: TeamItem[] }>("/team-members")).data,
   });
 
   const members = data?.data && data.data.length > 0 ? data.data : teamMembers;
@@ -85,6 +87,7 @@ function TeamsPage() {
                 <img
                   src={resolveTeamImage(member.avatar, member.name)}
                   alt={member.name}
+                  onError={handleImageError}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

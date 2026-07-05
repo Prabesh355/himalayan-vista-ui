@@ -118,6 +118,11 @@ export function resolvePackageImage(
   title?: string,
   fallback = defaultImageFallback,
 ) {
+  const providedImage = String(src || "").trim();
+  if (providedImage) {
+    return resolveImageUrl(providedImage, fallback);
+  }
+
   const normalizedSlug = normalizeText(slug || title || "").replace(/\s+/g, "-");
   if (normalizedSlug && packageImagesBySlug[normalizedSlug]) {
     return packageImagesBySlug[normalizedSlug];
@@ -147,11 +152,20 @@ export function resolveShopImage(
   productName?: string,
   fallback = defaultShopImageFallback,
 ) {
+  const providedImage = String(src || "").trim();
+  if (providedImage) {
+    return resolveImageUrl(providedImage, fallback);
+  }
+
   const normalizedName = normalizeText(productName);
 
   if (normalizedName) {
     for (const [name, image] of Object.entries(shopImagesByName)) {
-      if (normalizedName === name || normalizedName.includes(name) || name.includes(normalizedName)) {
+      if (
+        normalizedName === name ||
+        normalizedName.includes(name) ||
+        name.includes(normalizedName)
+      ) {
         return image;
       }
     }
@@ -176,6 +190,11 @@ export function resolveTeamImage(
   memberName?: string,
   fallback = defaultImageFallback,
 ) {
+  const providedImage = String(src || "").trim();
+  if (providedImage) {
+    return resolveImageUrl(providedImage, fallback);
+  }
+
   const normalizedName = normalizeText(memberName);
 
   if (normalizedName && teamImagesByName[normalizedName]) {

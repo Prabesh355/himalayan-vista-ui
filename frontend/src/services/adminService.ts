@@ -160,6 +160,8 @@ export interface ReviewItem {
   comment?: string;
   rating?: number;
   status?: string;
+  guestName?: string;
+  guestEmail?: string;
   user?: any;
   package?: any;
   createdAt?: string;
@@ -276,6 +278,10 @@ export const adminService = {
   getReviews: async () =>
     (await api.get<{ success: boolean; count: number; reviews: ReviewItem[] }>("/admin/reviews"))
       .data,
+  createReview: async (payload: Record<string, unknown>) =>
+    (await api.post("/admin/reviews", payload)).data,
+  updateReview: async (reviewId: string, payload: Record<string, unknown>) =>
+    (await api.put(`/admin/reviews/${reviewId}`, payload)).data,
   approveReview: async (reviewId: string) =>
     (await api.put(`/admin/reviews/${reviewId}/approve`, {})).data,
   deleteReview: async (reviewId: string) => (await api.delete(`/admin/reviews/${reviewId}`)).data,

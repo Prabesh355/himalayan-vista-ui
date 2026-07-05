@@ -6,7 +6,10 @@ const Package = require('../models/Package');
 // @access  Public
 exports.getAllReviews = async (req, res, next) => {
   try {
-    const reviews = await Review.find({ status: 'approved' }).populate('user', 'name');
+    const reviews = await Review.find({ status: 'approved' })
+      .populate('user', 'firstName lastName email')
+      .populate('package', 'title slug destination')
+      .sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: reviews });
   } catch (err) {
     next(err);
@@ -82,6 +85,28 @@ exports.createPublicPackageReviewBySlug = async (req, res, next) => {
   }
 };
 
+// @desc    Create and publish a site-wide visitor review
+// @route   POST /api/reviews/site
+// @access  Public
+exports.createPublicSiteReview = async (req, res, next) => {
+  try {
+    const { guestName, guestEmail, title, rating, comment } = req.body;
+    const review = await Review.create({
+      guestName,
+      guestEmail,
+      title,
+      rating,
+      comment,
+      status: 'approved',
+      verifiedPurchase: false,
+    });
+
+    res.status(201).json({ success: true, data: review });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // @desc    Create new review
 // @route   POST /api/reviews
 // @access  Private
@@ -111,7 +136,7 @@ exports.updateReview = async (req, res, next) => {
        return res.status(404).json({ success: false, message: 'Review not found' });
     }
     // Only user can update their review
-    if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    if ((!review.user || review.user.toString() !== req.user.id) && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
     review = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -131,7 +156,7 @@ exports.deleteReview = async (req, res, next) => {
        return res.status(404).json({ success: false, message: 'Review not found' });
     }
     // Only user can delete their review
-    if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    if ((!review.user || review.user.toString() !== req.user.id) && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
     await Review.findByIdAndDelete(req.params.id);

@@ -109,6 +109,57 @@ router.get('/reviews', protect, authorize('admin'), async (req, res, next) => {
   }
 });
 
+router.post('/reviews', protect, authorize('admin'), async (req, res, next) => {
+  try {
+    const Review = require('../models/Review');
+    const { guestName, guestEmail, title, rating, comment, status, package: packageId } = req.body;
+    const review = await Review.create({
+      guestName,
+      guestEmail,
+      title,
+      rating,
+      comment,
+      package: packageId || undefined,
+      status: status || 'approved',
+      verifiedPurchase: false,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Review created',
+      review,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/reviews/:id', protect, authorize('admin'), async (req, res, next) => {
+  try {
+    const Review = require('../models/Review');
+    const allowed = {};
+    ['guestName', 'guestEmail', 'title', 'rating', 'comment', 'status', 'package'].forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+        allowed[field] = req.body[field] || undefined;
+      }
+    });
+
+    const review = await Review.findByIdAndUpdate(req.params.id, allowed, { new: true, runValidators: true });
+
+    if (!review) {
+      return res.status(404).json({ success: false, message: 'Review not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Review updated',
+      review,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put('/reviews/:id/approve', protect, authorize('admin'), async (req, res, next) => {
   try {
     const Review = require('../models/Review');

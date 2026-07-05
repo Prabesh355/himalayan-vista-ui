@@ -1,15 +1,44 @@
-import { useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { DataTable } from "./DataTable";
-import { CheckCircle2, Trash2, Star, MessageSquareText } from "lucide-react";
+import { CheckCircle2, Edit3, Plus, Trash2, Star, MessageSquareText } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { adminService, ReviewItem } from "@/services/adminService";
+
+type ReviewFormState = {
+  guestName: string;
+  guestEmail: string;
+  title: string;
+  rating: number;
+  comment: string;
+  status: string;
+};
+
+const emptyReviewForm: ReviewFormState = {
+  guestName: "",
+  guestEmail: "",
+  title: "",
+  rating: 5,
+  comment: "",
+  status: "approved",
+};
+
+const getReviewerName = (review: ReviewItem) =>
+  review.guestName ||
+  [review.user?.firstName, review.user?.lastName].filter(Boolean).join(" ").trim() ||
+  review.user?.email ||
+  "Guest Traveler";
+
+const getReviewerEmail = (review: ReviewItem) => review.guestEmail || review.user?.email || "";
 
 export const ReviewManagement = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
+  const [editingReview, setEditingReview] = useState<ReviewItem | null>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [form, setForm] = useState<ReviewFormState>(emptyReviewForm);
 
   const reviewsQuery = useQuery({
     queryKey: ["admin-reviews"],
@@ -33,6 +62,32 @@ export const ReviewManagement = () => {
     },
   });
 
+  const saveMutation = useMutation({
+    mutationFn: () => {
+      const payload = {
+        guestName: form.guestName.trim(),
+        guestEmail: form.guestEmail.trim(),
+        title: form.title.trim(),
+        rating: Number(form.rating),
+        comment: form.comment.trim(),
+        status: form.status,
+      };
+
+      if (editingReview) {
+        return adminService.updateReview(editingReview._id || editingReview.id || "", payload);
+      }
+
+      return adminService.createReview(payload);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
+      await queryClient.invalidateQueries({ queryKey: ["admin-dashboard-stats"] });
+      setIsEditorOpen(false);
+      setEditingReview(null);
+      setForm(emptyReviewForm);
+    },
+  });
+
   const reviews = reviewsQuery.data?.reviews || [];
 
   const filteredData = useMemo(() => {
@@ -42,8 +97,11 @@ export const ReviewManagement = () => {
         review.user?.firstName,
         review.user?.lastName,
         review.user?.email,
+        review.guestName,
+        review.guestEmail,
         review.package?.title,
         review.package?.destination,
+        review.title,
         review.comment,
         review.status,
       ]
@@ -59,13 +117,12 @@ export const ReviewManagement = () => {
     {
       key: "reviewer",
       header: "Reviewer",
-      render: (item: ReviewItem) =>
-        `${item.user?.firstName || "Guest"} ${item.user?.lastName || ""}`.trim(),
+      render: (item: ReviewItem) => getReviewerName(item),
     },
     {
       key: "package",
-      header: "Package",
-      render: (item: ReviewItem) => item.package?.title || "—",
+      header: "Scope",
+      render: (item: ReviewItem) => item.package?.title || "Homepage",
     },
     {
       key: "rating",
@@ -90,6 +147,32 @@ export const ReviewManagement = () => {
     },
   ];
 
+  const openEditor = (review?: ReviewItem) => {
+    setEditingReview(review || null);
+    setForm(
+      review
+        ? {
+            guestName: getReviewerName(review),
+            guestEmail: getReviewerEmail(review),
+            title: review.title || "",
+            rating: review.rating || 5,
+            comment: review.comment || "",
+            status: review.status || "approved",
+          }
+        : emptyReviewForm,
+    );
+    setIsEditorOpen(true);
+  };
+
+  const updateForm = (field: keyof ReviewFormState, value: string | number) => {
+    setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const handleSave = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    saveMutation.mutate();
+  };
+
   const actions = (item: ReviewItem) => (
     <div className="flex justify-end gap-2 text-muted-foreground">
       <button
@@ -98,6 +181,13 @@ export const ReviewManagement = () => {
         onClick={() => setSelectedReview(item)}
       >
         <MessageSquareText className="w-4 h-4" />
+      </button>
+      <button
+        className="p-1 hover:text-primary transition-colors"
+        title="Edit Review"
+        onClick={() => openEditor(item)}
+      >
+        <Edit3 className="w-4 h-4" />
       </button>
       <button
         className="p-1 hover:text-emerald-600 transition-colors disabled:opacity-50"
@@ -122,8 +212,18 @@ export const ReviewManagement = () => {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Reviews</h1>
-          <p className="text-muted-foreground">Approve, review, and moderate customer feedback.</p>
+          <p className="text-muted-foreground">
+            Create, edit, approve, and moderate homepage customer feedback.
+          </p>
         </div>
+        <button
+          type="button"
+          onClick={() => openEditor()}
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+        >
+          <Plus className="h-4 w-4" />
+          New Review
+        </button>
       </div>
 
       {reviewsQuery.error && (
@@ -141,6 +241,7 @@ export const ReviewManagement = () => {
             item._id || item.id || `${item.rating}-${item.comment?.slice(0, 10)}`
           }
           onSearch={setSearchTerm}
+          searchValue={searchTerm}
           searchPlaceholder="Search reviews by user, package, or comment..."
           actions={actions}
           isLoading={reviewsQuery.isLoading}
@@ -157,17 +258,14 @@ export const ReviewManagement = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground font-medium">Reviewer</p>
-                  <p className="font-semibold">
-                    {selectedReview.user?.firstName || "Guest"}{" "}
-                    {selectedReview.user?.lastName || ""}
-                  </p>
+                  <p className="font-semibold">{getReviewerName(selectedReview)}</p>
                   <p className="text-sm text-muted-foreground">
-                    {selectedReview.user?.email || "—"}
+                    {getReviewerEmail(selectedReview) || "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground font-medium">Package</p>
-                  <p className="font-semibold">{selectedReview.package?.title || "—"}</p>
+                  <p className="text-sm text-muted-foreground font-medium">Scope</p>
+                  <p className="font-semibold">{selectedReview.package?.title || "Homepage"}</p>
                   <p className="text-sm text-muted-foreground">
                     {selectedReview.package?.destination || "—"}
                   </p>
@@ -189,6 +287,108 @@ export const ReviewManagement = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+        <DialogContent className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingReview ? "Edit Review" : "New Review"}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSave} className="grid gap-4 py-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Reviewer name
+                <input
+                  required
+                  value={form.guestName}
+                  onChange={(event) => updateForm("guestName", event.target.value)}
+                  className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Reviewer email
+                <input
+                  type="email"
+                  value={form.guestEmail}
+                  onChange={(event) => updateForm("guestEmail", event.target.value)}
+                  className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Review title
+                <input
+                  required
+                  value={form.title}
+                  onChange={(event) => updateForm("title", event.target.value)}
+                  className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Status
+                <select
+                  value={form.status}
+                  onChange={(event) => updateForm("status", event.target.value)}
+                  className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  <option value="approved">Approved</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </label>
+            </div>
+
+            <label className="text-sm font-medium">
+              Rating
+              <input
+                required
+                type="number"
+                min={1}
+                max={5}
+                value={form.rating}
+                onChange={(event) => updateForm("rating", Number(event.target.value))}
+                className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
+
+            <label className="text-sm font-medium">
+              Comment
+              <textarea
+                required
+                minLength={10}
+                value={form.comment}
+                onChange={(event) => updateForm("comment", event.target.value)}
+                className="mt-2 min-h-32 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
+
+            {saveMutation.error && (
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-700">
+                {(saveMutation.error as any)?.response?.data?.message ||
+                  "Unable to save this review. Please check the fields and try again."}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsEditorOpen(false)}
+                className="rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saveMutation.isPending}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+              >
+                {saveMutation.isPending ? "Saving..." : "Save Review"}
+              </button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

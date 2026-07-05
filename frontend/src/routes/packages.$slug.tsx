@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -33,11 +33,6 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 
-import {
-  ReviewsSection,
-  type Review as ReviewCard,
-  type ReviewFormValues,
-} from "@/components/ReviewsSection";
 import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
 
@@ -75,25 +70,6 @@ type DayDraft = {
   meta: string[];
   highlights: string[];
   activeSection: string | null;
-};
-
-type ReviewApiItem = {
-  _id: string;
-  id?: string;
-  title?: string;
-  comment?: string;
-  rating?: number;
-  verifiedPurchase?: boolean;
-  createdAt?: string;
-  guestName?: string;
-  guestEmail?: string;
-  user?:
-    | {
-        firstName?: string;
-        lastName?: string;
-        email?: string;
-      }
-    | string;
 };
 
 const includedCosts: PriceItem[] = [
@@ -646,10 +622,7 @@ export const Route = createFileRoute("/packages/$slug")({
 function PackageDetails() {
   const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
-  const queryClient = useQueryClient();
   const [openDay, setOpenDay] = useState<number | null>(0);
-  const [reviewSubmitMessage, setReviewSubmitMessage] = useState("");
-  const [reviewSubmitError, setReviewSubmitError] = useState("");
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
   const search = useRouterState({
@@ -721,75 +694,9 @@ function PackageDetails() {
   const isFullItineraryView = search.view === "itinerary";
   const previewDays = itinerary?.days.slice(0, 5) || [];
 
-  const reviewsQuery = useQuery({
-    queryKey: ["package-reviews", slug],
-    queryFn: async () =>
-      (await api.get<{ success: boolean; data: ReviewApiItem[] }>(`/reviews/package-slug/${slug}`))
-        .data,
-    enabled: !!pkg,
-  });
-
-  const reviewMutation = useMutation({
-    mutationFn: async (values: ReviewFormValues) => {
-      const res = await api.post(`/reviews/package-slug/${slug}`, values);
-      return res.data;
-    },
-    onMutate: () => {
-      setReviewSubmitMessage("");
-      setReviewSubmitError("");
-    },
-    onSuccess: async () => {
-      setReviewSubmitMessage("Your review has been published. Thank you for sharing it.");
-      await queryClient.invalidateQueries({ queryKey: ["package-reviews", slug] });
-    },
-    onError: (error: any) => {
-      setReviewSubmitError(
-        error?.response?.data?.message ||
-          "We could not publish your review right now. Please try again.",
-      );
-    },
-  });
-
   const contactEmail = "nomadsnavigatenepal5@gmail.com";
   const whatsappNumber = "+9779769364689";
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg?.title || "trek")}%20package.`;
-
-  const reviewCards: ReviewCard[] = useMemo(() => {
-    const items = reviewsQuery.data?.data || [];
-
-    return items.map((review, index) => {
-      const author =
-        typeof review.user === "string"
-          ? review.user
-          : review.guestName ||
-            [review.user?.firstName, review.user?.lastName].filter(Boolean).join(" ").trim() ||
-            review.user?.email ||
-            review.guestEmail ||
-            "Guest Traveler";
-
-      return {
-        id: review._id || review.id || String(index),
-        author,
-        rating: review.rating || 0,
-        date: review.createdAt
-          ? new Date(review.createdAt).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })
-          : "Recently",
-        title: review.title || `Rated ${review.rating || 0}/5`,
-        content: review.comment || "",
-        verified: Boolean(review.verifiedPurchase),
-      };
-    });
-  }, [reviewsQuery.data?.data]);
-
-  const averageRating = useMemo(() => {
-    if (!reviewCards.length) return 0;
-    const total = reviewCards.reduce((sum, review) => sum + review.rating, 0);
-    return total / reviewCards.length;
-  }, [reviewCards]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -1284,18 +1191,6 @@ function PackageDetails() {
             No itinerary details available for this package.
           </div>
         )}
-      </div>
-
-      <div className="mt-10">
-        <ReviewsSection
-          reviews={reviewCards}
-          averageRating={averageRating}
-          totalReviews={reviewCards.length}
-          isSubmitting={reviewMutation.isPending}
-          submitMessage={reviewSubmitMessage}
-          submitError={reviewSubmitError}
-          onSubmitReview={(values) => reviewMutation.mutateAsync(values)}
-        />
       </div>
 
       <div className="mt-12 text-center lg:text-left">
