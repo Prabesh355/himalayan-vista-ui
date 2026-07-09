@@ -131,6 +131,9 @@ function Hero({ data }: { data?: any }) {
             <Sparkles className="h-3.5 w-3.5" />
             {displayBadgeText}
           </span>
+          <p className="mt-5 w-fit rounded-2xl border border-accent/30 bg-black/35 px-5 py-3 text-3xl font-black uppercase leading-none tracking-wide text-gradient-sunset shadow-glow backdrop-blur-md sm:text-4xl md:text-5xl">
+            Booking Open
+          </p>
           <h1 className="mt-8 text-5xl md:text-8xl font-display tracking-tight text-foreground leading-[0.95] uppercase font-bold">
             {title}
           </h1>

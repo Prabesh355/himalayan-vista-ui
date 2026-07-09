@@ -19,8 +19,8 @@ import aadarshaBhandari from "@/assets/Aadarsha Bhandari.jpg";
 import simonBhattarai from "@/assets/Simon Bhattarai.jpg";
 import janguSherpa from "@/assets/Jangu Sherpa.jpg";
 import sushantThapa from "@/assets/Sushant Thapa.JPG";
-import samrajImg from "@/assets/Samraj.png";
-import prashiddhaImg from "@/assets/Prashiddha.png";
+import samrajImg from "@/assets/Samraj, trekking guide.jpg";
+import prashiddhaImg from "@/assets/Prashiddha, trekking guide.jpg";
 
 export type Difficulty = "Easy" | "Moderate" | "Challenging" | "Strenuous";
 export type Region =
@@ -2056,7 +2056,8 @@ Start planning your Everest Three Passes Trek with our experienced local team.
     name: "Nar Phu Valley Trek",
     region: "Annapurna",
     tagline: "Explore the hidden valleys of Nar and Phu",
-    description: "A 12-day adventure into the remote Nar and Phu Valleys, crossing Kang La Pass and returning via the Annapurna Circuit.",
+    description:
+      "A 12-day adventure into the remote Nar and Phu Valleys, crossing Kang La Pass and returning via the Annapurna Circuit.",
     itinerary: `# Nar Phu Valley Trek – 12 Days
 
 Discover Nepal's hidden Himalayan kingdom on a remote 12-day journey through the restricted Nar and Phu Valleys. This authentic trek combines Tibetan Buddhist culture, medieval stone villages, dramatic canyons, and the high-altitude Kang La Pass.
@@ -2219,7 +2220,8 @@ Experience, local knowledge, ethical porter care, restricted area expertise, and
     name: "API Himal Base Camp",
     region: "Lowlands",
     tagline: "Untouched wilderness in far-western Nepal",
-    description: "Explore the remote and rugged trails of far-western Nepal, trekking to the base of the majestic API Himal.",
+    description:
+      "Explore the remote and rugged trails of far-western Nepal, trekking to the base of the majestic API Himal.",
     itinerary: "# Coming Soon...",
     image: apiHimal,
     altitude: "4,250 m",
@@ -2237,7 +2239,8 @@ Experience, local knowledge, ethical porter care, restricted area expertise, and
     name: "Kanchenjunga Base Camp Trek",
     region: "Everest",
     tagline: "Journey to the world's third highest peak",
-    description: "A 24-day expedition to the remote North and South Base Camps of Mount Kanchenjunga, offering rare wilderness, rich culture, and dramatic Himalayan scenery.",
+    description:
+      "A 24-day expedition to the remote North and South Base Camps of Mount Kanchenjunga, offering rare wilderness, rich culture, and dramatic Himalayan scenery.",
     itinerary: `# Kanchenjunga Base Camp Trek – 24 Days
 
 Explore the remote wilderness of eastern Nepal on a 24-day expedition to both North Base Camp (Pangpema – 5,143m) and South Base Camp (Oktang – 4,730m) of Mount Kanchenjunga. This journey travels through the protected Kanchenjunga Conservation Area, ancient village communities, rhododendron forests, alpine meadows, and glacial valleys.
