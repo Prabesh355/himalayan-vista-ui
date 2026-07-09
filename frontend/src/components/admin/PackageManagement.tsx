@@ -67,6 +67,10 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
   };
 }
 
+function getPackageRecordId(pkg?: PackageItem | null) {
+  return String(pkg?._id || pkg?.id || "").trim();
+}
+
 export const PackageManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const { formatPrice } = useCurrency();
@@ -173,8 +177,9 @@ export const PackageManagement: React.FC = () => {
       console.log("Saving package payload:", payload);
       console.log("Current form.images:", form.images);
 
-      const result = selectedPackage?._id
-        ? await adminService.updatePackage(selectedPackage._id, payload)
+      const selectedPackageId = getPackageRecordId(selectedPackage);
+      const result = selectedPackageId
+        ? await adminService.updatePackage(selectedPackageId, payload)
         : await adminService.createPackage(payload);
 
       console.log("Save response data:", result);
@@ -182,8 +187,9 @@ export const PackageManagement: React.FC = () => {
       return result;
     },
     onMutate: async () => {
-      if (selectedPackage && (selectedPackage._id || selectedPackage.id)) {
-        setPendingActionId(String(selectedPackage._id || selectedPackage.id));
+      const selectedPackageId = getPackageRecordId(selectedPackage);
+      if (selectedPackageId) {
+        setPendingActionId(selectedPackageId);
       }
     },
     onSuccess: async () => {
@@ -333,8 +339,9 @@ export const PackageManagement: React.FC = () => {
       for (const file of fileArray) {
         const fd = new FormData();
         fd.append("file", file);
-        if (selectedPackage && (selectedPackage._id || selectedPackage.id)) {
-          fd.append("packageId", String(selectedPackage._id || selectedPackage.id));
+        const selectedPackageId = getPackageRecordId(selectedPackage);
+        if (selectedPackageId) {
+          fd.append("packageId", selectedPackageId);
         }
         console.log("Uploading file:", file.name);
         const res = await adminService.uploadImage(fd);
@@ -348,8 +355,8 @@ export const PackageManagement: React.FC = () => {
           setForm((prev) =>
             prev.images.includes(res.fileUrl) ? prev : { ...prev, images: nextImages },
           );
-          if (selectedPackage?._id) {
-            await adminService.updatePackage(selectedPackage._id, {
+          if (selectedPackageId) {
+            await adminService.updatePackage(selectedPackageId, {
               title: form.title,
               description: form.description,
               destination: form.destination,
@@ -370,7 +377,7 @@ export const PackageManagement: React.FC = () => {
         }
       }
       toast.success(
-        selectedPackage?._id
+        getPackageRecordId(selectedPackage)
           ? "Images uploaded and package updated"
           : "Images uploaded. Save package to publish them.",
       );
@@ -383,7 +390,7 @@ export const PackageManagement: React.FC = () => {
   };
 
   const actions = (item: PackageItem) => {
-    const id = String(item._id || item.id || "");
+    const id = getPackageRecordId(item);
     const isPending = pendingActionId === id;
     return (
       <div className="flex justify-end gap-2 text-muted-foreground">
