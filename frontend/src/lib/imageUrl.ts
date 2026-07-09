@@ -34,34 +34,6 @@ function getApiOrigin() {
 export const defaultImageFallback = fallbackImage;
 export const defaultShopImageFallback = shopFallbackImage;
 
-const packageImagesBySlug: Record<string, string> = {
-  "everest-base-camp": everestBaseCamp,
-  "annapurna-base-camp": annapurnaBaseCamp,
-  "annapurna-circuit-trek": annapurnaCircuit,
-  "lobuche-east": lobucheEast,
-  "manaslu-tsum-valley": manasluAndTsum,
-  "mera-peak-ski": meraPeakSki,
-  "mera-peak-expedition": meraPeakExpedition,
-  "three-pass-trek": threePassTrek,
-  "kanchenjunga-base-camp-trek": kanchenjungaBaseCamp,
-  "tsho-rolpa-lake-trek": tshoRolpaLake,
-  "api-himal-base-camp-trek": apiHimalBaseCamp,
-};
-
-const packageImagesByTitle: Record<string, string> = {
-  "everest base camp": everestBaseCamp,
-  "annapurna base camp": annapurnaBaseCamp,
-  "annapurna circuit trek": annapurnaCircuit,
-  "lobuche east": lobucheEast,
-  "manaslu and tsum valley": manasluAndTsum,
-  "mera peak ski": meraPeakSki,
-  "mera peak expedition": meraPeakExpedition,
-  "three pass trek": threePassTrek,
-  "kanchenjunga base camp trek": kanchenjungaBaseCamp,
-  "tsho rolpa lake trek": tshoRolpaLake,
-  "api himal base camp trek": apiHimalBaseCamp,
-};
-
 const teamImagesByName: Record<string, string> = {
   "nishant karki": nishantKarki,
   "sukadev thapa": sukadevThapa,
@@ -116,36 +88,10 @@ function getUploadCandidateFromName(name?: string, src?: string | null) {
 
 export function resolvePackageImage(
   src?: string | null,
-  slug?: string,
-  title?: string,
+  _slug?: string,
+  _title?: string,
   fallback = defaultImageFallback,
 ) {
-  const providedImage = String(src || "").trim();
-  if (providedImage) {
-    return resolveImageUrl(providedImage, fallback);
-  }
-
-  const normalizedSlug = normalizeText(slug || title || "").replace(/\s+/g, "-");
-  if (normalizedSlug && packageImagesBySlug[normalizedSlug]) {
-    return packageImagesBySlug[normalizedSlug];
-  }
-
-  const normalizedTitle = normalizeText(title);
-  if (normalizedTitle && packageImagesByTitle[normalizedTitle]) {
-    return packageImagesByTitle[normalizedTitle];
-  }
-
-  if (normalizedTitle.includes("everest base camp")) return everestBaseCamp;
-  if (normalizedTitle.includes("annapurna base camp")) return annapurnaBaseCamp;
-  if (normalizedTitle.includes("annapurna circuit")) return annapurnaCircuit;
-  if (normalizedTitle.includes("lobuche east")) return lobucheEast;
-  if (normalizedTitle.includes("manaslu")) return manasluAndTsum;
-  if (normalizedTitle.includes("mera peak")) {
-    if (normalizedTitle.includes("ski")) return meraPeakSki;
-    return meraPeakExpedition;
-  }
-  if (normalizedTitle.includes("three pass")) return threePassTrek;
-
   return resolveImageUrl(src, fallback);
 }
 

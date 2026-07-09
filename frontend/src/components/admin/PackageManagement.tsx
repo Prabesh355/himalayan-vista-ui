@@ -281,6 +281,25 @@ export const PackageManagement: React.FC = () => {
   }, [data?.data]);
 
   const columns = [
+    {
+      key: "image",
+      header: "Image",
+      width: "w-24",
+      render: (item: PackageItem) => {
+        const image = item.images?.[0];
+
+        return (
+          <div className="h-14 w-20 overflow-hidden rounded-lg border border-input bg-secondary/30">
+            <img
+              src={resolveImageUrl(image)}
+              alt={item.title}
+              onError={handleImageError}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        );
+      },
+    },
     { key: "title", header: "Package Title" },
     {
       key: "duration",
@@ -348,9 +367,10 @@ export const PackageManagement: React.FC = () => {
         console.log("Upload response:", res);
         if (res && res.fileUrl) {
           console.log("Adding to images:", res.fileUrl);
-          uploadedImages = uploadedImages.includes(res.fileUrl)
-            ? uploadedImages
-            : [...uploadedImages, res.fileUrl];
+          uploadedImages = [
+            res.fileUrl,
+            ...uploadedImages.filter((image) => image !== res.fileUrl),
+          ];
           const nextImages = uploadedImages;
           setForm((prev) =>
             prev.images.includes(res.fileUrl) ? prev : { ...prev, images: nextImages },

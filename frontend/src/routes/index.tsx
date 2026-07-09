@@ -248,7 +248,7 @@ function FeaturedDestinations() {
     slug: pkg.slug,
     name: pkg.title,
     tagline: pkg.tagline || pkg.description || "",
-    image: resolvePackageImage(null, pkg.slug, pkg.title),
+    image: resolvePackageImage(pkg.images?.[0], pkg.slug, pkg.title),
     region: pkg.destination,
     duration: pkg.duration?.days ? `${pkg.duration.days} days` : pkg.duration || "Trek",
     difficulty: pkg.difficulty,
