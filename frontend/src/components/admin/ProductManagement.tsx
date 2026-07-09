@@ -157,8 +157,25 @@ export const ProductManagement: React.FC = () => {
       const res = await adminService.uploadImage(fd);
       if (res?.fileUrl) {
         setForm((prev) => ({ ...prev, image: res.fileUrl }));
+        if (selectedProduct?._id || selectedProduct?.id) {
+          await adminService.updateProduct(selectedProduct._id || selectedProduct.id || "", {
+            name: form.name,
+            description: form.description,
+            category: form.category,
+            price: Number(form.price),
+            image: res.fileUrl,
+            inStock: form.inStock,
+            isActive: form.isActive,
+          });
+          await queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+          await queryClient.invalidateQueries({ queryKey: ["products"] });
+        }
       }
-      toast.success("Image uploaded");
+      toast.success(
+        selectedProduct
+          ? "Image uploaded and product updated"
+          : "Image uploaded. Save product to publish it.",
+      );
     } catch (err: any) {
       toast.error(err?.message || "Image upload failed");
     } finally {
@@ -190,7 +207,9 @@ export const ProductManagement: React.FC = () => {
       key: "status",
       header: "Status",
       render: (item: ProductItem) => (
-        <span className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
+        >
           {item.isActive ? "Active" : "Draft"}
         </span>
       ),
@@ -199,7 +218,9 @@ export const ProductManagement: React.FC = () => {
       key: "stock",
       header: "Stock",
       render: (item: ProductItem) => (
-        <span className={`rounded-full px-2 py-1 text-xs font-medium ${item.inStock ? "bg-sky-100 text-sky-700" : "bg-red-100 text-red-700"}`}>
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-medium ${item.inStock ? "bg-sky-100 text-sky-700" : "bg-red-100 text-red-700"}`}
+        >
           {item.inStock ? "In stock" : "Out"}
         </span>
       ),
@@ -290,7 +311,11 @@ export const ProductManagement: React.FC = () => {
               </label>
               <label className="grid gap-2 text-sm font-medium">
                 Upload image
-                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e.target.files)} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e.target.files)}
+                />
               </label>
               {form.image && (
                 <img

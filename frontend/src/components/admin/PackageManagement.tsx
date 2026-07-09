@@ -203,7 +203,7 @@ export const PackageManagement: React.FC = () => {
       const result = selectedPackage?._id
         ? await adminService.updatePackage(selectedPackage._id, payload)
         : await adminService.createPackage(payload);
-      
+
       console.log("Save response data:", result);
       console.log("Returned images:", result?.data?.images);
       return result;
@@ -310,14 +310,12 @@ export const PackageManagement: React.FC = () => {
 
     const dbSlugs = new Set(dbList.map((p) => (p.slug || "").toLowerCase().trim()));
 
-    const remainingFallbacks = destinations
-      .map(mapDestinationToPackageItem)
-      .filter((fp) => {
-        const slugKey = (fp.slug || "").toLowerCase().trim();
-        const isSavedInDb = dbSlugs.has(slugKey);
-        const isDeleted = deletedFallbackSlugs.includes(fp.slug || "");
-        return !isSavedInDb && !isDeleted;
-      });
+    const remainingFallbacks = destinations.map(mapDestinationToPackageItem).filter((fp) => {
+      const slugKey = (fp.slug || "").toLowerCase().trim();
+      const isSavedInDb = dbSlugs.has(slugKey);
+      const isDeleted = deletedFallbackSlugs.includes(fp.slug || "");
+      return !isSavedInDb && !isDeleted;
+    });
 
     return [...dbList, ...remainingFallbacks];
   }, [data?.data, deletedFallbackSlugs]);
@@ -377,6 +375,7 @@ export const PackageManagement: React.FC = () => {
     if (!fileArray.length) return;
     setUploading(true);
     try {
+      let uploadedImages = [...form.images];
       for (const file of fileArray) {
         const fd = new FormData();
         fd.append("file", file);
@@ -388,12 +387,39 @@ export const PackageManagement: React.FC = () => {
         console.log("Upload response:", res);
         if (res && res.fileUrl) {
           console.log("Adding to images:", res.fileUrl);
+          uploadedImages = uploadedImages.includes(res.fileUrl)
+            ? uploadedImages
+            : [...uploadedImages, res.fileUrl];
+          const nextImages = uploadedImages;
           setForm((prev) =>
-            prev.images.includes(res.fileUrl) ? prev : { ...prev, images: [...prev.images, res.fileUrl] },
+            prev.images.includes(res.fileUrl) ? prev : { ...prev, images: nextImages },
           );
+          if (selectedPackage?._id) {
+            await adminService.updatePackage(selectedPackage._id, {
+              title: form.title,
+              description: form.description,
+              destination: form.destination,
+              price: Number(form.price),
+              discountPrice: form.discountPrice ? Number(form.discountPrice) : null,
+              duration: { days: Number(form.durationDays), nights: Number(form.durationNights) },
+              images: nextImages,
+              groupSize: { min: Number(form.groupSizeMin), max: Number(form.groupSizeMax) },
+              featured: form.featured,
+              isActive: form.isActive,
+              itinerary: form.itinerary,
+            });
+            await queryClient.invalidateQueries({ queryKey: ["admin-packages"] });
+            await queryClient.invalidateQueries({ queryKey: ["packages"] });
+            await queryClient.invalidateQueries({ queryKey: ["featured-packages"] });
+            await queryClient.invalidateQueries({ queryKey: ["package"] });
+          }
         }
       }
-      toast.success("Images uploaded");
+      toast.success(
+        selectedPackage?._id
+          ? "Images uploaded and package updated"
+          : "Images uploaded. Save package to publish them.",
+      );
     } catch (err: any) {
       console.error("Upload error", err);
       toast.error(err?.response?.data?.message || err?.message || "Upload failed");
@@ -425,7 +451,7 @@ export const PackageManagement: React.FC = () => {
               if (typeof window !== "undefined") {
                 window.localStorage.setItem(
                   "deleted_fallback_packages",
-                  JSON.stringify(nextDeleted)
+                  JSON.stringify(nextDeleted),
                 );
               }
               toast.success("Package deleted");
@@ -446,7 +472,9 @@ export const PackageManagement: React.FC = () => {
           )}
         </button>
         {isFallback ? (
-          <span className="text-xs text-amber-700 whitespace-nowrap self-center">Fallback data</span>
+          <span className="text-xs text-amber-700 whitespace-nowrap self-center">
+            Fallback data
+          </span>
         ) : null}
       </div>
     );
@@ -536,7 +564,10 @@ export const PackageManagement: React.FC = () => {
 
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Images</label>
-                <p className="text-xs text-muted-foreground">Upload package images or paste image URLs. These appear in destination cards and package details.</p>
+                <p className="text-xs text-muted-foreground">
+                  Upload package images or paste image URLs. These appear in destination cards and
+                  package details.
+                </p>
                 <div className="flex gap-2 flex-wrap">
                   <input
                     placeholder="Paste image URL and press Enter"
@@ -557,14 +588,19 @@ export const PackageManagement: React.FC = () => {
                 {form.images.length > 0 ? (
                   <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-2">
                     {form.images.slice(0, 5).map((img, idx) => (
-                      <div key={img + idx} className="relative h-20 w-28 overflow-hidden rounded-lg border border-input bg-background">
+                      <div
+                        key={img + idx}
+                        className="relative h-20 w-28 overflow-hidden rounded-lg border border-input bg-background"
+                      >
                         <img
                           src={resolveImageUrl(img)}
                           alt={`Preview ${idx + 1}`}
                           onError={handleImageError}
                           className="h-full w-full object-cover"
                         />
-                        <span className="absolute left-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] text-white">Preview</span>
+                        <span className="absolute left-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] text-white">
+                          Preview
+                        </span>
                       </div>
                     ))}
                     {form.images.length > 5 ? (

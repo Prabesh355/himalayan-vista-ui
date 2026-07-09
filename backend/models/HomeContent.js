@@ -3,7 +3,7 @@ const { createModel } = require('../lib/postgresModel');
 const HomeContent = createModel('HomeContent', {
   defaults: {
     hero: () => ({
-      badgeText: "Small group sizes · Expert Nepali guides",
+      badgeText: "Booking Open · Expert Nepali guides",
       title: "NOMADS NAVIGATE NEPAL",
       description: "Explore Nepal, Beyond Maps",
       backgroundImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1920&auto=format&fit=crop"

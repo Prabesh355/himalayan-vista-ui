@@ -32,6 +32,13 @@ const emptyForm: TeamFormState = {
   isActive: true,
 };
 
+function normalizeTeamName(name?: string) {
+  return String(name || "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
 function mapMemberToForm(member: TeamItem): TeamFormState {
   return {
     name: member.name || "",
@@ -111,24 +118,28 @@ export const TeamManagement: React.FC = () => {
 
   const members = useMemo(() => {
     const dbMembers = data?.data || [];
-    const dbNames = new Set(dbMembers.map((m) => (m.name || "").toLowerCase().trim()));
+    const uniqueDbMembers = dbMembers.filter((member, index, list) => {
+      const nameKey = normalizeTeamName(member.name);
+      return list.findIndex((candidate) => normalizeTeamName(candidate.name) === nameKey) === index;
+    });
+    const dbNames = new Set(uniqueDbMembers.map((m) => normalizeTeamName(m.name)));
 
     const remainingFallbacks = teamMembers.filter((tf) => {
-      const nameKey = (tf.name || "").toLowerCase().trim();
+      const nameKey = normalizeTeamName(tf.name);
       const isSavedInDb = dbNames.has(nameKey);
       const isDeleted = deletedFallbackIds.includes(tf.id || "");
       return !isSavedInDb && !isDeleted;
     });
 
-    return [...dbMembers, ...remainingFallbacks];
+    return [...uniqueDbMembers, ...remainingFallbacks];
   }, [data?.data, deletedFallbackIds]);
 
   const isShowingFallback = useMemo(() => {
     if (isLoading) return false;
     const dbMembers = data?.data || [];
-    const dbNames = new Set(dbMembers.map((m) => (m.name || "").toLowerCase().trim()));
+    const dbNames = new Set(dbMembers.map((m) => normalizeTeamName(m.name)));
     return teamMembers.some((tf) => {
-      const nameKey = (tf.name || "").toLowerCase().trim();
+      const nameKey = normalizeTeamName(tf.name);
       return !dbNames.has(nameKey) && !deletedFallbackIds.includes(tf.id || "");
     });
   }, [data?.data, deletedFallbackIds, isLoading]);
@@ -184,7 +195,23 @@ export const TeamManagement: React.FC = () => {
       const res = await adminService.uploadImage(fd);
       if (res?.fileUrl) {
         setForm((prev) => ({ ...prev, avatar: res.fileUrl }));
-        toast.success("Avatar uploaded");
+        if (selectedMember?._id) {
+          await adminService.updateTeamMember(selectedMember._id, {
+            name: form.name,
+            role: form.role,
+            bio: form.bio,
+            avatar: res.fileUrl,
+            sortOrder: Number(form.sortOrder || 0),
+            isActive: form.isActive,
+          });
+          await queryClient.invalidateQueries({ queryKey: ["admin-team-members"] });
+          await queryClient.invalidateQueries({ queryKey: ["team-members", "public"] });
+        }
+        toast.success(
+          selectedMember
+            ? "Avatar uploaded and team member updated"
+            : "Avatar uploaded. Save member to publish it.",
+        );
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.message || err?.message || "Upload failed");
@@ -213,7 +240,7 @@ export const TeamManagement: React.FC = () => {
               if (typeof window !== "undefined") {
                 window.localStorage.setItem(
                   "deleted_fallback_team_members",
-                  JSON.stringify(nextDeleted)
+                  JSON.stringify(nextDeleted),
                 );
               }
               toast.success("Team member deleted");
@@ -325,7 +352,8 @@ export const TeamManagement: React.FC = () => {
                     <div className="space-y-1 text-sm">
                       <p className="font-medium">Inline avatar preview</p>
                       <p className="text-muted-foreground">
-                        This avatar will show on the team page. Upload or paste a new URL to replace it.
+                        This avatar will show on the team page. Upload or paste a new URL to replace
+                        it.
                       </p>
                     </div>
                   </div>
@@ -380,7 +408,11 @@ export const TeamManagement: React.FC = () => {
                 className="mt-4 bg-primary text-primary-foreground h-10 rounded-md font-medium disabled:opacity-50"
                 disabled={saveMutation.isPending}
               >
-                {saveMutation.isPending ? "Saving…" : selectedMember ? "Update Member" : "Save Member"}
+                {saveMutation.isPending
+                  ? "Saving…"
+                  : selectedMember
+                    ? "Update Member"
+                    : "Save Member"}
               </button>
             </div>
           </DialogContent>
@@ -389,7 +421,8 @@ export const TeamManagement: React.FC = () => {
 
       {error && (
         <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-700">
-          Unable to load team members: {error instanceof Error ? error.message : "Please try again."}
+          Unable to load team members:{" "}
+          {error instanceof Error ? error.message : "Please try again."}
         </div>
       )}
       {isShowingFallback && (

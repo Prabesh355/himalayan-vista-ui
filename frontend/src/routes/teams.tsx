@@ -34,7 +34,22 @@ function TeamsPage() {
       (await api.get<{ success: boolean; data: TeamItem[] }>("/team-members")).data,
   });
 
-  const members = data?.data && data.data.length > 0 ? data.data : teamMembers;
+  const sourceMembers = data?.data && data.data.length > 0 ? data.data : teamMembers;
+  const members = sourceMembers.filter((member, index, list) => {
+    const nameKey = String(member.name || "")
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ");
+    return (
+      list.findIndex(
+        (candidate) =>
+          String(candidate.name || "")
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, " ") === nameKey,
+      ) === index
+    );
+  });
 
   return (
     <>

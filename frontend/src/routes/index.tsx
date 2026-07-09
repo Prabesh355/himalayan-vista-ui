@@ -81,7 +81,10 @@ type ReviewApiItem = {
 };
 
 function Hero({ data }: { data?: any }) {
-  const badgeText = data?.badgeText || "Elite IFMGA Guides · Private Camp Logistics";
+  const badgeText = data?.badgeText || "Booking Open · Elite IFMGA Guides";
+  const displayBadgeText = badgeText.toLowerCase().includes("booking open")
+    ? badgeText
+    : `Booking Open · ${badgeText}`;
   const title = data?.title || "EXPLORE THE SUMMIT STANDARDS";
   const description =
     data?.description ||
@@ -126,7 +129,7 @@ function Hero({ data }: { data?: any }) {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/5 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5" />
-            {badgeText}
+            {displayBadgeText}
           </span>
           <h1 className="mt-8 text-5xl md:text-8xl font-display tracking-tight text-foreground leading-[0.95] uppercase font-bold">
             {title}

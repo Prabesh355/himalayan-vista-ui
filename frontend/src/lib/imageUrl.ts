@@ -76,6 +76,8 @@ const teamImagesByName: Record<string, string> = {
 };
 
 const shopImagesByName: Record<string, string> = {
+  "himalayan trekker": annapurnaCircuit,
+  "summit expedition": meraPeakExpedition,
   "everest base camp": everestBaseCamp,
   "annapurna base camp": annapurnaBaseCamp,
   "annapurna circuit trek": annapurnaCircuit,
@@ -153,11 +155,18 @@ export function resolveShopImage(
   fallback = defaultShopImageFallback,
 ) {
   const providedImage = String(src || "").trim();
-  if (providedImage) {
+  const normalizedName = normalizeText(productName);
+  const isUploadedImage =
+    providedImage.startsWith("/uploads/") ||
+    providedImage.startsWith("uploads/") ||
+    /^https?:\/\/[^/]+\/uploads\//i.test(providedImage);
+
+  if (
+    providedImage &&
+    (isUploadedImage || !["himalayan trekker", "summit expedition"].includes(normalizedName))
+  ) {
     return resolveImageUrl(providedImage, fallback);
   }
-
-  const normalizedName = normalizeText(productName);
 
   if (normalizedName) {
     for (const [name, image] of Object.entries(shopImagesByName)) {
@@ -191,11 +200,18 @@ export function resolveTeamImage(
   fallback = defaultImageFallback,
 ) {
   const providedImage = String(src || "").trim();
-  if (providedImage) {
+  const normalizedName = normalizeText(memberName);
+  const isUploadedImage =
+    providedImage.startsWith("/uploads/") ||
+    providedImage.startsWith("uploads/") ||
+    /^https?:\/\/[^/]+\/uploads\//i.test(providedImage);
+
+  if (
+    providedImage &&
+    (isUploadedImage || !["samraj", "prashidda", "prashiddha"].includes(normalizedName))
+  ) {
     return resolveImageUrl(providedImage, fallback);
   }
-
-  const normalizedName = normalizeText(memberName);
 
   if (normalizedName && teamImagesByName[normalizedName]) {
     return teamImagesByName[normalizedName];
