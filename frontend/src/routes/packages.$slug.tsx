@@ -636,7 +636,10 @@ function PackageDetails() {
         const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${slug}`);
         return res.data;
       } catch (err: any) {
-        if (err.response?.status === 404 || !err.response) {
+        const status = err.response?.status;
+        const databaseUnavailable =
+          !err.response || status === 502 || status === 503 || status === 504;
+        if (databaseUnavailable) {
           const mockModule = await import("@/services/mockData");
           const fallback = mockModule.destinations.find((d) => d.slug === slug);
           if (fallback) {

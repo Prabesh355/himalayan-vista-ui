@@ -1,13 +1,58 @@
-const Package = require('../models/Package');
-const { AppError } = require('../utils/errorHandler');
-const logger = require('../utils/logger');
-const slugify = require('slugify');
+const Package = require("../models/Package");
+const { AppError } = require("../utils/errorHandler");
+const logger = require("../utils/logger");
+const slugify = require("slugify");
 
 function isOwnedByUser(pkg, user) {
   if (!pkg || !user) return false;
-  if (user.role === 'admin') return true;
+  if (user.role === "admin") return true;
   if (!pkg.createdBy) return true;
   return String(pkg.createdBy) === String(user.id);
+}
+
+function getRequestOrigin(req) {
+  const forwardedProto = req.get("x-forwarded-proto");
+  const protocol = forwardedProto ? forwardedProto.split(",")[0] : req.protocol;
+  return `${protocol}://${req.get("host")}`;
+}
+
+function normalizeUploadUrl(value, req) {
+  if (!value || typeof value !== "string") return value;
+
+  const origin = getRequestOrigin(req);
+  if (value.startsWith("/uploads/")) return `${origin}${value}`;
+  if (value.startsWith("uploads/")) return `${origin}/${value}`;
+
+  try {
+    const parsed = new URL(value);
+    const isLocalHost = ["localhost", "127.0.0.1", "0.0.0.0", "::1"].includes(
+      parsed.hostname,
+    );
+    if (isLocalHost && parsed.pathname.startsWith("/uploads/")) {
+      return `${origin}${parsed.pathname}${parsed.search}`;
+    }
+  } catch (error) {
+    return value;
+  }
+
+  return value;
+}
+
+function serializePackage(pkg, req) {
+  const data = typeof pkg.toObject === "function" ? pkg.toObject() : { ...pkg };
+  const images = Array.isArray(data.images)
+    ? data.images.map((image) => normalizeUploadUrl(image, req))
+    : data.images;
+
+  return {
+    ...data,
+    image: normalizeUploadUrl(data.image, req),
+    images,
+  };
+}
+
+function serializePackages(packages, req) {
+  return packages.map((pkg) => serializePackage(pkg, req));
 }
 
 // @desc Get all packages with search, filter and pagination
@@ -15,7 +60,18 @@ function isOwnedByUser(pkg, user) {
 // @access Public
 exports.getAllPackages = async (req, res, next) => {
   try {
-    const { search, destination, minPrice, maxPrice, difficulty, category, featured, sort, page = 1, limit = 10 } = req.query;
+    const {
+      search,
+      destination,
+      minPrice,
+      maxPrice,
+      difficulty,
+      category,
+      featured,
+      sort,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
     // Build filter query
     const filter = { isActive: true };
@@ -27,7 +83,7 @@ exports.getAllPackages = async (req, res, next) => {
 
     // Filter by destination
     if (destination) {
-      filter.destination = { $regex: destination, $options: 'i' };
+      filter.destination = { $regex: destination, $options: "i" };
     }
 
     // Filter by price range
@@ -48,7 +104,7 @@ exports.getAllPackages = async (req, res, next) => {
     }
 
     // Filter featured packages
-    if (featured === 'true') {
+    if (featured === "true") {
       filter.featured = true;
     }
 
@@ -62,10 +118,10 @@ exports.getAllPackages = async (req, res, next) => {
 
     // Sorting
     if (sort) {
-      const sortBy = sort.split(',').join(' ');
+      const sortBy = sort.split(",").join(" ");
       query = query.sort(sortBy);
     } else {
-      query = query.sort('-createdAt');
+      query = query.sort("-createdAt");
     }
 
     const packages = await query.exec();
@@ -77,7 +133,7 @@ exports.getAllPackages = async (req, res, next) => {
       total,
       pages: Math.ceil(total / limitNum),
       currentPage: pageNum,
-      data: packages,
+      data: serializePackages(packages, req),
     });
 
     logger.info(`Retrieved ${packages.length} packages`);
@@ -92,7 +148,19 @@ exports.getAllPackages = async (req, res, next) => {
 // @access Private/Admin or Vendor
 exports.getAllPackagesAdmin = async (req, res, next) => {
   try {
-    const { search, destination, minPrice, maxPrice, difficulty, category, featured, isActive, sort, page = 1, limit = 100 } = req.query;
+    const {
+      search,
+      destination,
+      minPrice,
+      maxPrice,
+      difficulty,
+      category,
+      featured,
+      isActive,
+      sort,
+      page = 1,
+      limit = 100,
+    } = req.query;
 
     const filter = {};
 
@@ -101,7 +169,7 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
     }
 
     if (destination) {
-      filter.destination = { $regex: destination, $options: 'i' };
+      filter.destination = { $regex: destination, $options: "i" };
     }
 
     if (minPrice || maxPrice) {
@@ -118,13 +186,13 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
       filter.category = category;
     }
 
-    if (featured === 'true') {
+    if (featured === "true") {
       filter.featured = true;
     }
 
-    if (isActive === 'true') {
+    if (isActive === "true") {
       filter.isActive = true;
-    } else if (isActive === 'false') {
+    } else if (isActive === "false") {
       filter.isActive = false;
     }
 
@@ -135,9 +203,9 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
     let query = Package.find(filter).skip(skip).limit(limitNum);
 
     if (sort) {
-      query = query.sort(sort.split(',').join(' '));
+      query = query.sort(sort.split(",").join(" "));
     } else {
-      query = query.sort('-createdAt');
+      query = query.sort("-createdAt");
     }
 
     const packages = await query.exec();
@@ -149,7 +217,7 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
       total,
       pages: Math.ceil(total / limitNum),
       currentPage: pageNum,
-      data: packages,
+      data: serializePackages(packages, req),
     });
   } catch (error) {
     logger.error(`Get admin packages error: ${error.message}`);
@@ -162,15 +230,18 @@ exports.getAllPackagesAdmin = async (req, res, next) => {
 // @access Public
 exports.getPackage = async (req, res, next) => {
   try {
-    const pkg = await Package.findById(req.params.id).populate('createdBy', 'firstName lastName email');
+    const pkg = await Package.findById(req.params.id).populate(
+      "createdBy",
+      "firstName lastName email",
+    );
 
     if (!pkg) {
-      return next(new AppError('Package not found', 404));
+      return next(new AppError("Package not found", 404));
     }
 
     res.status(200).json({
       success: true,
-      data: pkg,
+      data: serializePackage(pkg, req),
     });
   } catch (error) {
     logger.error(`Get package error: ${error.message}`);
@@ -183,15 +254,18 @@ exports.getPackage = async (req, res, next) => {
 // @access Public
 exports.getPackageBySlug = async (req, res, next) => {
   try {
-    const packages = await Package.find({ slug: req.params.slug, isActive: true }).populate('createdBy', 'firstName lastName email');
+    const packages = await Package.find({
+      slug: req.params.slug,
+      isActive: true,
+    }).populate("createdBy", "firstName lastName email");
 
     if (!packages || packages.length === 0) {
-      return next(new AppError('Package not found', 404));
+      return next(new AppError("Package not found", 404));
     }
 
     res.status(200).json({
       success: true,
-      data: packages[0],
+      data: serializePackage(packages[0], req),
     });
   } catch (error) {
     logger.error(`Get package by slug error: ${error.message}`);
@@ -208,16 +282,18 @@ exports.getFeaturedPackages = async (req, res, next) => {
 
     let packages = await Package.find({ isActive: true, featured: true })
       .limit(limit)
-      .sort('-createdAt');
+      .sort("-createdAt");
 
     if (!packages.length) {
-      packages = await Package.find({ isActive: true }).limit(limit).sort('-createdAt');
+      packages = await Package.find({ isActive: true })
+        .limit(limit)
+        .sort("-createdAt");
     }
 
     res.status(200).json({
       success: true,
       count: packages.length,
-      data: packages,
+      data: serializePackages(packages, req),
     });
 
     logger.info(`Retrieved ${packages.length} featured packages`);
@@ -241,13 +317,13 @@ exports.getPackagesByDestination = async (req, res, next) => {
 
     const filter = {
       isActive: true,
-      destination: { $regex: destination, $options: 'i' },
+      destination: { $regex: destination, $options: "i" },
     };
 
     const packages = await Package.find(filter)
       .skip(skip)
       .limit(limitNum)
-      .sort('-createdAt');
+      .sort("-createdAt");
 
     const total = await Package.countDocuments(filter);
 
@@ -257,7 +333,7 @@ exports.getPackagesByDestination = async (req, res, next) => {
       total,
       pages: Math.ceil(total / limitNum),
       currentPage: pageNum,
-      data: packages,
+      data: serializePackages(packages, req),
     });
   } catch (error) {
     logger.error(`Get packages by destination error: ${error.message}`);
@@ -273,25 +349,35 @@ exports.createPackage = async (req, res, next) => {
     // Attach user ID
     req.body.createdBy = req.user.id;
 
-    const slug = slugify(String(req.body.title || ''), { lower: true, strict: true });
+    const slug = slugify(String(req.body.title || ""), {
+      lower: true,
+      strict: true,
+    });
     if (slug) {
       const existing = await Package.findOne({ slug });
       if (existing) {
-        return next(new AppError('A package with this title already exists. Edit the existing package instead of creating a duplicate.', 409));
+        return next(
+          new AppError(
+            "A package with this title already exists. Edit the existing package instead of creating a duplicate.",
+            409,
+          ),
+        );
       }
     }
 
     // Validate that group size is valid
     if (req.body.groupSize.min > req.body.groupSize.max) {
-      return next(new AppError('Minimum group size cannot be greater than maximum', 400));
+      return next(
+        new AppError("Minimum group size cannot be greater than maximum", 400),
+      );
     }
 
     const pkg = await Package.create(req.body);
 
     res.status(201).json({
       success: true,
-      message: 'Package created successfully',
-      data: pkg,
+      message: "Package created successfully",
+      data: serializePackage(pkg, req),
     });
 
     logger.info(`Package created: ${pkg.title} by ${req.user.id}`);
@@ -309,29 +395,41 @@ exports.updatePackage = async (req, res, next) => {
     let pkg = await Package.findById(req.params.id);
 
     if (!pkg) {
-      return next(new AppError('Package not found', 404));
+      return next(new AppError("Package not found", 404));
     }
 
     // Check ownership (creator or admin). Legacy packages without createdBy can be adopted on edit.
     if (!isOwnedByUser(pkg, req.user)) {
-      return next(new AppError('Not authorized to update this package', 403));
+      return next(new AppError("Not authorized to update this package", 403));
     }
 
     if (!pkg.createdBy) {
       req.body.createdBy = req.user.id;
     }
 
-    const nextSlug = req.body.title ? slugify(String(req.body.title), { lower: true, strict: true }) : null;
+    const nextSlug = req.body.title
+      ? slugify(String(req.body.title), { lower: true, strict: true })
+      : null;
     if (nextSlug) {
       const duplicate = await Package.findOne({ slug: nextSlug });
-      if (duplicate && String(duplicate.id || duplicate._id) !== String(pkg.id || pkg._id)) {
-        return next(new AppError('A package with this title already exists. Please edit the existing package instead of creating a duplicate.', 409));
+      if (
+        duplicate &&
+        String(duplicate.id || duplicate._id) !== String(pkg.id || pkg._id)
+      ) {
+        return next(
+          new AppError(
+            "A package with this title already exists. Please edit the existing package instead of creating a duplicate.",
+            409,
+          ),
+        );
       }
     }
 
     // Validate group size if provided
     if (req.body.groupSize && req.body.groupSize.min > req.body.groupSize.max) {
-      return next(new AppError('Minimum group size cannot be greater than maximum', 400));
+      return next(
+        new AppError("Minimum group size cannot be greater than maximum", 400),
+      );
     }
 
     // Don't allow changing createdBy
@@ -344,8 +442,8 @@ exports.updatePackage = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Package updated successfully',
-      data: pkg,
+      message: "Package updated successfully",
+      data: serializePackage(pkg, req),
     });
 
     logger.info(`Package updated: ${pkg.title}`);
@@ -363,19 +461,19 @@ exports.deletePackage = async (req, res, next) => {
     const pkg = await Package.findById(req.params.id);
 
     if (!pkg) {
-      return next(new AppError('Package not found', 404));
+      return next(new AppError("Package not found", 404));
     }
 
     // Check ownership (creator or admin). Legacy packages without createdBy can be deleted by any authorized package editor.
     if (!isOwnedByUser(pkg, req.user)) {
-      return next(new AppError('Not authorized to delete this package', 403));
+      return next(new AppError("Not authorized to delete this package", 403));
     }
 
     await Package.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,
-      message: 'Package deleted successfully',
+      message: "Package deleted successfully",
       data: {},
     });
 
@@ -394,7 +492,7 @@ exports.searchPackages = async (req, res, next) => {
     const { q, page = 1, limit = 10 } = req.query;
 
     if (!q) {
-      return next(new AppError('Please provide a search query', 400));
+      return next(new AppError("Please provide a search query", 400));
     }
 
     const pageNum = Math.max(1, Number(page));
@@ -403,9 +501,9 @@ exports.searchPackages = async (req, res, next) => {
 
     const packages = await Package.find(
       { $text: { $search: q }, isActive: true },
-      { score: { $meta: 'textScore' } }
+      { score: { $meta: "textScore" } },
     )
-      .sort({ score: { $meta: 'textScore' } })
+      .sort({ score: { $meta: "textScore" } })
       .skip(skip)
       .limit(limitNum);
 
@@ -420,7 +518,7 @@ exports.searchPackages = async (req, res, next) => {
       total,
       pages: Math.ceil(total / limitNum),
       currentPage: pageNum,
-      data: packages,
+      data: serializePackages(packages, req),
     });
 
     logger.info(`Search performed: ${q}`);

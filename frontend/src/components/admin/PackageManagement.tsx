@@ -16,33 +16,6 @@ import { adminService, PackageItem } from "@/services/adminService";
 import { toast } from "sonner";
 import { defaultImageFallback, resolveImageUrl, useFallbackImage } from "@/lib/imageUrl";
 import { useCurrency } from "@/context/CurrencyProvider";
-import { destinations } from "@/services/mockData";
-
-// Map Destination from mockData to PackageItem for fallback merging
-const mapDestinationToPackageItem = (d: any): PackageItem => {
-  const daysMatch = d.duration ? d.duration.match(/(\d+)\s*days?/i) : null;
-  const days = daysMatch ? Number(daysMatch[1]) : 1;
-  const nights = Math.max(0, days - 1);
-
-  return {
-    _id: "", // no DB ID
-    id: d.slug,
-    slug: d.slug,
-    title: d.name,
-    description: d.description,
-    destination: d.region,
-    price: d.priceFrom || d.price || 0,
-    discountPrice: undefined,
-    duration: { days, nights },
-    images: d.image ? [d.image] : [],
-    groupSize: { min: 1, max: 12 },
-    featured: d.featured || false,
-    isActive: true,
-    itinerary: d.itinerary || "",
-    rating: d.rating || 0,
-    reviewCount: d.reviews || 0,
-  } as PackageItem;
-};
 
 type PackageFormState = {
   title: string;
@@ -289,36 +262,17 @@ export const PackageManagement: React.FC = () => {
     },
   });
 
-  const [deletedFallbackSlugs, setDeletedFallbackSlugs] = useState<string[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = window.localStorage.getItem("deleted_fallback_packages");
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
-
   const packages = useMemo(() => {
     const list = data?.data || [];
     const seen = new Set<string>();
 
-    const dbList = list.filter((item) => {
+    return list.filter((item) => {
       const key = String(item.slug || item._id || item.id || item.title);
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
-
-    const dbSlugs = new Set(dbList.map((p) => (p.slug || "").toLowerCase().trim()));
-
-    const remainingFallbacks = destinations.map(mapDestinationToPackageItem).filter((fp) => {
-      const slugKey = (fp.slug || "").toLowerCase().trim();
-      const isSavedInDb = dbSlugs.has(slugKey);
-      const isDeleted = deletedFallbackSlugs.includes(fp.slug || "");
-      return !isSavedInDb && !isDeleted;
-    });
-
-    return [...dbList, ...remainingFallbacks];
-  }, [data?.data, deletedFallbackSlugs]);
+  }, [data?.data]);
 
   const columns = [
     { key: "title", header: "Package Title" },
@@ -430,7 +384,6 @@ export const PackageManagement: React.FC = () => {
 
   const actions = (item: PackageItem) => {
     const id = String(item._id || item.id || "");
-    const isFallback = !item._id;
     const isPending = pendingActionId === id;
     return (
       <div className="flex justify-end gap-2 text-muted-foreground">
@@ -438,32 +391,20 @@ export const PackageManagement: React.FC = () => {
           className="p-1 hover:text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           onClick={() => openForm(item)}
           disabled={isPending}
-          title={isFallback ? "Edit fallback package (will save to database)" : "Edit package"}
+          title="Edit package"
         >
           <Edit className="w-4 h-4" />
         </button>
         <button
           className="p-1 hover:text-red-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           onClick={() => {
-            if (isFallback) {
-              const nextDeleted = [...deletedFallbackSlugs, item.slug || ""];
-              setDeletedFallbackSlugs(nextDeleted);
-              if (typeof window !== "undefined") {
-                window.localStorage.setItem(
-                  "deleted_fallback_packages",
-                  JSON.stringify(nextDeleted),
-                );
-              }
-              toast.success("Package deleted");
-            } else {
-              setPendingActionId(id);
-              deleteMutation.mutate(id, {
-                onSettled: () => setPendingActionId(null),
-              });
-            }
+            setPendingActionId(id);
+            deleteMutation.mutate(id, {
+              onSettled: () => setPendingActionId(null),
+            });
           }}
           disabled={isPending}
-          title={isFallback ? "Delete fallback package" : "Delete package"}
+          title="Delete package"
         >
           {isPending ? (
             <span className="inline-block w-4 h-4 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin" />
@@ -471,11 +412,6 @@ export const PackageManagement: React.FC = () => {
             <Trash2 className="w-4 h-4" />
           )}
         </button>
-        {isFallback ? (
-          <span className="text-xs text-amber-700 whitespace-nowrap self-center">
-            Fallback data
-          </span>
-        ) : null}
       </div>
     );
   };
