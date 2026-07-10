@@ -18,8 +18,8 @@ import aadarshaBhandari from "@/assets/Aadarsha Bhandari.jpg";
 import simonBhattarai from "@/assets/Simon Bhattarai.jpg";
 import janguSherpa from "@/assets/Jangu Sherpa.jpg";
 import sushantThapa from "@/assets/Sushant Thapa.JPG";
-import samraj from "@/assets/Samraj, trekking guide.jpg";
-import prashiddha from "@/assets/Prashiddha, trekking guide.jpg";
+import samraj from "@/assets/Samraj.jpg";
+import prashiddha from "@/assets/Prashiddha.jpg";
 import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import type React from "react";
 

@@ -5,8 +5,8 @@ import janguImg from "@/assets/Jangu Sherpa.jpg";
 import sukadevImg from "@/assets/Sukadev Thapa.jpeg";
 import aadarshaImg from "@/assets/Aadarsha Bhandari.jpg";
 import sushantImg from "@/assets/Sushant Thapa.JPG";
-import samrajImg from "@/assets/Samraj, trekking guide.jpg";
-import prashiddhaImg from "@/assets/Prashiddha, trekking guide.jpg";
+import samrajImg from "@/assets/Samraj.jpg";
+import prashiddhaImg from "@/assets/Prashiddha.jpg";
 
 export interface Testimonial {
   id: string;

@@ -19,8 +19,8 @@ import aadarshaBhandari from "@/assets/Aadarsha Bhandari.jpg";
 import simonBhattarai from "@/assets/Simon Bhattarai.jpg";
 import janguSherpa from "@/assets/Jangu Sherpa.jpg";
 import sushantThapa from "@/assets/Sushant Thapa.JPG";
-import samrajImg from "@/assets/Samraj, trekking guide.jpg";
-import prashiddhaImg from "@/assets/Prashiddha, trekking guide.jpg";
+import samrajImg from "@/assets/Samraj.jpg";
+import prashiddhaImg from "@/assets/Prashiddha.jpg";
 
 export type Difficulty = "Easy" | "Moderate" | "Challenging" | "Strenuous";
 export type Region =
