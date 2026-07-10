@@ -48,7 +48,7 @@ exports.validatePackage = [
     .withMessage('Price must be greater than 0'),
   
   body('discountPrice')
-    .optional()
+    .optional({ nullable: true, checkFalsy: true })
     .isNumeric()
     .withMessage('Discount price must be a number')
     .custom((value, { req }) => {
@@ -162,7 +162,7 @@ exports.validatePackageUpdate = [
     .withMessage('Price must be greater than 0'),
   
   body('discountPrice')
-    .optional()
+    .optional({ nullable: true, checkFalsy: true })
     .isNumeric()
     .withMessage('Discount price must be a number')
     .custom((value, { req }) => {
