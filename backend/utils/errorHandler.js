@@ -48,6 +48,16 @@ const errorHandler = (err, req, res) => {
     err = new AppError(message, 400);
   }
 
+  if (
+    /cloudinary|cloud name|api key|api secret|missing required configuration/i.test(err.message || '') ||
+    err.name === 'CloudinaryError'
+  ) {
+    err = new AppError(
+      'Image upload failed because Cloudinary is not configured correctly on the server.',
+      503,
+    );
+  }
+
   if (err.name === 'MulterError' || err.code === 'LIMIT_FILE_SIZE' || err.code === 'LIMIT_UNEXPECTED_FILE') {
     let message = 'Invalid upload request';
 
