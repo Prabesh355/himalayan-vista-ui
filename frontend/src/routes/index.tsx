@@ -47,6 +47,41 @@ function Index() {
     queryFn: () => homeContentService.getHomeContent(),
   });
   const homeData = response?.data;
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+  const [subscriberEmail, setSubscriberEmail] = useState("");
+  const [popupDismissed, setPopupDismissed] = useState(false);
+
+  useEffect(() => {
+    if (popupDismissed) return;
+    const handleScroll = () => {
+      if (window.scrollY > 450) {
+        setShowSubscribePopup(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [popupDismissed]);
+
+  const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(subscriberEmail);
+  const contactEmail = "nomadsnavigatenepal5@gmail.com";
+
+  const submitSubscription = () => {
+    if (!emailIsValid) return;
+    window.open(
+      `mailto:${contactEmail}?subject=Subscribe%20to%20Website%20Updates&body=Please%20add%20${encodeURIComponent(
+        subscriberEmail,
+      )}%20to%20your%20email%20update%20list.`,
+      "_blank",
+    );
+    setShowSubscribePopup(false);
+    setPopupDismissed(true);
+  };
+
+  const closeSubscribePopup = () => {
+    setShowSubscribePopup(false);
+    setPopupDismissed(true);
+  };
 
   return (
     <div className="bg-background text-foreground selection:bg-accent selection:text-white">
@@ -57,6 +92,44 @@ function Index() {
       <Testimonials data={homeData?.testimonials} />
       <HomeReviews />
       <CTA data={homeData?.cta} />
+
+      {showSubscribePopup && !popupDismissed ? (
+        <div className="fixed bottom-5 right-5 z-50 w-[min(92vw,380px)] rounded-3xl border border-white/10 bg-card/95 p-4 shadow-elegant backdrop-blur-xl text-foreground">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-accent">Stay updated</p>
+              <h2 className="mt-2 text-lg font-semibold">Subscribe for new packages</h2>
+            </div>
+            <button
+              type="button"
+              onClick={closeSubscribePopup}
+              className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-sm text-muted-foreground hover:bg-white/10"
+            >
+              Close
+            </button>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Get notified by email whenever the website publishes a new itinerary or update.
+          </p>
+          <div className="mt-4 flex flex-col gap-3">
+            <input
+              type="email"
+              value={subscriberEmail}
+              onChange={(event) => setSubscriberEmail(event.target.value)}
+              placeholder="Your email address"
+              className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            />
+            <button
+              type="button"
+              onClick={submitSubscription}
+              disabled={!emailIsValid}
+              className="inline-flex items-center justify-center rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Subscribe by email
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
