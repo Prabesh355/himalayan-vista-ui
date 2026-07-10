@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -58,6 +58,16 @@ export const AdminSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    document.body.style.overflow = isMobileOpen ? "hidden" : "";
+    return () => {
+      if (typeof window !== "undefined") {
+        document.body.style.overflow = "";
+      }
+    };
+  }, [isMobileOpen]);
+
   // Note: Adjust the import strategy or active checking based on Tanstack Router's matchRoute or useLocation
   const location = useLocation();
 
@@ -111,7 +121,7 @@ export const AdminSidebar = () => {
         }}
         className={cn(
           "fixed md:sticky top-0 h-screen bg-card border-r z-50 flex flex-col transition-all duration-300 shadow-xl md:shadow-none",
-          "max-md:w-[280px] max-md:absolute max-md:left-0",
+          "max-md:w-[280px] max-md:absolute max-md:left-0 max-md:h-screen max-md:overflow-hidden",
           !isMobileOpen && "max-md:-translate-x-full",
         )}
       >

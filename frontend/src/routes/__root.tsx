@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import logoIcon from "@/assets/nomads-logo-official.png?url";
 import { CurrencyProvider } from "@/context/CurrencyProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -90,13 +91,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Premium Himalayan trekking and adventure travel, locally led.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: logoIcon },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        href: logoIcon,
       },
     ],
   }),

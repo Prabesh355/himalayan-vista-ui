@@ -12,7 +12,7 @@ import {
   UserCircle,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { siteSettingsService } from "@/services/siteSettingsService";
 import { useCurrency } from "@/context/CurrencyProvider";
@@ -110,9 +110,9 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full pt-2 z-50 min-w-[700px]">
-          <div className="glass-strong rounded-2xl p-4 shadow-elegant border border-border/50 bg-background/95 backdrop-blur-xl">
-            <div className="grid grid-cols-3 gap-6">
+        <div className="absolute inset-x-0 top-full z-50 px-4 pt-2 sm:px-0">
+          <div className="mx-auto w-full max-w-7xl glass-strong rounded-2xl p-4 shadow-elegant border border-border/50 bg-background/95 backdrop-blur-xl">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
               {/* Expedition */}
               <div>
                 <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
@@ -281,6 +281,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [user, setUser] = useState<StoredUser | null>(null);
+  const [headerTopOffset, setHeaderTopOffset] = useState(88);
+  const headerRef = useRef<HTMLElement | null>(null);
   const { currency, currencies, setCurrency } = useCurrency();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdmin = user?.role === "admin";
@@ -310,6 +312,17 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useLayoutEffect(() => {
+    const updateHeaderHeight = () => {
+      const height = headerRef.current?.offsetHeight ?? 88;
+      setHeaderTopOffset(height);
+    };
+
+    updateHeaderHeight();
+    window.addEventListener("resize", updateHeaderHeight);
+    return () => window.removeEventListener("resize", updateHeaderHeight);
+  }, [scrolled]);
+
   useEffect(() => { setOpen(false); setMobileExpanded(null); }, [pathname]);
 
   useEffect(() => {
@@ -320,7 +333,7 @@ export function Navbar() {
   const closeMobile = () => setOpen(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 py-3">
         <nav
           className={`flex items-center justify-between transition-all duration-500 rounded-2xl px-4 py-2 ${
@@ -454,7 +467,8 @@ export function Navbar() {
               aria-hidden="true"
             />
             <div
-              className="md:hidden fixed inset-x-0 top-[72px] bottom-0 z-50 overflow-y-auto overscroll-contain"
+              className="md:hidden fixed inset-x-0 bottom-0 z-50 overflow-y-auto overscroll-contain"
+              style={{ top: headerTopOffset, maxHeight: `calc(100vh - ${headerTopOffset}px)` }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mx-auto max-w-7xl px-4 pb-8">
