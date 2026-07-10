@@ -117,6 +117,17 @@ function isPlaceholderPackageImage(value?: string | null) {
   return false;
 }
 
+function isPlaceholderShopImage(value?: string | null) {
+  const image = String(value || "").trim();
+  if (!image) return true;
+  if (/res\.cloudinary\.com\/demo\/image\/upload\/sample\.jpg/i.test(image)) return true;
+  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) return true;
+  if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\/uploads\//i.test(image)) {
+    return true;
+  }
+  return false;
+}
+
 export function resolvePackageImage(
   src?: string | null,
   _slug?: string,
@@ -140,15 +151,8 @@ export function resolveShopImage(
 ) {
   const providedImage = String(src || "").trim();
   const normalizedName = normalizeText(productName);
-  const isUploadedImage =
-    providedImage.startsWith("/uploads/") ||
-    providedImage.startsWith("uploads/") ||
-    /^https?:\/\/[^/]+\/uploads\//i.test(providedImage);
 
-  if (
-    providedImage &&
-    (isUploadedImage || !["himalayan trekker", "summit expedition"].includes(normalizedName))
-  ) {
+  if (providedImage && !isPlaceholderShopImage(providedImage)) {
     return resolveImageUrl(providedImage, fallback);
   }
 
