@@ -1,6 +1,20 @@
 const Team = require('../models/Team');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
+const {
+  deleteCloudinaryAsset,
+  isCloudinaryUrl,
+} = require('../services/cloudinaryService');
+
+async function cleanupCloudinaryImage(url, context) {
+  if (!url || !isCloudinaryUrl(url)) return;
+
+  try {
+    await deleteCloudinaryAsset(url);
+  } catch (error) {
+    logger.warn(`Failed to delete ${context} image from Cloudinary: ${error.message}`);
+  }
+}
 
 exports.getAllTeamMembers = async (req, res, next) => {
   try {
@@ -46,6 +60,7 @@ exports.updateTeamMember = async (req, res, next) => {
       return next(new AppError('Team member not found', 404));
     }
 
+    const previousAvatar = member.avatar;
     member = await Team.findByIdAndUpdate(
       req.params.id,
       {
@@ -54,6 +69,10 @@ exports.updateTeamMember = async (req, res, next) => {
       },
       { new: true, runValidators: true },
     );
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'avatar') && previousAvatar && previousAvatar !== member.avatar) {
+      await cleanupCloudinaryImage(previousAvatar, `team member ${member.name}`);
+    }
 
     res.status(200).json({ success: true, message: 'Team member updated successfully', data: member });
     logger.info(`Team member updated: ${member.name}`);
@@ -69,7 +88,9 @@ exports.deleteTeamMember = async (req, res, next) => {
       return next(new AppError('Team member not found', 404));
     }
 
+    const previousAvatar = member.avatar;
     await Team.findByIdAndDelete(req.params.id);
+    await cleanupCloudinaryImage(previousAvatar, `team member ${member.name}`);
     res.status(200).json({ success: true, message: 'Team member deleted successfully', data: {} });
     logger.info(`Team member deleted: ${member.name}`);
   } catch (error) {

@@ -1,19 +1,21 @@
-const fs = require('fs');
 const { AppError } = require('../utils/errorHandler');
+const logger = require('../utils/logger');
 const {
-  isS3Enabled,
-  uploadToS3,
-  resolveLocalFileUrl,
-  removeLocalFile,
-} = require('../services/storageService');
+  deleteCloudinaryAssetByPublicId,
+} = require('../services/cloudinaryService');
 
-function isValidImageBuffer(buf) {
-  if (!buf || buf.length < 4) return false;
-  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return true;
-  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return true;
-  if (buf.slice(0, 3).toString('ascii') === 'GIF') return true;
-  if (buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP') return true;
-  return false;
+function getUploadedFileUrl(file) {
+  return file?.secure_url || file?.path || file?.url || '';
+}
+
+async function cleanupUploadedAsset(file) {
+  if (!file?.filename) return;
+
+  try {
+    await deleteCloudinaryAssetByPublicId(file.filename);
+  } catch (error) {
+    logger.warn(`Failed to clean up uploaded Cloudinary asset ${file.filename}: ${error.message}`);
+  }
 }
 
 exports.uploadFile = async (req, res, next) => {
@@ -22,20 +24,15 @@ exports.uploadFile = async (req, res, next) => {
       return next(new AppError('No file uploaded', 400));
     }
 
-    const filePath = req.file.path;
-    const filename = req.file.filename;
-
-    let buffer;
-    try {
-      buffer = fs.readFileSync(filePath);
-    } catch (err) {
-      removeLocalFile(filePath);
-      return next(new AppError('Uploaded file could not be processed', 500));
+    if (!String(req.file.mimetype || '').startsWith('image/')) {
+      await cleanupUploadedAsset(req.file);
+      return next(new AppError('Invalid image file type', 400));
     }
 
-    if (!isValidImageBuffer(buffer)) {
-      removeLocalFile(filePath);
-      return next(new AppError('Invalid image file content', 400));
+    const fileUrl = getUploadedFileUrl(req.file);
+    if (!fileUrl) {
+      await cleanupUploadedAsset(req.file);
+      return next(new AppError('Uploaded file could not be processed', 500));
     }
 
     const maxImages = Number(process.env.MAX_IMAGES_PER_PACKAGE || 12);
@@ -46,7 +43,7 @@ exports.uploadFile = async (req, res, next) => {
         const existing = await Package.findById(packageId);
         const existingCount = (existing && Array.isArray(existing.images)) ? existing.images.length : 0;
         if (existingCount + 1 > maxImages) {
-          removeLocalFile(filePath);
+          await cleanupUploadedAsset(req.file);
           return next(new AppError(`Package already has ${existingCount} images; limit is ${maxImages}`, 400));
         }
       } catch (err) {
@@ -54,23 +51,17 @@ exports.uploadFile = async (req, res, next) => {
       }
     }
 
-    const useS3 = isS3Enabled();
-    let fileUrl;
-
-    if (useS3) {
-      try {
-        fileUrl = await uploadToS3(filePath, filename, req.file.mimetype);
-        removeLocalFile(filePath);
-      } catch (err) {
-        removeLocalFile(filePath);
-        return next(new AppError('Failed to store file in cloud storage', 500));
-      }
-    } else {
-      fileUrl = resolveLocalFileUrl(filename, req);
-    }
-
-    res.status(201).json({ success: true, fileUrl, filename });
+    res.status(201).json({
+      success: true,
+      fileUrl,
+      filename: req.file.filename,
+      publicId: req.file.filename,
+      secureUrl: req.file.secure_url || fileUrl,
+    });
   } catch (error) {
+    if (req.file) {
+      await cleanupUploadedAsset(req.file);
+    }
     next(error);
   }
 };

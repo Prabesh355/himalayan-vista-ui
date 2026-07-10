@@ -1,6 +1,20 @@
 const Product = require('../models/Product');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
+const {
+  deleteCloudinaryAsset,
+  isCloudinaryUrl,
+} = require('../services/cloudinaryService');
+
+async function cleanupCloudinaryImage(url, context) {
+  if (!url || !isCloudinaryUrl(url)) return;
+
+  try {
+    await deleteCloudinaryAsset(url);
+  } catch (error) {
+    logger.warn(`Failed to delete ${context} image from Cloudinary: ${error.message}`);
+  }
+}
 
 function buildFilter(query = {}, includeInactive = false) {
   const filter = {};
@@ -107,8 +121,13 @@ exports.updateProduct = async (req, res, next) => {
       return next(new AppError('Not authorized to update this product', 403));
     }
 
+    const previousImage = product.image;
     Object.assign(product, req.body);
     await product.save();
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'image') && previousImage && previousImage !== product.image) {
+      await cleanupCloudinaryImage(previousImage, `product ${product.name}`);
+    }
 
     res.json({ success: true, data: product });
   } catch (error) {
@@ -129,7 +148,9 @@ exports.deleteProduct = async (req, res, next) => {
       return next(new AppError('Not authorized to delete this product', 403));
     }
 
+    const previousImage = product.image;
     await Product.findByIdAndDelete(req.params.id);
+    await cleanupCloudinaryImage(previousImage, `product ${product.name}`);
     res.json({ success: true, data: {} });
   } catch (error) {
     logger.error(`Delete product error: ${error.message}`);

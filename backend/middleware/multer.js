@@ -1,38 +1,39 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const { AppError } = require('../utils/errorHandler');
-
-// Create uploads directory if it doesn't exist
-const uploadDir = process.env.UPLOAD_DIR || './uploads';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure storage
 const crypto = require('crypto');
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // Use a cryptographically strong random name and preserve extension
-    const ext = path.extname(file.originalname) || '';
-    const name = crypto.randomBytes(16).toString('hex');
-    const safeName = `${file.fieldname}-${name}${ext}`;
-    cb(null, safeName);
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { AppError } = require('../utils/errorHandler');
+const { cloudinary } = require('../services/cloudinaryService');
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: process.env.CLOUDINARY_FOLDER || 'himalayan-vista',
+    resource_type: 'image',
+    public_id: (req, file) => {
+      const suffix = crypto.randomBytes(12).toString('hex');
+      return `${file.fieldname}-${Date.now()}-${suffix}`;
+    },
   },
 });
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  const allowedMimes = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'image/bmp',
+    'image/avif',
+    'image/svg+xml',
+  ];
 
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
-      new AppError('Invalid file type. Only images are allowed', 400),
+      new AppError('Invalid file type. Only image uploads are allowed', 400),
       false
     );
   }
@@ -42,7 +43,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 15 * 1024 * 1024, // 15MB default
+    fileSize: Number(process.env.MAX_FILE_SIZE) || 15 * 1024 * 1024, // 15MB default
   },
   fileFilter: fileFilter,
 });

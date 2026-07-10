@@ -2,6 +2,10 @@ const Package = require("../models/Package");
 const { AppError } = require("../utils/errorHandler");
 const logger = require("../utils/logger");
 const slugify = require("slugify");
+const {
+  deleteCloudinaryAsset,
+  isCloudinaryUrl,
+} = require("../services/cloudinaryService");
 
 function isOwnedByUser(pkg, user) {
   if (!pkg || !user) return false;
@@ -53,6 +57,69 @@ function serializePackage(pkg, req) {
 
 function serializePackages(packages, req) {
   return packages.map((pkg) => serializePackage(pkg, req));
+}
+
+function normalizeImageList(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => (typeof item === "string" ? item.trim() : String(item || "").trim())).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    if (trimmed.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((item) => (typeof item === "string" ? item.trim() : String(item || "").trim())).filter(Boolean);
+        }
+      } catch (error) {
+        // fall through to treat it as a single URL string
+      }
+    }
+
+    return [trimmed];
+  }
+
+  if (value == null) return [];
+
+  return [String(value).trim()].filter(Boolean);
+}
+
+function normalizeSingleImage(value) {
+  if (Array.isArray(value)) {
+    return normalizeSingleImage(value[0]);
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || "";
+  }
+
+  return value || "";
+}
+
+function getPackageImageUrls(pkg) {
+  const urls = [normalizeSingleImage(pkg?.image), ...normalizeImageList(pkg?.images)];
+  return [...new Set(urls.filter(Boolean))];
+}
+
+async function cleanupPackageImages(urls, context = "package image") {
+  const uniqueUrls = [...new Set((urls || []).filter(Boolean))];
+  if (!uniqueUrls.length) return;
+
+  await Promise.allSettled(
+    uniqueUrls.map(async (url) => {
+      if (!isCloudinaryUrl(url)) return;
+
+      try {
+        await deleteCloudinaryAsset(url);
+      } catch (error) {
+        logger.warn(`Failed to delete ${context} from Cloudinary: ${error.message}`);
+      }
+    }),
+  );
 }
 
 // @desc Get all packages with search, filter and pagination
@@ -348,6 +415,8 @@ exports.createPackage = async (req, res, next) => {
   try {
     // Attach user ID
     req.body.createdBy = req.user.id;
+    req.body.image = normalizeSingleImage(req.body.image);
+    req.body.images = normalizeImageList(req.body.images);
 
     const slug = slugify(String(req.body.title || ""), {
       lower: true,
@@ -407,6 +476,12 @@ exports.updatePackage = async (req, res, next) => {
       req.body.createdBy = req.user.id;
     }
 
+    const previousImageUrls = getPackageImageUrls(pkg);
+    const nextImageProvided = Object.prototype.hasOwnProperty.call(req.body, "image");
+    const nextImagesProvided = Object.prototype.hasOwnProperty.call(req.body, "images");
+    const nextImage = nextImageProvided ? normalizeSingleImage(req.body.image) : normalizeSingleImage(pkg.image);
+    const nextImages = nextImagesProvided ? normalizeImageList(req.body.images) : normalizeImageList(pkg.images);
+
     const nextSlug = req.body.title
       ? slugify(String(req.body.title), { lower: true, strict: true })
       : null;
@@ -434,11 +509,21 @@ exports.updatePackage = async (req, res, next) => {
 
     // Don't allow changing createdBy
     delete req.body.createdBy;
+    if (nextImageProvided) {
+      req.body.image = nextImage;
+    }
+    if (nextImagesProvided) {
+      req.body.images = nextImages;
+    }
 
     pkg = await Package.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+
+    const retainedUrls = new Set(getPackageImageUrls(pkg));
+    const removedUrls = previousImageUrls.filter((url) => !retainedUrls.has(url));
+    await cleanupPackageImages(removedUrls, `package ${pkg.title}`);
 
     res.status(200).json({
       success: true,
@@ -469,7 +554,9 @@ exports.deletePackage = async (req, res, next) => {
       return next(new AppError("Not authorized to delete this package", 403));
     }
 
+    const imageUrls = getPackageImageUrls(pkg);
     await Package.findByIdAndDelete(req.params.id);
+    await cleanupPackageImages(imageUrls, `package ${pkg.title}`);
 
     res.status(200).json({
       success: true,

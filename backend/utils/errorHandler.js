@@ -10,7 +10,7 @@ class AppError extends Error {
 }
 
 // Centralized Error Handler Middleware
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res) => {
   err.statusCode = err.statusCode || 500;
   err.message = err.message || 'Internal Server Error';
 
@@ -45,6 +45,19 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors)
       .map((val) => val.message)
       .join(', ');
+    err = new AppError(message, 400);
+  }
+
+  if (err.name === 'MulterError' || err.code === 'LIMIT_FILE_SIZE' || err.code === 'LIMIT_UNEXPECTED_FILE') {
+    let message = 'Invalid upload request';
+
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      const maxMb = Math.max(1, Math.round((Number(process.env.MAX_FILE_SIZE) || 15 * 1024 * 1024) / (1024 * 1024)));
+      message = `File too large. Maximum size is ${maxMb}MB`;
+    } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      message = 'Unexpected file field. Please upload using the file field.';
+    }
+
     err = new AppError(message, 400);
   }
 
