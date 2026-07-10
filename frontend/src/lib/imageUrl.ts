@@ -34,6 +34,26 @@ function getApiOrigin() {
 export const defaultImageFallback = fallbackImage;
 export const defaultShopImageFallback = shopFallbackImage;
 
+const packageImagesByName: Record<string, string> = {
+  "everest base camp": everestBaseCamp,
+  "mera peak ski": meraPeakSki,
+  "mera peak expedition": meraPeakExpedition,
+  "manaslu and tsum valley": manasluAndTsum,
+  "kanchenjunga base camp trek": kanchenjungaBaseCamp,
+  "kanchenjunga base camp": kanchenjungaBaseCamp,
+  "annapurna base camp": annapurnaBaseCamp,
+  "tsho rolpa lake trek": tshoRolpaLake,
+  "tsho rolpa valley trek": tshoRolpaLake,
+  "tsho rolpa": tshoRolpaLake,
+  "api himal base camp trek": apiHimalBaseCamp,
+  "api himal base camp": apiHimalBaseCamp,
+  "three pass trek": threePassTrek,
+  "lobuche east": lobucheEast,
+  "annapurna circuit trek": annapurnaCircuit,
+  "annapurna circuit": annapurnaCircuit,
+  "nar phu valley trek": annapurnaCircuit,
+};
+
 const teamImagesByName: Record<string, string> = {
   "nishant karki": nishantKarki,
   "sukadev thapa": sukadevThapa,
@@ -86,12 +106,30 @@ function getUploadCandidateFromName(name?: string, src?: string | null) {
   return `/uploads/${encodeURIComponent(rawName)}.${extension}`;
 }
 
+function isPlaceholderPackageImage(value?: string | null) {
+  const image = String(value || "").trim();
+  if (!image) return true;
+  if (/res\.cloudinary\.com\/demo\/image\/upload\/sample\.jpg/i.test(image)) return true;
+  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) return true;
+  if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\/uploads\//i.test(image)) {
+    return true;
+  }
+  return false;
+}
+
 export function resolvePackageImage(
   src?: string | null,
   _slug?: string,
-  _title?: string,
+  title?: string,
   fallback = defaultImageFallback,
 ) {
+  const providedImage = String(src || "").trim();
+  const normalizedTitle = normalizeText(title);
+
+  if (normalizedTitle && isPlaceholderPackageImage(providedImage) && packageImagesByName[normalizedTitle]) {
+    return packageImagesByName[normalizedTitle];
+  }
+
   return resolveImageUrl(src, fallback);
 }
 
