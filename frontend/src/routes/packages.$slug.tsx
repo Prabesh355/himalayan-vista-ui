@@ -135,6 +135,9 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+const ensureStringValue = (value: unknown) =>
+  typeof value === "string" ? value : value == null ? "" : String(value);
+
 const getSectionTitle = (line: string) => {
   const trimmed = line.trim();
   const markdownHeading = trimmed.match(/^#{1,4}\s+(.+)$/);
@@ -674,14 +677,32 @@ function PackageDetails() {
 
   const pkg = packageQuery.data?.data;
 
-  const itinerary = useMemo(() => (pkg?.itinerary ? extractItinerary(pkg.itinerary) : null), [pkg]);
-  const trekDetails = useMemo(
-    () =>
-      pkg?.itinerary
-        ? parseTrekSections(pkg.itinerary, pkg?.title || "")
-        : { sections: [], highlightItems: [] },
-    [pkg?.itinerary, pkg?.title],
+  const itineraryMarkdown = useMemo(
+    () => (pkg?.itinerary ? ensureStringValue(pkg.itinerary) : ""),
+    [pkg?.itinerary],
   );
+
+  const itinerary = useMemo(() => {
+    if (!itineraryMarkdown) return null;
+    try {
+      return extractItinerary(itineraryMarkdown);
+    } catch (error) {
+      console.error("Failed to parse itinerary summary:", error);
+      return null;
+    }
+  }, [itineraryMarkdown]);
+
+  const trekDetails = useMemo(() => {
+    if (!itineraryMarkdown) {
+      return { sections: [], highlightItems: [] };
+    }
+    try {
+      return parseTrekSections(itineraryMarkdown, pkg?.title || "");
+    } catch (error) {
+      console.error("Failed to parse trek sections:", error);
+      return { sections: [], highlightItems: [] };
+    }
+  }, [itineraryMarkdown, pkg?.title]);
   const fullHighlightItems =
     trekDetails.highlightItems.length > 0
       ? trekDetails.highlightItems
