@@ -110,8 +110,8 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
       </button>
 
       {open && (
-        <div className="absolute left-1/2 top-full z-50 w-[min(96vw,980px)] -translate-x-1/2 pt-2 sm:px-0">
-          <div className="mx-auto w-full glass-strong rounded-2xl p-5 shadow-2xl border border-white/10 bg-slate-950/95 backdrop-blur-2xl">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[min(92vw,880px)] sm:w-[min(84vw,820px)]">
+          <div className="glass-strong rounded-2xl p-5 shadow-2xl border border-white/10 bg-slate-950/95 backdrop-blur-2xl">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
               {/* Expedition */}
               <div>
