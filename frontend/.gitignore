@@ -1,4 +1,6 @@
-<<<<<<< HEAD
+.vercel
+.env*
+
 # Logs
 logs
 *.log
@@ -8,15 +10,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependency directories
 node_modules
+
+# Build outputs
 dist
 dist-ssr
+build
 .output
-.vinxi
-.tanstack/**
 .nitro
 .vercel/output
+.vinxi
+.tanstack/**
+
+# Local files
 *.local
+.env
 
 # Wrangler / Cloudflare
 .wrangler/
@@ -32,14 +41,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-=======
-node_modules/
-dist/
-build/
-.env
-.DS_Store
-*.log
-
->>>>>>> ff1035069d14f891f4a70ea6c8f2721597241763
-.vercel
-.env*
