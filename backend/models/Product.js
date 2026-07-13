@@ -8,6 +8,7 @@ const Product = createModel('Product', {
     inStock: true,
     rating: 0,
     reviews: 0,
+    comingSoon: false,
   },
   validate: async (doc) => {
     if (!doc.name) throw new AppError('Please provide a product name', 400);

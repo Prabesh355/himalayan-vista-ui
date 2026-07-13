@@ -31,35 +31,7 @@ export interface TeamMember {
   avatar?: string;
 }
 
-export const testimonials: Testimonial[] = [
-  {
-    id: "t1",
-    name: "Maya Tanaka",
-    country: "Japan",
-    avatar: "https://i.pravatar.cc/120?img=47",
-    quote:
-      "The EBC trek with Nomads was the trip of a lifetime. Our guide Tenzing made every day feel both safe and magical.",
-    trek: "Everest Base Camp",
-  },
-  {
-    id: "t2",
-    name: "Lucas Ferreira",
-    country: "Brazil",
-    avatar: "https://i.pravatar.cc/120?img=12",
-    quote:
-      "Beautifully organised. Tea-houses, permits, transfers — everything just worked. I focused on the mountains.",
-    trek: "Annapurna Circuit",
-  },
-  {
-    id: "t3",
-    name: "Priya Sharma",
-    country: "India",
-    avatar: "https://i.pravatar.cc/120?img=32",
-    quote:
-      "Langtang felt like a hidden secret. Our small group, the silence of the valleys, the food — perfection.",
-    trek: "Langtang Valley",
-  },
-];
+export const testimonials: Testimonial[] = [];
 
 export const stats: StatItem[] = [
   { label: "Happy travellers", value: "12K+" },

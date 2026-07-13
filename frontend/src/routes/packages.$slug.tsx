@@ -35,6 +35,7 @@ import {
 
 import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
+import { BookingForm } from "@/components/BookingForm";
 
 type ItineraryDay = {
   day: number;
@@ -626,6 +627,7 @@ function PackageDetails() {
   const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
   const [openDay, setOpenDay] = useState<number | null>(0);
+  const [showBookingForm, setShowBookingForm] = useState(false);
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
   const search = useRouterState({
@@ -676,6 +678,10 @@ function PackageDetails() {
   });
 
   const pkg = packageQuery.data?.data;
+  const packageId = useMemo(() => {
+    const candidate = pkg?._id || pkg?.id || "";
+    return typeof candidate === "string" ? candidate : "";
+  }, [pkg?._id, pkg?.id]);
 
   const itineraryMarkdown = useMemo(
     () => (pkg?.itinerary ? ensureStringValue(pkg.itinerary) : ""),
@@ -1227,6 +1233,12 @@ function PackageDetails() {
       <div className="h-28 lg:hidden" />
       <div className="fixed bottom-6 left-4 right-4 z-50 rounded-2xl border border-white/10 bg-background/80 px-4 py-3.5 shadow-elegant backdrop-blur-xl max-w-md mx-auto lg:hidden">
         <div className="flex gap-3">
+          <button
+            onClick={() => setShowBookingForm(true)}
+            className="flex-1 rounded-full bg-gradient-sunset px-4 py-3.5 text-center text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
+          >
+            Book Now
+          </button>
           <a
             href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
             className="flex-1 rounded-full bg-gradient-sunset px-4 py-3.5 text-center text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
@@ -1243,6 +1255,19 @@ function PackageDetails() {
           </a>
         </div>
       </div>
-    </section>
+    
+      {showBookingForm && (
+        <BookingForm
+          packageId={packageId}
+          packageName={pkg.title}
+          packagePrice={pkg.discountPrice || pkg.price}
+          onClose={() => setShowBookingForm(false)}
+          onSuccess={() => {
+            setShowBookingForm(false);
+          }}
+        />
+      )}
+    
+</section>
   );
 }

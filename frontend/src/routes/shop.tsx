@@ -38,6 +38,7 @@ type Product = {
   reviews?: number;
   image: string;
   inStock?: boolean;
+  comingSoon?: boolean;
 };
 
 const fallbackProducts: Product[] = [
@@ -96,7 +97,6 @@ function Shop() {
   const { formatPrice } = useCurrency();
   const [cart, setCart] = useState<string[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products", "public"],
     queryFn: async () => (await api.get<{ success: boolean; data: Product[] }>("/products")).data,
@@ -110,8 +110,37 @@ function Shop() {
   const cartTotal = cartProducts.reduce((sum, product) => sum + Number(product.price || 0), 0);
 
   const addToCart = (product: Product) => {
-    setCart((current) => [...current, productId(product)]);
+    const productKey = productId(product);
+    const alreadyInCart = cart.includes(productKey);
+    if (alreadyInCart) {
+      setCart((current) => current.filter((id) => id !== productKey));
+      return;
+    }
+
+    setCart((current) => [...current, productKey]);
     setCartOpen(true);
+  };
+
+  const updateCartItemQuantity = (product: Product, delta: number) => {
+    const productKey = productId(product);
+    const nextItems = [...cart];
+    const existingIndex = nextItems.findIndex((id) => id === productKey);
+
+    if (existingIndex === -1) {
+      if (delta > 0) {
+        nextItems.push(productKey);
+      }
+    } else if (delta > 0) {
+      nextItems.splice(existingIndex, 1, productKey);
+    } else {
+      nextItems.splice(existingIndex, 1);
+    }
+
+    setCart(nextItems);
+  };
+
+  const removeFromCart = (product: Product) => {
+    setCart((current) => current.filter((id) => id !== productId(product)));
   };
 
   return (
@@ -135,10 +164,10 @@ function Shop() {
               </span>
             </div>
             <button
-              onClick={() => setCartOpen(true)}
+              onClick={() => setCartOpen((current) => !current)}
               className="rounded-full border border-border/60 px-4 py-2 text-sm font-semibold hover:bg-secondary"
             >
-              View Cart ({cart.length})
+              {cartOpen ? "Hide Cart" : `View Cart (${cart.length})`}
             </button>
           </div>
           {cartOpen && (
@@ -151,10 +180,21 @@ function Shop() {
               </div>
               {cartProducts.length ? (
                 <div className="mt-3 space-y-2">
-                  {cartProducts.map((product, index) => (
-                    <div key={`${productId(product)}-${index}`} className="flex items-center justify-between gap-3 text-sm">
-                      <span>{product.name}</span>
+                  {cartProducts.map((product) => (
+                    <div key={productId(product)} className="flex items-center justify-between gap-3 text-sm">
+                      <span className="flex-1">{product.name}</span>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => updateCartItemQuantity(product, -1)} className="rounded border px-2 py-0.5">-</button>
+                        <span className="min-w-6 text-center">1</span>
+                        <button onClick={() => updateCartItemQuantity(product, 1)} className="rounded border px-2 py-0.5">+</button>
+                      </div>
                       <span className="font-semibold">{formatPrice(product.price)}</span>
+                      <button
+                        onClick={() => removeFromCart(product)}
+                        className="text-red-500 hover:text-red-700 transition"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
                   ))}
                   <div className="border-t border-border/60 pt-3 text-right text-sm font-bold">
@@ -192,7 +232,11 @@ function Shop() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
-                  {!inStock && (
+                  {Boolean(product.comingSoon) ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                      <span className="font-bold text-white">Coming Soon</span>
+                    </div>
+                  ) : !inStock && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                       <span className="font-bold text-white">Out of Stock</span>
                     </div>
@@ -235,15 +279,15 @@ function Shop() {
 
                   <button
                     onClick={() => addToCart(product)}
-                    disabled={!inStock}
+                    disabled={!inStock || Boolean(product.comingSoon)}
                     className={`flex w-full items-center justify-center gap-2 rounded-lg py-2 font-semibold transition-all ${
-                      inStock
-                        ? "bg-gradient-sunset text-white hover:-translate-y-0.5 hover:shadow-glow"
-                        : "cursor-not-allowed bg-muted text-muted-foreground"
+                      !inStock || Boolean(product.comingSoon)
+                        ? "cursor-not-allowed bg-muted text-muted-foreground"
+                        : "bg-gradient-sunset text-white hover:-translate-y-0.5 hover:shadow-glow"
                     }`}
                   >
                     <PackageCheck className="h-4 w-4" />
-                    {inStock ? "Add to Cart" : "Out of Stock"}
+                    {Boolean(product.comingSoon) ? "Coming Soon" : inStock ? "Add to Cart" : "Out of Stock"}
                   </button>
                 </div>
               </div>
