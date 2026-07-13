@@ -91,6 +91,7 @@ export const PackageManagement: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
+  const [showOverview, setShowOverview] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -766,6 +767,55 @@ export const PackageManagement: React.FC = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+        {showOverview && (
+          <Dialog open={showOverview} onOpenChange={setShowOverview}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Content Review</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="rounded-lg border p-4">
+                  <h3 className="font-semibold">Package Summary</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{form.title || "Untitled package"}</p>
+                  <p className="mt-2 text-sm">{form.description || "No description provided yet."}</p>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-lg border p-4 text-sm">
+                    <p className="font-medium">Destination</p>
+                    <p className="mt-1 text-muted-foreground">{form.destination || "Not set"}</p>
+                  </div>
+                  <div className="rounded-lg border p-4 text-sm">
+                    <p className="font-medium">Pricing</p>
+                    <p className="mt-1 text-muted-foreground">{form.price ? `${formatPrice(Number(form.price))}` : "Not set"}</p>
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <h3 className="font-semibold">Itinerary Preview</h3>
+                  <div className="mt-2 prose prose-sm max-w-none text-sm">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {form.itinerary || "No itinerary content added yet."}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button onClick={() => setShowOverview(false)} className="h-10 rounded-md border px-4 font-medium">
+                    Edit Again
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowOverview(false);
+                      saveMutation.mutate();
+                    }}
+                    className="h-10 rounded-md bg-primary px-4 font-medium text-primary-foreground"
+                  >
+                    Confirm & Save
+                  </button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
 
       <div className="grid gap-3 rounded-xl border border-secondary/50 bg-secondary/10 p-4">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

@@ -3,6 +3,7 @@ const Package = require('../models/Package');
 const User = require('../models/UserPg');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
+const emailService = require('../services/emailService');
 
 /**
  * @desc    Create a new booking
@@ -71,7 +72,30 @@ exports.createBooking = async (req, res, next) => {
         path: 'package',
         select: 'title destination price duration difficulty',
       },
-    ]);
+    ]);    // Send email notifications
+    try {
+      const firstTraveler = travelers[0];
+      const bookingEmailData = {
+        bookingNumber: booking.bookingNumber,
+        packageName: booking.package?.title || pkg.title,
+        travelDate: booking.travelDate,
+        numberOfTravelers: booking.numberOfTravelers,
+        totalPrice: booking.totalPrice,
+      };
+
+      // Send notification to admin
+      await emailService.sendBookingNotification(bookingEmailData, firstTraveler);
+
+      // Send confirmation to customer
+      if (firstTraveler.email) {
+        await emailService.sendBookingConfirmation(firstTraveler.email, bookingEmailData);
+      }
+    } catch (emailError) {
+      logger.warn(`Email notification failed for booking ${booking.bookingNumber}: ${emailError.message}`);
+      // Don't fail the booking if email fails
+    }
+
+
 
     logger.info(`Booking created: ${booking.bookingNumber} by user ${req.user.id}`);
 

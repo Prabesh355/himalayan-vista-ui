@@ -21,6 +21,7 @@ type ProductFormState = {
   image: string;
   inStock: boolean;
   isActive: boolean;
+  comingSoon: boolean;
 };
 
 const emptyForm: ProductFormState = {
@@ -31,6 +32,7 @@ const emptyForm: ProductFormState = {
   image: "",
   inStock: true,
   isActive: true,
+  comingSoon: false,
 };
 
 function mapProductToForm(product: ProductItem): ProductFormState {
@@ -42,6 +44,7 @@ function mapProductToForm(product: ProductItem): ProductFormState {
     image: product.image || "",
     inStock: Boolean(product.inStock ?? true),
     isActive: Boolean(product.isActive ?? true),
+    comingSoon: Boolean((product as any).comingSoon ?? false),
   };
 }
 
@@ -110,6 +113,7 @@ export const ProductManagement: React.FC = () => {
         image: form.image,
         inStock: form.inStock,
         isActive: form.isActive,
+        comingSoon: form.comingSoon,
       };
 
       return selectedProduct
@@ -341,6 +345,14 @@ export const ProductManagement: React.FC = () => {
                     onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
                   />
                   Active on shop
+                </label>
+                <label className="flex items-center gap-2 rounded-lg border p-3">
+                  <input
+                    type="checkbox"
+                    checked={form.comingSoon}
+                    onChange={(e) => setForm((prev) => ({ ...prev, comingSoon: e.target.checked }))}
+                  />
+                  Coming Soon
                 </label>
               </div>
               <button

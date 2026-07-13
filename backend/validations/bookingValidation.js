@@ -1,5 +1,5 @@
 const { body, validationResult } = require('express-validator');
-const AppError = require('../utils/errorHandler');
+const { AppError } = require('../utils/errorHandler');
 
 /**
  * Validate Booking Creation
@@ -9,8 +9,14 @@ const validateBooking = [
   body('packageId')
     .notEmpty()
     .withMessage('Package ID is required')
-    .isMongoId()
-    .withMessage('Invalid package ID'),
+    .custom((value) => {
+      const isMongoId = /^[a-fA-F\d]{24}$/.test(value);
+      const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(value);
+      if (!isMongoId && !isUuid) {
+        throw new Error('Invalid package ID');
+      }
+      return true;
+    }),
 
   body('travelDate')
     .notEmpty()
