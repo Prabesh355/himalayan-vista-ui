@@ -737,6 +737,7 @@ function HomeReviews() {
         averageRating={averageRating}
         totalReviews={reviewCards.length}
         isSubmitting={reviewMutation.isPending}
+        isLoading={reviewsQuery.isLoading}
         submitMessage={submitMessage}
         submitError={submitError}
         onSubmitReview={(values) => reviewMutation.mutateAsync(values)}
