@@ -390,6 +390,14 @@ export function Navbar() {
                   )}
                 </Link>
               </li>
+              <li>
+                <a
+                  href="/#reviews"
+                  className="relative inline-flex items-center px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                >
+                  Reviews
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -580,6 +588,15 @@ export function Navbar() {
                   <Link to="/shop" onClick={closeMobile} className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground">
                     Shop
                   </Link>
+
+                  {/* Reviews */}
+                  <a
+                    href="/#reviews"
+                    onClick={closeMobile}
+                    className="block rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10 hover:text-foreground"
+                  >
+                    Reviews
+                  </a>
 
                   <div className="my-2 border-t border-border/30" />
                   <div className="flex flex-wrap gap-2">

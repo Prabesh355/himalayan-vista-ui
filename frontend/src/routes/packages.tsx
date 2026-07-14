@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/services/api";
+import { packageService } from "@/services/packageService";
 import { defaultImageFallback, resolveImageUrl, resolvePackageImage, useFallbackImage } from "@/lib/imageUrl";
 import { useCurrency } from "@/context/CurrencyProvider";
 
@@ -28,12 +28,7 @@ function PackagesIndex() {
     isError,
   } = useQuery({
     queryKey: ["packages", "public"],
-    queryFn: async () => {
-      const res = await api.get<{ success: boolean; data: any[] }>("/packages", {
-        params: { limit: 100 },
-      });
-      return res.data;
-    },
+    queryFn: () => packageService.getAllPackages({ limit: 100 }),
   });
 
   const packages = response?.data || [];

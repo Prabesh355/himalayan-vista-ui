@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,34 +8,41 @@ import {
   BadgeCheck,
   BedDouble,
   BusFront,
+  Calendar,
   CalendarDays,
   Check,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   CirclePlus,
   Clock3,
-  ChevronDown,
   Compass,
+  Eye,
   Footprints,
   HelpCircle,
   Home,
   Info,
   ListChecks,
+  Mail,
   Map,
   MapPinned,
   Minus,
   Mountain,
   Plane,
   Route as RouteIcon,
+  Send,
   ShieldCheck,
   Sparkles,
   Ticket,
   Users,
   UtensilsCrossed,
+  X,
 } from "lucide-react";
 
 import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
 import { BookingForm } from "@/components/BookingForm";
+import { defaultImageFallback, resolvePackageImage } from "@/lib/imageUrl";
 
 type ItineraryDay = {
   day: number;
@@ -44,6 +51,162 @@ type ItineraryDay = {
   meta: string[];
   highlights: string[];
 };
+
+export type TrekQuickFacts = {
+  altitude: string;
+  duration: string;
+  accommodation: string;
+  meals: string;
+  transportation: string;
+  bestSeason: string;
+  groupSize: string;
+  difficulty: string;
+};
+
+export const defaultQuickFacts: Record<string, TrekQuickFacts> = {
+  "everest-base-camp": {
+    altitude: "5,364m (Base Camp) / 5,545m (Kala Patthar)",
+    duration: "12 - 14 Days",
+    accommodation: "Luxury Tea Houses & Eco Lodges",
+    meals: "Full Board (Breakfast, Lunch, Dinner)",
+    transportation: "Lukla Flight & Private transfers",
+    bestSeason: "March - May & Sept - Nov",
+    groupSize: "2 - 12 Travelers",
+    difficulty: "Challenging",
+  },
+  "nar-phu-valley": {
+    altitude: "5,320m (Kang La Pass)",
+    duration: "12 Days",
+    accommodation: "Traditional Tibetan Tea Houses",
+    meals: "Full Board (Local & Western options)",
+    transportation: "Private Jeep / Shared local transfer",
+    bestSeason: "Sept - Nov & March - May",
+    groupSize: "1 - 10 Travelers",
+    difficulty: "Demanding",
+  },
+  "mera-peak-ski": {
+    altitude: "6,476m (Mera Peak Summit)",
+    duration: "18 Days",
+    accommodation: "Alpine Camping & Selected Tea Houses",
+    meals: "Freshly prepared expedition meals",
+    transportation: "Lukla Flights & Jeep transfers",
+    bestSeason: "April - May & Oct - Nov",
+    groupSize: "2 - 8 Climbers",
+    difficulty: "Strenuous / Alpine Skiing",
+  },
+  "mera-peak-expedition": {
+    altitude: "6,476m (Mera Peak Summit)",
+    duration: "18 Days",
+    accommodation: "Alpine Camping & Selected Tea Houses",
+    meals: "Freshly prepared expedition meals & Lodge dining",
+    transportation: "Lukla Flights & Jeep transfers",
+    bestSeason: "April - May & Oct - Nov",
+    groupSize: "2 - 8 Climbers",
+    difficulty: "Strenuous (Alpine Grade PD)",
+  },
+  "manaslu-and-tsum-valley": {
+    altitude: "5,106m (Larkya La Pass)",
+    duration: "20 Days",
+    accommodation: "Local Tibetan-style Tea Houses",
+    meals: "Traditional Dal Bhat & Lodge menu",
+    transportation: "Private 4WD Jeep from Kathmandu",
+    bestSeason: "March - May & Sept - Nov",
+    groupSize: "2 - 12 Travelers",
+    difficulty: "Challenging",
+  },
+  "kanchenjunga-base-camp": {
+    altitude: "5,143m (Pangpema Base Camp)",
+    duration: "22 Days",
+    accommodation: "Basic Wilderness Tea Houses / Camping",
+    meals: "Local standard meals",
+    transportation: "Flight to Bhadrapur & Private Jeep",
+    bestSeason: "Oct - Nov & March - May",
+    groupSize: "2 - 8 Travelers",
+    difficulty: "Strenuous",
+  },
+  "tsho-rolpa-lake": {
+    altitude: "4,580m (Tsho Rolpa Lake)",
+    duration: "10 Days",
+    accommodation: "Lodge & Local Homestays",
+    meals: "Full Board (Local organic food)",
+    transportation: "Local/Private Bus or Jeep to Chetchet",
+    bestSeason: "Sept - Nov & March - May",
+    groupSize: "2 - 12 Travelers",
+    difficulty: "Moderate to Challenging",
+  },
+  "annapurna-base-camp": {
+    altitude: "4,130m (Base Camp)",
+    duration: "10 Days",
+    accommodation: "Standard Mountain Tea Houses",
+    meals: "Full Board (Breakfast, Lunch, Dinner)",
+    transportation: "Private Jeep / Coaster to Pokhara",
+    bestSeason: "March - May & Sept - Nov",
+    groupSize: "1 - 14 Travelers",
+    difficulty: "Moderate",
+  },
+  "annapurna-circuit": {
+    altitude: "5,416m (Thorong La Pass)",
+    duration: "14 - 18 Days",
+    accommodation: "Premium Tea Houses & Eco Lodges",
+    meals: "Full Board (Breakfast, Lunch, Dinner)",
+    transportation: "Private Jeep / Shared local transfer",
+    bestSeason: "March - May & Sept - Nov",
+    groupSize: "2 - 12 Travelers",
+    difficulty: "Challenging",
+  },
+  "three-pass": {
+    altitude: "5,545m (Kala Patthar) / 3 Passes",
+    duration: "20 Days",
+    accommodation: "Standard Tea Houses",
+    meals: "Full Board (Breakfast, Lunch, Dinner)",
+    transportation: "Lukla Flights & Private transfers",
+    bestSeason: "March - May & Sept - Nov",
+    groupSize: "2 - 10 Travelers",
+    difficulty: "Strenuous",
+  },
+  "lobuche-east": {
+    altitude: "6,119m (Lobuche East Summit)",
+    duration: "16 Days",
+    accommodation: "Camping & High Camps",
+    meals: "Expedition Prepared Meals",
+    transportation: "Domestic Flights & Private Jeep",
+    bestSeason: "April - May & Oct - Nov",
+    groupSize: "2 - 8 Climbers",
+    difficulty: "Very Strenuous (Alpine Grade PD+)",
+  },
+  "api-himal-base-camp": {
+    altitude: "4,250m (Base Camp)",
+    duration: "16 Days",
+    accommodation: "Teahouses / Wilderness Camping",
+    meals: "Prepared camp food & local tea houses",
+    transportation: "Domestic Flight to Dhangadhi & Private Jeep",
+    bestSeason: "Sept - Nov & March - May",
+    groupSize: "2 - 10 Travelers",
+    difficulty: "Demanding / Remote",
+  },
+};
+
+export function getTrekFacts(slug: string, pkg: any): TrekQuickFacts {
+  const normalizedSlug = slug.toLowerCase().replace(/-trek$/, "");
+  const matchedKey = Object.keys(defaultQuickFacts).find(
+    (k) => normalizedSlug.includes(k) || k.includes(normalizedSlug)
+  );
+
+  if (matchedKey) {
+    return defaultQuickFacts[matchedKey];
+  }
+
+  return {
+    altitude: "3,500m - 5,500m",
+    duration: `${pkg?.duration?.days || 12} Days`,
+    accommodation: "Premium Tea Houses & Mountain Lodges",
+    meals: "Full Board (Breakfast, Lunch, Dinner)",
+    transportation: "Private/Shared Transfers",
+    bestSeason: "Spring (March - May) & Autumn (September - November)",
+    groupSize: `${pkg?.groupSize?.min || 1} - ${pkg?.groupSize?.max || 12} Travelers`,
+    difficulty: pkg?.difficulty || "Moderate",
+  };
+}
 
 type PriceItem = {
   label: string;
@@ -628,11 +791,130 @@ function PackageDetails() {
   const { slug } = Route.useParams();
   const [openDay, setOpenDay] = useState<number | null>(0);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
   const detailsRef = useRef<HTMLElement | null>(null);
   const itineraryRef = useRef<HTMLElement | null>(null);
   const search = useRouterState({
     select: (state) => state.location.search as Record<string, unknown>,
   });
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [enquiryName, setEnquiryName] = useState("");
+  const [enquiryEmail, setEnquiryEmail] = useState("");
+  const [enquiryMessage, setEnquiryMessage] = useState("");
+  const [enquirySent, setEnquirySent] = useState(false);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  const shouldReduceMotion = useReducedMotion();
+  const premiumEase = useMemo(() => [0.22, 0.61, 0.36, 1], []);
+
+  const heroVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: premiumEase,
+      },
+    },
+  }), [shouldReduceMotion, premiumEase]);
+
+  const metaContainerVariants = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.08,
+        staggerChildren: 0.08,
+      },
+    },
+  }), []);
+
+  const metaItemVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: premiumEase,
+      },
+    },
+  }), [shouldReduceMotion, premiumEase]);
+
+  const ctaContainerVariants = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.15,
+        staggerChildren: 0.08,
+      },
+    },
+  }), []);
+
+  const buttonVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: premiumEase,
+      },
+    },
+    hover: {
+      scale: shouldReduceMotion ? 1 : 1.03,
+      y: shouldReduceMotion ? 0 : -3,
+      boxShadow: "0 8px 30px rgba(217, 119, 6, 0.15)",
+      transition: {
+        duration: 0.25,
+        ease: premiumEase,
+      },
+    },
+    tap: {
+      scale: 0.98,
+      transition: {
+        duration: 0.1,
+        ease: premiumEase,
+      },
+    },
+  }), [shouldReduceMotion, premiumEase]);
+
+  const journeyPlanVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: premiumEase,
+      },
+    },
+  }), [shouldReduceMotion, premiumEase]);
+
+  const dayCardVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 25 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: premiumEase,
+      },
+    },
+    hover: {
+      y: shouldReduceMotion ? 0 : -3,
+      boxShadow: "0 10px 30px -10px rgba(217, 119, 6, 0.15)",
+      borderColor: "rgba(217, 119, 6, 0.25)",
+      transition: {
+        duration: 0.25,
+        ease: premiumEase,
+      },
+    },
+  }), [shouldReduceMotion, premiumEase]);
 
   const packageQuery = useQuery({
     queryKey: ["package", slug],
@@ -740,6 +1022,18 @@ function PackageDetails() {
     return () => cancelAnimationFrame(frame);
   }, [slug, pkg]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) return;
+      const scrollPercent = (window.scrollY / scrollHeight) * 100;
+      setShowStickyCTA(scrollPercent > 40 && scrollPercent < 88);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   if (packageQuery.isLoading) {
     return (
       <section className="mx-auto mt-16 max-w-4xl px-4 py-20">
@@ -770,457 +1064,585 @@ function PackageDetails() {
     );
   }
 
-  if (isFullItineraryView) {
-    return (
-      <section className="mx-auto mt-16 max-w-7xl bg-background px-4 py-12 lg:px-6">
-        <div className="mb-8">
-          <a href={`/packages/${slug}`} className="text-sm text-accent hover:underline">
-            ← Back to package overview
-          </a>
+
+
+  const handleSendEnquiry = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!enquiryName || !enquiryEmail || !enquiryMessage) return;
+    setEnquirySent(true);
+    setTimeout(() => {
+      setEnquiryName("");
+      setEnquiryEmail("");
+      setEnquiryMessage("");
+    }, 3000);
+  };
+
+  const facts = getTrekFacts(slug, pkg);
+  const quickFactsList = [
+    { label: "Highest Altitude", value: facts.altitude, icon: Mountain },
+    { label: "Duration", value: facts.duration, icon: CalendarDays },
+    { label: "Accommodation", value: facts.accommodation, icon: BedDouble },
+    { label: "Meals", value: facts.meals, icon: UtensilsCrossed },
+    { label: "Transportation", value: facts.transportation, icon: BusFront },
+    { label: "Best Season", value: facts.bestSeason, icon: Compass },
+    { label: "Group Size", value: facts.groupSize, icon: Users },
+    { label: "Difficulty", value: facts.difficulty, icon: Footprints },
+  ];
+
+  const parseItineraryDay = (day: ItineraryDay) => {
+    const altitudeMatch = day.title.match(/\b(\d{1,3},?\d{3})\s*m\b/i) || day.detail.match(/\b(\d{1,3},?\d{3})\s*m\b/i);
+    const altitude = altitudeMatch ? `${altitudeMatch[1]}m` : "Varies";
+    const location = day.title
+      .replace(/\(\d{1,3},?\d{3}\s*m\)/i, "")
+      .replace(/^(Drive|Trek|Fly|Rest Day|Explore|Hike|Return)\s+(?:from\s+)?(?:to\s+)?/i, "")
+      .trim();
+    const walkingHours = day.meta.find(m => m.toLowerCase().includes("duration") || m.toLowerCase().includes("hour") || m.toLowerCase().includes("hr")) || "4 - 6 hours";
+    const distance = day.meta.find(m => m.toLowerCase().includes("distance") || m.toLowerCase().includes("km")) || "8 - 12 km";
+    const accommodation = day.meta.find(m => m.toLowerCase().includes("accommodation") || m.toLowerCase().includes("lodge") || m.toLowerCase().includes("tea house")) || "Mountain Tea House";
+    const meals = day.meta.find(m => m.toLowerCase().includes("meals") || m.toLowerCase().includes("breakfast") || m.toLowerCase().includes("dinner")) || "Breakfast, Lunch, Dinner";
+    return { altitude, location, walkingHours, distance, accommodation, meals };
+  };
+
+  const galleryImages = [
+    resolvePackageImage(pkg.images?.[0] || pkg.image, pkg.slug, pkg.title),
+    resolvePackageImage(null, "", "Everest Base Camp"),
+    resolvePackageImage(null, "", "Annapurna Circuit"),
+    resolvePackageImage(null, "", "Api Himal Base Camp"),
+    resolvePackageImage(null, "", "Tsho Rolpa"),
+    resolvePackageImage(null, "", "Mera Peak Expedition"),
+  ];
+
+  const faqsList = [
+    {
+      q: "What training or physical fitness is required?",
+      a: "Trekking in Nepal is demanding. We recommend cardio workouts (running, cycling) and stamina building (hiking with a loaded pack) starting 6-8 weeks prior to departure."
+    },
+    {
+      q: "How do we prevent acute mountain sickness (AMS)?",
+      a: "Our itineraries feature built-in acclimatization days. We recommend drinking 4-5 liters of water daily, walking slowly, and consulting your guide on using Acetazolamide (Diamox)."
+    },
+    {
+      q: "What type of travel insurance is mandatory?",
+      a: "You must have travel insurance that explicitly covers emergency high-altitude helicopter rescue and medical evacuation up to 6,000m altitude."
+    },
+    {
+      q: "What happens if a flight to Lukla or Pokhara is delayed?",
+      a: "Mountain flights are weather-dependent. We build buffer days into the itineraries. In case of extended closures, helicopter options can be arranged locally at extra cost."
+    },
+    {
+      q: "What gear is provided, and what should I bring?",
+      a: "We provide group medical kits, map guides, and helper permits. You should bring specialized hiking gear (down jacket, sleeping bag, broken-in boots, trekking poles)."
+    }
+  ];
+
+
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.currentTarget;
+    if (target.src !== defaultImageFallback) {
+      target.src = defaultImageFallback;
+    }
+  };
+
+  const heroImageSrc = resolvePackageImage(pkg.images?.[0] || pkg.image, pkg.slug, pkg.title);
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:py-12">
+      {/* 1. HERO SECTION */}
+      <motion.section
+        initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.75, ease: premiumEase }}
+        className="relative w-full overflow-hidden rounded-[28px] h-[320px] md:h-[450px] lg:h-[580px] bg-card/40"
+      >
+        <img
+          src={heroImageSrc}
+          alt={pkg.title}
+          onError={handleImageError}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+        {/* Hero Content Wrapper */}
+        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-12">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            {/* Bottom Left Content */}
+            <motion.div
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: premiumEase }}
+              className="max-w-xl text-left"
+            >
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-accent">
+                PREMIUM TREK EXPERIENCE
+              </span>
+              <h1 className="mt-2 text-3xl font-display font-semibold tracking-tight text-white md:text-5xl">
+                {pkg.title}
+              </h1>
+              <p className="mt-3 text-xs md:text-sm text-white/80 font-medium">
+                {pkg.destination} &bull; {pkg.duration?.days || 0} Days &bull; {pkg.difficulty || "Moderate"}
+              </p>
+              <p className="mt-2 text-sm md:text-lg font-semibold text-white">
+                Starting From <span className="text-accent font-bold">{formatPrice(pkg.price)}</span>
+              </p>
+            </motion.div>
+
+            {/* Bottom Right Glassmorphism Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25, ease: premiumEase }}
+              className="flex flex-wrap gap-3 rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-md"
+            >
+              <button
+                onClick={() => setShowBookingForm(true)}
+                className="h-11 rounded-full bg-gradient-sunset px-6 text-xs font-bold uppercase tracking-wider text-white shadow-glow hover:opacity-95 transition cursor-pointer"
+              >
+                Book Now
+              </button>
+              <a
+                href={`mailto:${contactEmail}?subject=Expedition%20Inquiry%20for%20${encodeURIComponent(pkg.title)}`}
+                className="h-11 rounded-full border border-white/20 bg-white/5 px-5 inline-flex items-center text-xs font-semibold text-white hover:bg-white/10 transition"
+              >
+                Email Enquiry
+              </a>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="h-11 rounded-full border border-white/20 bg-white/5 px-5 inline-flex items-center text-xs font-semibold text-white hover:bg-white/10 transition"
+              >
+                WhatsApp
+              </a>
+            </motion.div>
+          </div>
         </div>
+      </motion.section>
 
-        <motion.header
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-card via-background to-primary/35 p-6 shadow-elegant md:p-10"
-        >
-          <div className="max-w-4xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-accent">
-              Premium trek details
-            </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
-              {pkg.title}
-            </h1>
-            {itinerary?.summary && (
-              <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground md:text-lg">
-                {itinerary.summary}
+      {/* 2. QUICK FACTS CARDS */}
+      <motion.section
+        variants={metaContainerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-8"
+      >
+        {quickFactsList.map((fact, index) => {
+          const FactIcon = fact.icon;
+          return (
+            <motion.div
+              key={fact.label}
+              variants={metaItemVariants}
+              whileHover={{ y: -3 }}
+              className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 backdrop-blur-[12px] shadow-soft flex flex-col items-center text-center transition"
+            >
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent">
+                <FactIcon className="h-5 w-5" />
+              </div>
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                {fact.label}
               </p>
-            )}
-          </div>
+              <p className="mt-1 text-xs font-semibold text-foreground leading-tight">
+                {fact.value}
+              </p>
+            </motion.div>
+          );
+        })}
+      </motion.section>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: "Region", value: pkg.destination || "Nepal", icon: MapPinned },
-              {
-                label: "Duration",
-                value: `${pkg.duration?.days || itinerary?.days.length || 0} Days`,
-                icon: CalendarDays,
-              },
-              { label: "Difficulty", value: pkg.difficulty || "Moderate", icon: Mountain },
-              { label: "From", value: formatPrice(pkg.price), icon: Ticket },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
+      <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_360px]">
+        {/* Left column content */}
+        <div className="space-y-16">
+          {/* 3. TREK OVERVIEW */}
+          <motion.section
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: premiumEase }}
+            className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-[12px] shadow-soft"
+          >
+            <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">
+              Overview
+            </h2>
+            <div className="relative mt-4">
+              {/* Desktop Always Full */}
+              <div className="hidden md:block prose prose-invert max-w-none text-muted-foreground leading-8">
+                {pkg.description}
+              </div>
+
+              {/* Mobile Read More */}
+              <div className="block md:hidden">
                 <div
-                  key={item.label}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md transition hover:-translate-y-0.5 hover:border-accent/30 hover:bg-white/10"
+                  className={`prose prose-invert max-w-none text-muted-foreground leading-7 transition-all duration-500 overflow-hidden ${
+                    isExpanded ? "max-h-[1000px]" : "max-h-[120px]"
+                  }`}
                 >
-                  <Icon className="h-5 w-5 text-accent" />
-                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                    {item.label}
-                  </p>
-                  <p className="mt-1 text-base font-semibold text-foreground">{item.value}</p>
+                  {pkg.description}
                 </div>
-              );
-            })}
-          </div>
-        </motion.header>
-
-        <div className="mt-10 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-          <aside className="hidden lg:block">
-            <div className="sticky top-28 rounded-[1.75rem] border border-white/10 bg-card/70 p-5 shadow-soft backdrop-blur-xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
-                Explore
-              </p>
-              <nav className="mt-4 space-y-1">
-                {tocItems.map((item) => (
-                  <a
-                    key={`${item.id}-${item.label}`}
-                    href={`#${item.id}`}
-                    className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary/10 hover:text-foreground"
+                {!isExpanded && (
+                  <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
+                )}
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="rounded-full border border-accent/30 px-5 py-2 text-xs font-semibold text-accent hover:bg-accent/10 transition"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
+                    {isExpanded ? "Show Less" : "Read More"}
+                  </button>
+                </div>
+              </div>
             </div>
-          </aside>
+          </motion.section>
 
-          <div className="space-y-8">
-            {trekDetails.sections.map((section, index) => (
-              <DetailCard key={`${section.id}-${index}`} section={section} index={index} />
-            ))}
-
-            {fullHighlightItems.length > 0 && (
-              <motion.section
-                id="highlights"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.35 }}
-                className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-card/80 p-6 shadow-elegant backdrop-blur-xl md:p-8"
-              >
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-sunset shadow-glow">
-                    <Sparkles className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
-                      Signature moments
-                    </p>
-                    <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-                      Trek Highlights
-                    </h2>
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {fullHighlightItems.map((item, index) => {
-                    const Icon = highlightIcons[index % highlightIcons.length];
-                    return (
-                      <div
-                        key={`${item}-${index}`}
-                        className="group rounded-2xl border border-white/10 bg-background/70 p-5 transition hover:-translate-y-1 hover:border-accent/30 hover:bg-secondary/10 hover:shadow-soft"
-                      >
-                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-accent/10 text-accent transition group-hover:bg-accent group-hover:text-white">
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <p className="mt-4 text-sm leading-7 text-muted-foreground">{item}</p>
+          {/* 4. HIGHLIGHTS SECTION */}
+          {fullHighlightItems.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: premiumEase }}
+              className="scroll-mt-28"
+            >
+              <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">
+                Trek Highlights
+              </h2>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {fullHighlightItems.map((item, index) => {
+                  const Icon = highlightIcons[index % highlightIcons.length];
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.05 }}
+                      whileHover={{ y: -3 }}
+                      className="group rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-[12px] shadow-soft flex gap-4 transition"
+                    >
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
+                        <Icon className="h-5 w-5" />
                       </div>
-                    );
-                  })}
-                </div>
-              </motion.section>
-            )}
+                      <p className="text-sm leading-6 text-muted-foreground">{item}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.section>
+          )}
 
-            {itinerary?.days.length ? (
-              <motion.section
-                id="itinerary"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.35 }}
-                className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-card/80 p-6 shadow-elegant backdrop-blur-xl md:p-8"
-              >
-                <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">
-                      Timeline
-                    </p>
-                    <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-                      Detailed Itinerary
-                    </h2>
-                  </div>
-                  <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/20 bg-secondary/10 px-4 py-2 text-sm font-medium text-foreground">
-                    <RouteIcon className="h-4 w-4 text-accent" />
-                    {itinerary.days.length} days
-                  </div>
-                </div>
+          {/* 5. DETAILED ITINERARY */}
+          {itinerary?.days.length ? (
+            <motion.section
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.7, ease: premiumEase }}
+              className="scroll-mt-28"
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">
+                  Detailed Itinerary
+                </h2>
+                <span className="rounded-full border border-accent/20 bg-accent/5 px-3 py-1 text-xs font-semibold text-accent">
+                  {itinerary.days.length} Days
+                </span>
+              </div>
 
-                <div className="space-y-4">
-                  {itinerary.days.map((day, index) => {
-                    const isOpen = openDay === index;
-                    const Icon = dayIcons[index % dayIcons.length];
+              {/* Vertical timeline accordion */}
+              <div className="mt-8 relative border-l border-white/10 pl-6 ml-4 space-y-6">
+                {itinerary.days.map((day, index) => {
+                  const isOpen = openDay === index;
+                  const dayDetails = parseItineraryDay(day);
 
-                    return (
-                      <article
-                        key={`${day.day}-${day.title}-${index}`}
-                        className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-background/75 transition hover:border-accent/25"
+                  return (
+                    <div key={index} className="relative">
+                      {/* Timeline dot */}
+                      <span className="absolute -left-[31px] top-5 flex h-4 w-4 items-center justify-center rounded-full border border-accent/50 bg-[#0c0a09]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                      </span>
+
+                      <motion.article
+                        initial="hidden"
+                        whileInView="visible"
+                        whileHover="hover"
+                        viewport={{ once: true }}
+                        variants={dayCardVariants}
+                        className="overflow-hidden rounded-[20px] border border-white/[0.08] bg-white/[0.03] backdrop-blur-[12px] shadow-soft transition-colors"
                       >
                         <button
                           type="button"
-                          className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-secondary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                          aria-expanded={isOpen}
-                          aria-controls={`full-itinerary-panel-${index}`}
+                          className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-white/5"
                           onClick={() => setOpenDay(isOpen ? null : index)}
                         >
-                          <div className="flex min-w-0 items-center gap-4">
-                            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent">
-                              <Icon className="h-5 w-5" />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-accent">
-                                Day {day.day}
-                              </p>
-                              <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
-                                {day.title}
-                              </h3>
-                            </div>
+                          <div className="min-w-0">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+                              Day {day.day}
+                            </span>
+                            <h3 className="text-base md:text-lg font-semibold text-foreground">
+                              {dayDetails.location || day.title}
+                            </h3>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">
+                              Altitude: <span className="text-foreground">{dayDetails.altitude}</span>
+                            </p>
                           </div>
                           <ChevronDown
-                            className={`h-5 w-5 shrink-0 text-accent transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
-                            aria-hidden="true"
+                            className={`h-4 w-4 text-accent transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
                           />
                         </button>
 
                         <motion.div
-                          id={`full-itinerary-panel-${index}`}
                           initial={false}
                           animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
                           transition={{ duration: 0.35, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
-                          <div className="border-t border-white/10 px-5 pb-5 pt-4">
-                            {(day.meta.length > 0 || day.highlights.length > 0) && (
-                              <div className="mb-4 flex flex-wrap gap-2">
-                                {[...day.meta, ...day.highlights].map((item) => (
-                                  <span
-                                    key={item}
-                                    className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-medium text-foreground"
-                                  >
-                                    {item}
-                                  </span>
-                                ))}
+                          <div className="border-t border-white/[0.08] px-5 pb-5 pt-4">
+                            <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mb-4">
+                              <div className="rounded-xl bg-white/5 p-2.5 text-center">
+                                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Meals</p>
+                                <p className="text-xs font-semibold text-foreground mt-1 truncate">{dayDetails.meals}</p>
                               </div>
-                            )}
-                            <p className="max-w-3xl text-sm leading-8 text-muted-foreground md:text-base">
+                              <div className="rounded-xl bg-white/5 p-2.5 text-center">
+                                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Lodge</p>
+                                <p className="text-xs font-semibold text-foreground mt-1 truncate">{dayDetails.accommodation}</p>
+                              </div>
+                              <div className="rounded-xl bg-white/5 p-2.5 text-center">
+                                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Hours</p>
+                                <p className="text-xs font-semibold text-foreground mt-1 truncate">{dayDetails.walkingHours}</p>
+                              </div>
+                              <div className="rounded-xl bg-white/5 p-2.5 text-center">
+                                <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Distance</p>
+                                <p className="text-xs font-semibold text-foreground mt-1 truncate">{dayDetails.distance}</p>
+                              </div>
+                            </div>
+                            <p className="text-sm leading-7 text-muted-foreground">
                               {day.detail}
                             </p>
                           </div>
                         </motion.div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </motion.section>
-            ) : null}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section
-      id="package-details"
-      ref={detailsRef}
-      className="mx-auto mt-16 max-w-3xl rounded-3xl bg-background/60 px-4 py-12"
-    >
-      {/* Mobile Floating Back Button */}
-      <Link
-        to="/packages"
-        className="fixed top-24 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/60 shadow-elegant backdrop-blur-md text-white hover:bg-black/80 lg:hidden"
-        aria-label="Back to packages"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="h-5 w-5"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </Link>
-
-      <header className="mb-8">
-        <div className="hidden lg:block mb-4">
-          <Link
-            to="/packages"
-            className="text-sm text-accent hover:underline flex items-center gap-1"
-          >
-            ← Back to all trekking packages
-          </Link>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">{pkg.title}</h1>
-        {pkg.tagline && <p className="mt-2 text-muted-foreground">{pkg.tagline}</p>}
-        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <strong>Region:</strong> <span className="text-foreground">{pkg.destination}</span>
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <strong>Duration:</strong>{" "}
-            <span className="text-foreground">{pkg.duration?.days || 0} Days</span>
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <strong>Difficulty:</strong>{" "}
-            <span className="text-foreground">{pkg.difficulty || "Moderate"}</span>
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <strong>Price:</strong>{" "}
-            <span className="text-accent font-semibold">{formatPrice(pkg.price)}</span>
-          </span>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <a
-            href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
-            className="inline-flex items-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
-          >
-            Email enquiry
-          </a>
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
-          >
-            WhatsApp enquiry
-          </a>
-        </div>
-      </header>
-
-      <div className="space-y-8">
-        {itinerary ? (
-          <section
-            id="itinerary"
-            ref={itineraryRef}
-            className="scroll-mt-28 rounded-[2rem] border border-border/70 bg-gradient-to-b from-card to-muted/30 p-6 shadow-elegant"
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent">
-                  Journey plan
-                </p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-                  Detailed Itinerary
-                </h2>
+                      </motion.article>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="rounded-full border border-accent/20 bg-secondary/10 px-4 py-2 text-sm font-medium text-foreground w-fit">
-                {itinerary.days.length}+ days · scroll through the route
-              </div>
-            </div>
+            </motion.section>
+          ) : null}
 
-            {itinerary.summary && (
-              <p className="mt-5 max-w-4xl text-sm leading-7 text-muted-foreground md:text-base">
-                {itinerary.summary}
-              </p>
-            )}
+          {/* 6. INCLUDED & EXCLUDED comparison */}
+          <section className="grid gap-6 md:grid-cols-2">
+            <CostCard title="What's Included" items={includedCosts} accent="bg-[#10B981]/15 border-[#10B981]/30" icon={CheckCircle2} />
+            <CostCard title="What's Excluded" items={excludedCosts} accent="bg-red-500/10 border-red-500/20" icon={Minus} />
+          </section>
 
-            {itinerary.highlights.length > 0 && (
-              <div className="mt-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-                  Trip highlights
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {itinerary.highlights.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-flex items-center rounded-full border border-accent/20 bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="mt-8 space-y-4">
-              {previewDays.map((day, index) => {
-                const isOpen = openDay === index;
-
+          {/* 7. ESSENTIAL INFORMATION GUIDE */}
+          <motion.section
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-[12px] shadow-soft"
+          >
+            <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">
+              Essential Trek Guide
+            </h2>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {[
+                { title: "Altitude & Acclimatization", desc: "Trekking above 3,000m altitude carries risks of acute mountain sickness (AMS). We pace our steps and build standard rest/acclimatization cycles.", icon: Compass },
+                { title: "Permits & TIMS cards", desc: "All local trek routes require specific conservation licenses (ACAP permits, local community tickets) which we manage entirely for you.", icon: Ticket },
+                { title: "Specialized Medical Insurance", desc: "High-altitude medical rescue and helicopter evacuation must be explicitly included in your personal travel policy before arrival.", icon: ShieldCheck },
+                { title: "Packing Essentials", desc: "Layered clothing, high-performance thermal layers, sleeping bags, polarized sunglasses, and well broken-in hiking boots are essential.", icon: Footprints }
+              ].map((item) => {
+                const GuideIcon = item.icon;
                 return (
-                  <motion.article
-                    key={`${day.day}-${day.title}`}
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.25 }}
-                    transition={{ duration: 0.35, delay: index * 0.03 }}
-                    className="overflow-hidden rounded-[1.75rem] border border-border/70 bg-background/95 shadow-soft backdrop-blur-md"
-                  >
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-secondary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-                      aria-expanded={isOpen}
-                      aria-controls={`itinerary-panel-${index}`}
-                      id={`itinerary-trigger-${index}`}
-                      onClick={() => setOpenDay(isOpen ? null : index)}
-                    >
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
-                          Day {day.day}
-                        </p>
-                        <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
-                          {day.title}
-                        </h3>
-                      </div>
-                      <ChevronDown
-                        className={`h-5 w-5 text-accent transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
-                        aria-hidden="true"
-                      />
-                    </button>
-
-                    <motion.div
-                      id={`itinerary-panel-${index}`}
-                      role="region"
-                      aria-labelledby={`itinerary-trigger-${index}`}
-                      initial={false}
-                      animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-                      transition={{ duration: 0.35, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="border-t border-border/70 px-5 pb-5 pt-4 sm:px-6">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                          <div className="min-w-0">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-accent">
-                              Day {day.day}
-                            </p>
-                            <h3 className="mt-1 text-lg font-semibold text-foreground md:text-xl">
-                              {day.title}
-                            </h3>
-                          </div>
-                          <div className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1.5 text-xs font-medium text-foreground">
-                            <Clock3 className="h-3.5 w-3.5 text-accent" />
-                            <span>Structured trek day</span>
-                          </div>
-                        </div>
-
-                        {(day.meta.length > 0 || day.highlights.length > 0) && (
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            {day.meta.slice(0, 4).map((item) => (
-                              <span
-                                key={item}
-                                className="inline-flex items-center rounded-full border border-border/70 bg-secondary/10 px-3 py-1 text-[11px] font-medium text-foreground"
-                              >
-                                {item}
-                              </span>
-                            ))}
-                            {day.highlights.slice(0, 3).map((item) => (
-                              <span
-                                key={item}
-                                className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-foreground"
-                              >
-                                {item}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground md:text-[15px]">
-                          {day.detail}
-                        </p>
-                      </div>
-                    </motion.div>
-                  </motion.article>
+                  <div key={item.title} className="flex gap-4 p-2">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
+                      <GuideIcon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
+                      <p className="mt-1 text-xs text-muted-foreground leading-5">{item.desc}</p>
+                    </div>
+                  </div>
                 );
               })}
             </div>
+          </motion.section>
 
-            {itinerary.fullMarkdown && (
-              <div className="mt-8 flex flex-col gap-3 rounded-3xl border border-accent/20 bg-secondary/10 p-5 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Need the complete route?</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Open every updated itinerary part on a clean page without the package overview.
-                  </p>
-                </div>
-                <a
-                  href={`/packages/${slug}?view=itinerary`}
-                  className="inline-flex w-fit items-center justify-center rounded-full bg-gradient-sunset px-5 py-3 text-sm font-semibold text-white shadow-glow transition hover:opacity-95"
+          {/* 8. GALLERY & LIGHTBOX */}
+          <section>
+            <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">
+              Expedition Gallery
+            </h2>
+            <div className="mt-6 grid gap-3 grid-cols-2 md:grid-cols-3">
+              {galleryImages.map((img, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveImage(img)}
+                  className="group relative cursor-zoom-in overflow-hidden rounded-2xl border border-white/10 h-32 md:h-40"
                 >
-                  View full itinerary
-                </a>
-              </div>
-            )}
+                  <img
+                    src={img}
+                    alt={`${pkg.title} screenshot ${i}`}
+                    onError={handleImageError}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/10 transition group-hover:bg-black/0" />
+                </div>
+              ))}
+            </div>
+
+            {/* Gallery Lightbox Modal */}
+            <AnimatePresence>
+              {activeImage && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setActiveImage(null)}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+                >
+                  <button
+                    onClick={() => setActiveImage(null)}
+                    className="absolute top-4 right-4 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/20 transition"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                  <motion.img
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0.95 }}
+                    src={activeImage}
+                    alt="Lightbox zoom view"
+                    className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-elegant"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
-        ) : (
-          <div className="rounded-[2rem] border border-border/70 bg-card p-6 text-center text-muted-foreground">
-            No itinerary details available for this package.
-          </div>
-        )}
+
+          {/* 9. FAQS ACCORDION */}
+          <section>
+            <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">
+              Frequently Asked Questions
+            </h2>
+            <div className="mt-6 space-y-3">
+              {faqsList.map((faq, i) => {
+                const isFaqOpen = activeFaq === i;
+                return (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-[12px] shadow-soft overflow-hidden"
+                  >
+                    <button
+                      onClick={() => setActiveFaq(isFaqOpen ? null : i)}
+                      className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-foreground text-sm"
+                    >
+                      <span>{faq.q}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 shrink-0 text-accent transition-transform duration-200 ${isFaqOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    <motion.div
+                      initial={false}
+                      animate={{ height: isFaqOpen ? "auto" : 0, opacity: isFaqOpen ? 1 : 0 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="border-t border-white/[0.08] px-5 py-4 text-xs md:text-sm text-muted-foreground leading-6">
+                        {faq.a}
+                      </p>
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+
+        {/* Right column sidebar */}
+        <aside className="space-y-6">
+          {/* Price Summary */}
+          <PriceSummary price={pkg.price} />
+
+          {/* 10. BOOKING CTA & FORM */}
+          <motion.div
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-[12px] shadow-soft"
+          >
+            <h3 className="text-lg font-semibold text-foreground font-display uppercase tracking-wide">
+              Secure Expedition Place
+            </h3>
+            <p className="text-xs text-muted-foreground mt-2 leading-5">
+              Confirm your trek dates directly or submit a swift reservation request to receive pricing options.
+            </p>
+
+            <form onSubmit={handleSendEnquiry} className="mt-6 space-y-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={enquiryName}
+                  onChange={(e) => setEnquiryName(e.target.value)}
+                  placeholder="Enter name"
+                  className="mt-1 w-full h-10 rounded-xl border border-white/10 bg-black/20 px-3 text-xs text-foreground placeholder-white/35 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={enquiryEmail}
+                  onChange={(e) => setEnquiryEmail(e.target.value)}
+                  placeholder="Enter email"
+                  className="mt-1 w-full h-10 rounded-xl border border-white/10 bg-black/20 px-3 text-xs text-foreground placeholder-white/35 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Enquiry Message</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={enquiryMessage}
+                  onChange={(e) => setEnquiryMessage(e.target.value)}
+                  placeholder="Write message..."
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-foreground placeholder-white/35 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={enquirySent}
+                className="w-full h-11 rounded-full bg-gradient-sunset text-xs font-bold uppercase tracking-wider text-white shadow-glow hover:opacity-95 transition flex items-center justify-center gap-2"
+              >
+                {enquirySent ? "Inquiry Transmitted!" : (
+                  <>
+                    <Send className="h-3.5 w-3.5" />
+                    <span>Send Message</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => setShowBookingForm(true)}
+                className="flex-1 h-10 rounded-full border border-accent text-xs font-bold uppercase text-accent hover:bg-accent/10 transition"
+              >
+                Book Now
+              </button>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 h-10 rounded-full border border-white/20 bg-white/5 inline-flex items-center justify-center text-xs font-semibold text-white hover:bg-white/10 transition"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </motion.div>
+        </aside>
       </div>
 
       <div className="mt-12 text-center lg:text-left">
@@ -1229,33 +1651,6 @@ function PackageDetails() {
         </Link>
       </div>
 
-      {/* Floating Thumb-Friendly Action Dock for Mobile */}
-      <div className="h-28 lg:hidden" />
-      <div className="fixed bottom-6 left-4 right-4 z-50 rounded-2xl border border-white/10 bg-background/80 px-4 py-3.5 shadow-elegant backdrop-blur-xl max-w-md mx-auto lg:hidden">
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowBookingForm(true)}
-            className="flex-1 rounded-full bg-gradient-sunset px-4 py-3.5 text-center text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
-          >
-            Book Now
-          </button>
-          <a
-            href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}&body=Hello%20Nomads%20Navigate%20Nepal%2C%0A%0AI%20am%20interested%20in%20the%20${encodeURIComponent(pkg.title)}%20package.%20Please%20send%20me%20pricing%20and%20availability.%0A%0AThank%20you.`}
-            className="flex-1 rounded-full bg-gradient-sunset px-4 py-3.5 text-center text-sm font-semibold text-white shadow-glow hover:opacity-95 transition"
-          >
-            Email Enquiry
-          </a>
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 rounded-full border border-white/20 bg-white/10 px-4 py-3.5 text-center text-sm font-semibold text-white hover:bg-white/20 transition"
-          >
-            WhatsApp Booking
-          </a>
-        </div>
-      </div>
-    
       {showBookingForm && (
         <BookingForm
           packageId={packageId}
@@ -1267,7 +1662,48 @@ function PackageDetails() {
           }}
         />
       )}
-    
-</section>
+
+      {/* Sticky action bar */}
+      <AnimatePresence>
+        {showStickyCTA && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.35, ease: premiumEase }}
+            className="fixed bottom-6 left-4 right-4 z-40 rounded-2xl border border-white/10 bg-background/90 px-4 py-3 shadow-elegant backdrop-blur-xl max-w-4xl mx-auto flex items-center justify-between gap-4"
+          >
+            <div className="hidden sm:block">
+              <p className="text-sm font-semibold text-foreground font-display">{pkg.title}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                From <span className="text-accent font-semibold">{formatPrice(pkg.price)}</span>
+              </p>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => setShowBookingForm(true)}
+                className="flex-1 sm:flex-none h-10 px-5 rounded-full bg-gradient-sunset text-center text-xs font-bold uppercase tracking-wider text-white shadow-glow hover:opacity-95 transition cursor-pointer flex items-center justify-center animate-none"
+              >
+                Book Now
+              </button>
+              <a
+                href={`mailto:${contactEmail}?subject=Booking%20Enquiry%20for%20${encodeURIComponent(pkg.title)}`}
+                className="flex-1 sm:flex-none h-10 px-4 inline-flex items-center justify-center rounded-full border border-white/10 bg-black/45 text-center text-xs font-semibold text-white hover:bg-white/5 transition"
+              >
+                Email
+              </a>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 sm:flex-none h-10 px-4 inline-flex items-center justify-center rounded-full border border-white/10 bg-black/45 text-center text-xs font-semibold text-white hover:bg-white/5 transition"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

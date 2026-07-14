@@ -2,9 +2,44 @@ import api from "./api";
 
 export const packageService = {
   getAllPackages: async (params?: any) => {
-    // E.g. params can include filtering: { search: 'Everest', limit: 10 }
-    const response = await api.get("/packages", { params });
-    return response.data;
+    try {
+      const response = await api.get("/packages", { params });
+      return response.data;
+    } catch (err: any) {
+      const status = err.response?.status;
+      const databaseUnavailable =
+        !err.response || status === 502 || status === 503 || status === 504;
+      if (databaseUnavailable || err.code === "ERR_NETWORK" || err.message?.includes("Network Error")) {
+        const mockModule = await import("./mockData");
+        const fallbackData = mockModule.destinations.map((d) => {
+          const daysMatch = d.duration ? d.duration.match(/(\d+)\s*days?/i) : null;
+          const days = daysMatch ? Number(daysMatch[1]) : 1;
+          const nights = Math.max(0, days - 1);
+          return {
+            id: d.slug,
+            _id: d.slug,
+            slug: d.slug,
+            title: d.name,
+            description: d.description,
+            destination: d.region,
+            price: d.priceFrom || 0,
+            duration: { days, nights },
+            images: d.image ? [d.image] : [],
+            groupSize: { min: 1, max: 12 },
+            featured: d.rating >= 4.8,
+            isActive: true,
+            itinerary: d.itinerary || "",
+            rating: d.rating || 0,
+            reviewCount: d.reviews || 0,
+          };
+        });
+        return {
+          success: true,
+          data: fallbackData,
+        };
+      }
+      throw err;
+    }
   },
 
   getPackageById: async (id: string) => {
@@ -13,7 +48,6 @@ export const packageService = {
   },
 
   createPackage: async (packageData: any) => {
-    // Dynamic headers based on whether the data is a FormData object (for image uploads)
     const isFormData = packageData instanceof FormData;
     const response = await api.post("/packages", packageData, {
       headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
@@ -35,7 +69,45 @@ export const packageService = {
   },
 
   getFeaturedPackages: async (params?: any) => {
-    const response = await api.get("/packages/featured", { params });
-    return response.data;
+    try {
+      const response = await api.get("/packages/featured", { params });
+      return response.data;
+    } catch (err: any) {
+      const status = err.response?.status;
+      const databaseUnavailable =
+        !err.response || status === 502 || status === 503 || status === 504;
+      if (databaseUnavailable || err.code === "ERR_NETWORK" || err.message?.includes("Network Error")) {
+        const mockModule = await import("./mockData");
+        const fallbackData = mockModule.destinations
+          .filter((d) => d.rating >= 4.7)
+          .map((d) => {
+            const daysMatch = d.duration ? d.duration.match(/(\d+)\s*days?/i) : null;
+            const days = daysMatch ? Number(daysMatch[1]) : 1;
+            const nights = Math.max(0, days - 1);
+            return {
+              id: d.slug,
+              _id: d.slug,
+              slug: d.slug,
+              title: d.name,
+              description: d.description,
+              destination: d.region,
+              price: d.priceFrom || 0,
+              duration: { days, nights },
+              images: d.image ? [d.image] : [],
+              groupSize: { min: 1, max: 12 },
+              featured: true,
+              isActive: true,
+              itinerary: d.itinerary || "",
+              rating: d.rating || 0,
+              reviewCount: d.reviews || 0,
+            };
+          });
+        return {
+          success: true,
+          data: fallbackData,
+        };
+      }
+      throw err;
+    }
   },
 };

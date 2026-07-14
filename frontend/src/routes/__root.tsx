@@ -177,6 +177,8 @@ function RootComponent() {
 }
 
 function WhatsAppShortcut() {
+  const router = useRouter();
+  const isPackageDetailsRoute = router.state.location.pathname.startsWith("/packages/");
   const whatsappNumber = "+9779769364689";
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}?text=Hi%20Nomads%20Navigate%20Nepal%2C%20I%20have%20an%20inquiry.`;
 
@@ -187,7 +189,9 @@ function WhatsAppShortcut() {
       rel="noreferrer"
       aria-label="Send inquiry on WhatsApp"
       title="Need help"
-      className="group fixed bottom-4 right-4 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50 sm:bottom-5 sm:right-5 sm:h-14 sm:w-14"
+      className={`group fixed right-4 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elegant ring-1 ring-white/30 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#25D366]/50 sm:right-5 sm:h-14 sm:w-14 ${
+        isPackageDetailsRoute ? "hidden lg:inline-flex bottom-20 sm:bottom-24" : "bottom-4 sm:bottom-5"
+      }`}
     >
       <span className="pointer-events-none absolute right-full mr-3 top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background opacity-0 shadow-lg transition-all duration-200 group-hover:block group-focus-visible:block sm:block sm:opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100">
         Need help

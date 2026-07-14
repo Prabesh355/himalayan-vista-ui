@@ -715,7 +715,7 @@ function HomeReviews() {
     : 0;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24">
+    <section id="reviews" className="mx-auto max-w-7xl px-4 py-24">
       <div className="mb-10 max-w-2xl">
         <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Traveler Reviews</p>
         <h2 className="mt-3 text-4xl font-display font-semibold uppercase tracking-tight md:text-5xl">
