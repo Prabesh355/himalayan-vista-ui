@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
@@ -15,7 +15,11 @@ import {
   resolvePackageImage,
   useFallbackImage,
 } from "@/lib/imageUrl";
-import { type Review as ReviewCard } from "@/components/ReviewsSection";
+import {
+  ReviewsSection,
+  type Review as ReviewCard,
+  type ReviewFormValues,
+} from "@/components/ReviewsSection";
 import api from "@/services/api";
 
 export const Route = createFileRoute("/")({
@@ -647,10 +651,35 @@ function Testimonials({ data }: { data?: any[] }) {
 }
 
 function HomeReviews() {
+  const queryClient = useQueryClient();
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
   const reviewsQuery = useQuery({
     queryKey: ["site-reviews"],
     queryFn: async () =>
-      (await api.get<{ success: boolean; data: ReviewApiItem[] }>("/reviews")).data,
+      (await api.get<{ success: boolean; data: ReviewApiItem[] }> ("/reviews")).data,
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: async (values: ReviewFormValues) => {
+      const res = await api.post("/reviews/site", values);
+      return res.data;
+    },
+    onMutate: () => {
+      setSubmitMessage("");
+      setSubmitError("");
+    },
+    onSuccess: async () => {
+      setSubmitMessage("Your review has been published. Thank you for sharing it.");
+      await queryClient.invalidateQueries({ queryKey: ["site-reviews"] });
+    },
+    onError: (error: any) => {
+      setSubmitError(
+        error?.response?.data?.message ||
+          "We could not publish your review right now. Please check your details and try again.",
+      );
+    },
   });
 
   const reviewCards: ReviewCard[] =
@@ -681,43 +710,38 @@ function HomeReviews() {
       };
     }) || [];
 
-  if (!reviewCards.length) return null;
+  const averageRating = reviewCards.length
+    ? reviewCards.reduce((sum, review) => sum + review.rating, 0) / reviewCards.length
+    : 0;
 
   return (
-    <div className="mt-10">
+    <section className="mx-auto max-w-7xl px-4 py-24">
+      <div className="mb-10 max-w-2xl">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Traveler Reviews</p>
+        <h2 className="mt-3 text-4xl font-display font-semibold uppercase tracking-tight md:text-5xl">
+          Share Your Experience
+        </h2>
+        <p className="mt-4 text-muted-foreground leading-relaxed">
+          Read real traveler feedback or post your own review directly from the homepage.
+        </p>
+      </div>
+
       {reviewsQuery.isError && (
         <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-300">
-          Reviews could not be loaded right now.
+          Reviews could not be loaded right now. You can still submit your review below.
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {reviewCards.map((review) => (
-          <div
-            key={review.id}
-            className="glass rounded-3xl border border-white/5 p-7 transition-all duration-300"
-          >
-            <div className="flex items-center gap-1 text-amber-400">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Star
-                  key={`${review.id}-${index}`}
-                  className={`h-4 w-4 ${index < review.rating ? "fill-current" : "text-white/30"}`}
-                />
-              ))}
-            </div>
-            <h4 className="mt-4 text-lg font-semibold text-foreground">{review.title}</h4>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">“{review.content}”</p>
-            <div className="mt-6 border-t border-white/10 pt-4">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">{review.author}</p>
-              <div className="mt-2 flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                <span>{review.date}</span>
-                {review.verified ? <span>Verified</span> : null}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+      <ReviewsSection
+        reviews={reviewCards}
+        averageRating={averageRating}
+        totalReviews={reviewCards.length}
+        isSubmitting={reviewMutation.isPending}
+        submitMessage={submitMessage}
+        submitError={submitError}
+        onSubmitReview={(values) => reviewMutation.mutateAsync(values)}
+      />
+    </section>
   );
 }
 
