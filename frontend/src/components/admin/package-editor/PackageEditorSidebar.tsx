@@ -1,6 +1,7 @@
 import * as React from "react";
 import { CheckCircle2, Clock3, FileText, Eye, ImagePlus, Layers3, Sparkles, AlertTriangle } from "lucide-react";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { TabKey } from "./types";
 
 const editorNavItems = [
@@ -22,6 +23,8 @@ type PackageEditorSidebarProps = {
   saveSuccess: boolean;
   imageCount: number;
   wordCount: number;
+  activeTab: TabKey;
+  onTabChange: (tab: TabKey) => void;
 };
 
 export const PackageEditorSidebar: React.FC<PackageEditorSidebarProps> = ({
@@ -30,6 +33,8 @@ export const PackageEditorSidebar: React.FC<PackageEditorSidebarProps> = ({
   saveSuccess,
   imageCount,
   wordCount,
+  activeTab,
+  onTabChange,
 }) => {
   return (
     <aside className="hidden h-full flex-col border-r bg-muted/20 p-5 md:flex">
@@ -69,18 +74,20 @@ export const PackageEditorSidebar: React.FC<PackageEditorSidebarProps> = ({
         </div>
       </div>
 
-      <TabsList className="mt-4 grid h-auto grid-cols-2 gap-2 bg-transparent p-0">
+      <div className="mt-4 grid grid-cols-2 gap-2">
         {editorNavItems.map(({ key, label, icon: Icon }) => (
-          <TabsTrigger
+          <Button
             key={key}
-            value={key}
-            className="justify-start gap-2 rounded-xl border border-transparent px-4 py-3 text-left data-[state=active]:border-border data-[state=active]:bg-background"
+            variant={activeTab === key ? "default" : "outline"}
+            className={cn("justify-start gap-2 rounded-xl px-4 py-3 text-left", activeTab !== key && "bg-background")}
+            type="button"
+            onClick={() => onTabChange(key)}
           >
             <Icon className="h-4 w-4" />
             {label}
-          </TabsTrigger>
+          </Button>
         ))}
-      </TabsList>
+      </div>
 
       <div className="mt-4 space-y-3 rounded-2xl border bg-background p-4 shadow-sm">
         <div className="flex items-center gap-2 text-sm font-medium">

@@ -620,6 +620,8 @@ export const PackageManagement: React.FC = () => {
                 saveSuccess={saveSuccess}
                 imageCount={form.images.length}
                 wordCount={wordCount}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
               />
 
               <div className="flex h-full min-w-0 flex-col">

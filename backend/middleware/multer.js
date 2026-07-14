@@ -1,10 +1,18 @@
 const multer = require('multer');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const { AppError } = require('../utils/errorHandler');
-const { cloudinary } = require('../services/cloudinaryService');
+const { cloudinary, hasCloudinaryCredentials } = require('../services/cloudinaryService');
 
-const storage = new CloudinaryStorage({
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const cloudinaryStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: process.env.CLOUDINARY_FOLDER || 'himalayan-vista',
@@ -13,6 +21,17 @@ const storage = new CloudinaryStorage({
       const suffix = crypto.randomBytes(12).toString('hex');
       return `${file.fieldname}-${Date.now()}-${suffix}`;
     },
+  },
+});
+
+const localStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (_req, file, cb) => {
+    const suffix = crypto.randomBytes(12).toString('hex');
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    cb(null, `${file.fieldname}-${Date.now()}-${suffix}${ext}`);
   },
 });
 
@@ -41,7 +60,7 @@ const fileFilter = (req, file, cb) => {
 
 // Create multer instance
 const upload = multer({
-  storage: storage,
+  storage: hasCloudinaryCredentials() ? cloudinaryStorage : localStorage,
   limits: {
     fileSize: Number(process.env.MAX_FILE_SIZE) || 15 * 1024 * 1024, // 15MB default
   },

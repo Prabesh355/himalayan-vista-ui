@@ -1,15 +1,39 @@
+const fs = require('fs');
+const path = require('path');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 const {
   deleteCloudinaryAssetByPublicId,
+  hasCloudinaryCredentials,
 } = require('../services/cloudinaryService');
 
 function getUploadedFileUrl(file) {
-  return file?.secure_url || file?.path || file?.url || '';
+  if (file?.secure_url || file?.url) {
+    return file.secure_url || file.url;
+  }
+
+  if (file?.path) {
+    const fileName = path.basename(file.path);
+    const baseUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 5001}`;
+    return `${baseUrl}/uploads/${encodeURIComponent(fileName)}`;
+  }
+
+  return '';
 }
 
 async function cleanupUploadedAsset(file) {
   if (!file?.filename) return;
+
+  if (!hasCloudinaryCredentials()) {
+    try {
+      if (file.path && fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+    } catch (error) {
+      logger.warn(`Failed to clean up local uploaded asset ${file.filename}: ${error.message}`);
+    }
+    return;
+  }
 
   try {
     await deleteCloudinaryAssetByPublicId(file.filename);
