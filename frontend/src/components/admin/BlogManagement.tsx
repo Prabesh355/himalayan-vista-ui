@@ -20,6 +20,10 @@ type BlogFormState = {
   category: string;
   featuredImage: string;
   status: string;
+  seoTitle: string;
+  seoDescription: string;
+  keywords: string;
+  robots: string;
 };
 
 const emptyForm: BlogFormState = {
@@ -29,6 +33,10 @@ const emptyForm: BlogFormState = {
   category: "",
   featuredImage: "",
   status: "draft",
+  seoTitle: "",
+  seoDescription: "",
+  keywords: "",
+  robots: "index, follow",
 };
 
 function mapBlogToForm(blog: BlogItem): BlogFormState {
@@ -39,6 +47,10 @@ function mapBlogToForm(blog: BlogItem): BlogFormState {
     category: blog.category || "",
     featuredImage: "",
     status: blog.status || "draft",
+    seoTitle: blog.seoTitle || "",
+    seoDescription: blog.seoDescription || "",
+    keywords: blog.keywords || "",
+    robots: blog.robots || "index, follow",
   };
 }
 
@@ -66,6 +78,10 @@ export const BlogManagement = () => {
         category: form.category,
         status: form.status,
         featuredImage: form.featuredImage,
+        seoTitle: form.seoTitle,
+        seoDescription: form.seoDescription,
+        keywords: form.keywords,
+        robots: form.robots,
       };
 
       return selectedBlog
@@ -289,6 +305,52 @@ export const BlogManagement = () => {
                     className="flex-1 min-w-[260px] h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
                     placeholder="Or paste an image URL"
                   />
+                </div>
+              </div>
+              <div className="border-t border-border pt-4 mt-2">
+                <h3 className="text-sm font-semibold mb-3">SEO Settings</h3>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium text-muted-foreground">SEO Title</label>
+                    <input
+                      value={form.seoTitle}
+                      onChange={(e) => setForm((prev) => ({ ...prev, seoTitle: e.target.value }))}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      placeholder="Custom title for search engines"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium text-muted-foreground">SEO Description</label>
+                    <textarea
+                      value={form.seoDescription}
+                      onChange={(e) => setForm((prev) => ({ ...prev, seoDescription: e.target.value }))}
+                      className="min-h-16 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      placeholder="Meta description"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <label className="text-sm font-medium text-muted-foreground">Keywords</label>
+                      <input
+                        value={form.keywords}
+                        onChange={(e) => setForm((prev) => ({ ...prev, keywords: e.target.value }))}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        placeholder="Comma separated keywords"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <label className="text-sm font-medium text-muted-foreground">Robots (Indexing)</label>
+                      <select
+                        value={form.robots}
+                        onChange={(e) => setForm((prev) => ({ ...prev, robots: e.target.value }))}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      >
+                        <option value="index, follow">Index, Follow</option>
+                        <option value="noindex, nofollow">No Index, No Follow</option>
+                        <option value="noindex, follow">No Index, Follow</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
               <button

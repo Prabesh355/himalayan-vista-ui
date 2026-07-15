@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+const sharp = require('sharp');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 const {
@@ -53,7 +55,45 @@ exports.uploadFile = async (req, res, next) => {
       return next(new AppError('Invalid image file type', 400));
     }
 
-    const fileUrl = getUploadedFileUrl(req.file);
+    let fileUrl = '';
+    let blurDataURL = '';
+
+    if (req.file.buffer) {
+      // Local upload with memory storage (sharp processing)
+      const originalName = (req.file.originalname || 'upload').split('.')[0].replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+      const suffix = crypto.randomBytes(4).toString('hex');
+      const filename = `img-${originalName}-${suffix}.webp`;
+      const uploadsDir = path.join(__dirname, '..', 'uploads');
+      const filepath = path.join(uploadsDir, filename);
+
+      // Convert to WebP and save
+      await sharp(req.file.buffer)
+        .webp({ quality: 80 })
+        .toFile(filepath);
+
+      // Generate blur placeholder
+      const blurBuffer = await sharp(req.file.buffer)
+        .resize(20, 20, { fit: 'inside' })
+        .webp({ quality: 20 })
+        .blur(10)
+        .toBuffer();
+      blurDataURL = `data:image/webp;base64,${blurBuffer.toString('base64')}`;
+
+      req.file.path = filepath;
+      req.file.filename = filename;
+      fileUrl = getUploadedFileUrl(req.file);
+    } else {
+      // Cloudinary upload
+      fileUrl = getUploadedFileUrl(req.file);
+      // Optional: derive Cloudinary blur URL
+      if (fileUrl.includes('res.cloudinary.com')) {
+        const parts = fileUrl.split('/upload/');
+        if (parts.length === 2) {
+          blurDataURL = `${parts[0]}/upload/w_20,e_blur:1000,f_webp,q_1/${parts[1]}`;
+        }
+      }
+    }
+
     if (!fileUrl) {
       await cleanupUploadedAsset(req.file);
       return next(new AppError('Uploaded file could not be processed', 500));
@@ -81,6 +121,7 @@ exports.uploadFile = async (req, res, next) => {
       filename: req.file.filename,
       publicId: req.file.filename,
       secureUrl: req.file.secure_url || fileUrl,
+      blurDataURL,
     });
   } catch (error) {
     if (req.file) {

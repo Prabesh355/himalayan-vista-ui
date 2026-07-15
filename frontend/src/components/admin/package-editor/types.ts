@@ -19,6 +19,8 @@ export type PackageFormState = {
   slug: string;
   canonicalUrl: string;
   ogImage: string;
+  keywords: string;
+  robots: string;
 };
 
 export type PackageEditorMutationOptions = {

@@ -43,6 +43,7 @@ import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
 import { BookingForm } from "@/components/BookingForm";
 import { defaultImageFallback, resolvePackageImage } from "@/lib/imageUrl";
+import { RelatedPackages } from "@/components/RelatedPackages";
 
 type ItineraryDay = {
   day: number;
@@ -786,9 +787,10 @@ export const Route = createFileRoute("/packages/$slug")({
   component: PackageDetails,
 });
 
-function PackageDetails() {
+export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
   const { formatPrice } = useCurrency();
-  const { slug } = Route.useParams();
+  const routeParams = Route.useParams();
+  const slug = slugProp || routeParams.slug;
   const [openDay, setOpenDay] = useState<number | null>(0);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
@@ -1644,6 +1646,12 @@ function PackageDetails() {
           </motion.div>
         </aside>
       </div>
+
+      <RelatedPackages 
+        currentPackageId={packageId} 
+        category={pkg.category || "trekking"} 
+        destination={pkg.destination} 
+      />
 
       <div className="mt-12 text-center lg:text-left">
         <Link to="/packages" className="text-accent hover:underline inline-flex items-center gap-1">

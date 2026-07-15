@@ -17,23 +17,17 @@ const cloudinaryStorage = new CloudinaryStorage({
   params: {
     folder: process.env.CLOUDINARY_FOLDER || 'himalayan-vista',
     resource_type: 'image',
+    format: 'webp', // Convert to WebP
+    transformation: [{ quality: 'auto:good' }], // Compress
     public_id: (req, file) => {
-      const suffix = crypto.randomBytes(12).toString('hex');
-      return `${file.fieldname}-${Date.now()}-${suffix}`;
+      const originalName = file.originalname.split('.')[0].replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+      const suffix = crypto.randomBytes(4).toString('hex');
+      return `img-${originalName}-${suffix}`;
     },
   },
 });
 
-const localStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (_req, file, cb) => {
-    const suffix = crypto.randomBytes(12).toString('hex');
-    const ext = path.extname(file.originalname || '').toLowerCase();
-    cb(null, `${file.fieldname}-${Date.now()}-${suffix}${ext}`);
-  },
-});
+const localStorage = multer.memoryStorage();
 
 // File filter
 const fileFilter = (req, file, cb) => {

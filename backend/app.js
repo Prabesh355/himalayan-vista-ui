@@ -100,6 +100,14 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/home-content', require('./routes/homeContentRoutes'));
 app.use('/api/site-settings', require('./routes/siteSettingsRoutes'));
 app.use('/api/uploads', require('./routes/uploadRoutes'));
+app.use('/api/seo', require('./routes/seoRoutes'));
+
+// Root-level SEO aliases — search engines expect these at the domain root
+const seoRouter = require('./routes/seoRoutes');
+app.use('/sitemap.xml', (req, res, next) => { req.url = '/sitemap.xml'; seoRouter(req, res, next); });
+app.use('/image-sitemap.xml', (req, res, next) => { req.url = '/image-sitemap.xml'; seoRouter(req, res, next); });
+app.use('/blog-sitemap.xml', (req, res, next) => { req.url = '/blog-sitemap.xml'; seoRouter(req, res, next); });
+app.use('/robots.txt', (req, res, next) => { req.url = '/robots.txt'; seoRouter(req, res, next); });
 
 // 404 handler
 app.use((req, res) => {

@@ -15,6 +15,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { MessageCircle } from "lucide-react";
+import { AnalyticsScripts, getVerificationMeta } from "@/components/Analytics";
 
 function NotFoundComponent() {
   return (
@@ -84,16 +85,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Premium Himalayan trekking and adventure travel. Everest, Annapurna, Langtang and beyond — locally led journeys since 2011.",
       },
+      { name: "keywords", content: "Nepal Trekking, Everest Base Camp Trek, Annapurna Base Camp, Peak Climbing, Nepal Tours, Himalayan Adventures" },
       { name: "author", content: "Nomads Navigate Nepal" },
-      { property: "og:title", content: "Nomads Navigate Nepal" },
+      { name: "robots", content: "index, follow" },
+      { name: "theme-color", content: "#f59e0b" },
+      { property: "og:title", content: "Nomads Navigate Nepal — Himalayan Treks & Adventures" },
       {
         property: "og:description",
-        content: "Premium Himalayan trekking and adventure travel, locally led.",
+        content: "Premium Himalayan trekking and adventure travel. Everest, Annapurna, Langtang and beyond — locally led journeys since 2011.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: logoIcon },
+      { property: "og:site_name", content: "Nomads Navigate Nepal" },
+      { property: "og:url", content: "https://nomadsnavigatenepal.com" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@NomadsNepal" },
+      { name: "twitter:title", content: "Nomads Navigate Nepal — Himalayan Treks & Adventures" },
+      { name: "twitter:description", content: "Premium Himalayan trekking and adventure travel, locally led." },
+      { name: "twitter:image", content: logoIcon },
+      ...getVerificationMeta(),
     ],
     links: [
       {
@@ -142,6 +152,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <AnalyticsScripts />
         <Scripts />
       </body>
     </html>

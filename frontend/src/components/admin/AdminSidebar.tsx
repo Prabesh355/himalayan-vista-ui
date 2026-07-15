@@ -14,6 +14,7 @@ import {
   Settings,
   LogOut,
   MountainSnow,
+  Activity,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
@@ -73,6 +74,7 @@ export const AdminSidebar = () => {
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", to: "/admin" },
+    { icon: Activity, label: "SEO Health", to: "/admin/seo" },
     { icon: Package, label: "Packages", to: "/admin/packages" },
     { icon: ShoppingBag, label: "Shop", to: "/admin/shop" },
     { icon: CalendarDays, label: "Bookings", to: "/admin/bookings" },

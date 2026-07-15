@@ -22,12 +22,17 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as TrekkingSlugRouteImport } from './routes/trekking.$slug'
+import { Route as ToursSlugRouteImport } from './routes/tours.$slug'
+import { Route as PeakClimbingSlugRouteImport } from './routes/peak-climbing.$slug'
 import { Route as PackagesSlugRouteImport } from './routes/packages.$slug'
 import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminTeamsRouteImport } from './routes/admin.teams'
 import { Route as AdminShopRouteImport } from './routes/admin.shop'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminSeoRouteImport } from './routes/admin.seo'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
@@ -99,6 +104,21 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const TrekkingSlugRoute = TrekkingSlugRouteImport.update({
+  id: '/trekking/$slug',
+  path: '/trekking/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToursSlugRoute = ToursSlugRouteImport.update({
+  id: '/tours/$slug',
+  path: '/tours/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeakClimbingSlugRoute = PeakClimbingSlugRouteImport.update({
+  id: '/peak-climbing/$slug',
+  path: '/peak-climbing/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PackagesSlugRoute = PackagesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -108,6 +128,11 @@ const BlogsSlugRoute = BlogsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => BlogsRoute,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
@@ -127,6 +152,11 @@ const AdminShopRoute = AdminShopRouteImport.update({
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSeoRoute = AdminSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminReviewsRoute = AdminReviewsRouteImport.update({
@@ -173,12 +203,17 @@ export interface FileRoutesByFullPath {
   '/admin/inquiries': typeof AdminInquiriesRoute
   '/admin/packages': typeof AdminPackagesRoute
   '/admin/reviews': typeof AdminReviewsRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
   '/admin/teams': typeof AdminTeamsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/peak-climbing/$slug': typeof PeakClimbingSlugRoute
+  '/tours/$slug': typeof ToursSlugRoute
+  '/trekking/$slug': typeof TrekkingSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -198,12 +233,17 @@ export interface FileRoutesByTo {
   '/admin/inquiries': typeof AdminInquiriesRoute
   '/admin/packages': typeof AdminPackagesRoute
   '/admin/reviews': typeof AdminReviewsRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
   '/admin/teams': typeof AdminTeamsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/peak-climbing/$slug': typeof PeakClimbingSlugRoute
+  '/tours/$slug': typeof ToursSlugRoute
+  '/trekking/$slug': typeof TrekkingSlugRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -225,12 +265,17 @@ export interface FileRoutesById {
   '/admin/inquiries': typeof AdminInquiriesRoute
   '/admin/packages': typeof AdminPackagesRoute
   '/admin/reviews': typeof AdminReviewsRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
   '/admin/teams': typeof AdminTeamsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/peak-climbing/$slug': typeof PeakClimbingSlugRoute
+  '/tours/$slug': typeof ToursSlugRoute
+  '/trekking/$slug': typeof TrekkingSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -253,12 +298,17 @@ export interface FileRouteTypes {
     | '/admin/inquiries'
     | '/admin/packages'
     | '/admin/reviews'
+    | '/admin/seo'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/teams'
     | '/admin/users'
+    | '/blog/$slug'
     | '/blogs/$slug'
     | '/packages/$slug'
+    | '/peak-climbing/$slug'
+    | '/tours/$slug'
+    | '/trekking/$slug'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -278,12 +328,17 @@ export interface FileRouteTypes {
     | '/admin/inquiries'
     | '/admin/packages'
     | '/admin/reviews'
+    | '/admin/seo'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/teams'
     | '/admin/users'
+    | '/blog/$slug'
     | '/blogs/$slug'
     | '/packages/$slug'
+    | '/peak-climbing/$slug'
+    | '/tours/$slug'
+    | '/trekking/$slug'
     | '/admin'
   id:
     | '__root__'
@@ -304,12 +359,17 @@ export interface FileRouteTypes {
     | '/admin/inquiries'
     | '/admin/packages'
     | '/admin/reviews'
+    | '/admin/seo'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/teams'
     | '/admin/users'
+    | '/blog/$slug'
     | '/blogs/$slug'
     | '/packages/$slug'
+    | '/peak-climbing/$slug'
+    | '/tours/$slug'
+    | '/trekking/$slug'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -326,6 +386,10 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ShopRoute: typeof ShopRoute
   TeamsRoute: typeof TeamsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  PeakClimbingSlugRoute: typeof PeakClimbingSlugRoute
+  ToursSlugRoute: typeof ToursSlugRoute
+  TrekkingSlugRoute: typeof TrekkingSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -421,6 +485,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/trekking/$slug': {
+      id: '/trekking/$slug'
+      path: '/trekking/$slug'
+      fullPath: '/trekking/$slug'
+      preLoaderRoute: typeof TrekkingSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tours/$slug': {
+      id: '/tours/$slug'
+      path: '/tours/$slug'
+      fullPath: '/tours/$slug'
+      preLoaderRoute: typeof ToursSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/peak-climbing/$slug': {
+      id: '/peak-climbing/$slug'
+      path: '/peak-climbing/$slug'
+      fullPath: '/peak-climbing/$slug'
+      preLoaderRoute: typeof PeakClimbingSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/packages/$slug': {
       id: '/packages/$slug'
       path: '/$slug'
@@ -434,6 +519,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blogs/$slug'
       preLoaderRoute: typeof BlogsSlugRouteImport
       parentRoute: typeof BlogsRoute
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/users': {
       id: '/admin/users'
@@ -461,6 +553,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/seo': {
+      id: '/admin/seo'
+      path: '/seo'
+      fullPath: '/admin/seo'
+      preLoaderRoute: typeof AdminSeoRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/reviews': {
@@ -507,6 +606,7 @@ interface AdminRouteChildren {
   AdminInquiriesRoute: typeof AdminInquiriesRoute
   AdminPackagesRoute: typeof AdminPackagesRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
+  AdminSeoRoute: typeof AdminSeoRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminShopRoute: typeof AdminShopRoute
   AdminTeamsRoute: typeof AdminTeamsRoute
@@ -520,6 +620,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminInquiriesRoute: AdminInquiriesRoute,
   AdminPackagesRoute: AdminPackagesRoute,
   AdminReviewsRoute: AdminReviewsRoute,
+  AdminSeoRoute: AdminSeoRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminShopRoute: AdminShopRoute,
   AdminTeamsRoute: AdminTeamsRoute,
@@ -564,6 +665,10 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ShopRoute: ShopRoute,
   TeamsRoute: TeamsRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  PeakClimbingSlugRoute: PeakClimbingSlugRoute,
+  ToursSlugRoute: ToursSlugRoute,
+  TrekkingSlugRoute: TrekkingSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

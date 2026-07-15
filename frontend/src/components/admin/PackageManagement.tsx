@@ -43,6 +43,8 @@ const emptyForm: PackageFormState = {
   slug: "",
   canonicalUrl: "",
   ogImage: "",
+  keywords: "",
+  robots: "index, follow",
 };
 
 function mapPackageToForm(pkg: PackageItem): PackageFormState {
@@ -60,11 +62,13 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
     featured: Boolean(pkg.featured),
     isActive: Boolean(pkg.isActive ?? true),
     itinerary: pkg.itinerary || "",
-    metaTitle: "",
-    metaDescription: "",
+    metaTitle: pkg.metaTitle || "",
+    metaDescription: pkg.metaDescription || "",
     slug: pkg.slug || "",
-    canonicalUrl: "",
-    ogImage: "",
+    canonicalUrl: pkg.canonicalUrl || "",
+    ogImage: pkg.ogImage || "",
+    keywords: pkg.keywords || "",
+    robots: pkg.robots || "index, follow",
   };
 }
 
@@ -188,6 +192,8 @@ export const PackageManagement: React.FC = () => {
         metaDescription: form.metaDescription,
         canonicalUrl: form.canonicalUrl,
         ogImage: form.ogImage,
+        keywords: form.keywords,
+        robots: form.robots,
       };
 
       const selectedPackageId = getPackageRecordId(selectedPackage);

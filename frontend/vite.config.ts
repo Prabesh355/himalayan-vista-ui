@@ -12,10 +12,30 @@ export default defineConfig({
       publicDir: ".vercel/output/static",
     },
   },
-  // Proxy API calls to backend during development
+  // Proxy API calls and SEO files to backend during development
   server: {
     proxy: {
       '/api': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/sitemap.xml': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/image-sitemap.xml': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/blog-sitemap.xml': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/robots.txt': {
         target: 'http://localhost:5001',
         changeOrigin: true,
         secure: false,

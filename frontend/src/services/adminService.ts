@@ -85,6 +85,13 @@ export interface PackageItem {
   isActive?: boolean;
   rating?: number;
   reviewCount?: number;
+  category?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  keywords?: string;
+  robots?: string;
   createdAt?: string;
 }
 
@@ -112,6 +119,7 @@ export interface BlogItem {
   content?: string;
   category?: string;
   status?: string;
+  featuredImage?: string;
   author?:
     | {
         _id?: string;
@@ -121,6 +129,12 @@ export interface BlogItem {
       }
     | string;
   slug?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  keywords?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  robots?: string;
   createdAt?: string;
 }
 
@@ -256,6 +270,8 @@ export const adminService = {
     (await api.put(`/team-members/${memberId}`, payload)).data,
   deleteTeamMember: async (memberId: string) =>
     (await api.delete(`/team-members/${memberId}`)).data,
+  getSeoHealth: async () =>
+    (await api.get<{ success: boolean; data: any }>("/seo/health")).data,
   getInquiries: async () =>
     (await api.get<{ success: boolean; data: InquiryItem[] }>("/inquiries")).data,
   getInquiryStats: async () =>
