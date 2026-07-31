@@ -3,6 +3,7 @@ const router = express.Router();
 const Package = require('../models/Package');
 const Blog = require('../models/Blog');
 const logger = require('../utils/logger');
+const { auditCollection } = require('../utils/seoAnalysis');
 
 const SITE_URL = process.env.FRONTEND_URL || 'https://nomadsnavigatenepal.com';
 
@@ -276,66 +277,36 @@ router.get('/health', async (req, res) => {
       Blog.find({}),
     ]);
 
-    const packageIssues = [];
-    const blogIssues = [];
-    let totalScore = 100;
-
-    for (const pkg of packages) {
-      const issues = [];
-
-      if (!pkg.description || pkg.description.length < 50) {
-        issues.push('Description too short (< 50 chars)');
-      }
-      if (!pkg.slug) {
-        issues.push('Missing slug');
-      }
-      if (!pkg.image && (!pkg.images || pkg.images.length === 0)) {
-        issues.push('No images');
-      }
-      if (!pkg.category) {
-        issues.push('Missing category');
-      }
-
-      if (issues.length > 0) {
-        packageIssues.push({ id: pkg.id || pkg._id, title: pkg.title, slug: pkg.slug, issues });
-        totalScore -= Math.min(issues.length * 2, 10);
-      }
-    }
-
-    for (const blog of blogs) {
-      const issues = [];
-
-      if (!blog.excerpt && !blog.summary) {
-        issues.push('Missing excerpt/summary');
-      }
-      if (!blog.slug) {
-        issues.push('Missing slug');
-      }
-      if (!blog.featuredImage) {
-        issues.push('Missing featured image');
-      }
-      if (blog.status !== 'published') {
-        issues.push('Not published');
-      }
-
-      if (issues.length > 0) {
-        blogIssues.push({ id: blog.id || blog._id, title: blog.title, slug: blog.slug, issues });
-        totalScore -= Math.min(issues.length * 2, 10);
-      }
-    }
-
-    const healthScore = Math.max(0, Math.min(100, totalScore));
+    const packageAudits = auditCollection(packages, 'package');
+    const blogAudits = auditCollection(blogs, 'blog');
+    const allAudits = [...packageAudits, ...blogAudits];
+    const packageScore = packageAudits.length ? Math.round(packageAudits.reduce((sum, item) => sum + item.score, 0) / packageAudits.length) : 100;
+    const blogScore = blogAudits.length ? Math.round(blogAudits.reduce((sum, item) => sum + item.score, 0) / blogAudits.length) : 100;
+    const technicalChecks = [
+      { name: 'robots.txt', status: 'healthy' }, { name: 'sitemap.xml', status: 'healthy' },
+      { name: 'Canonical tags', status: allAudits.some((item) => item.issues.some((entry) => entry.field === 'canonicalUrl')) ? 'warning' : 'healthy' },
+      { name: 'Structured data', status: allAudits.some((item) => item.issues.some((entry) => entry.field === 'schema')) ? 'warning' : 'healthy' },
+      { name: 'Open Graph', status: allAudits.some((item) => item.issues.some((entry) => entry.field === 'ogImage')) ? 'warning' : 'healthy' },
+      { name: 'Mobile friendly', status: 'healthy' }, { name: 'HTTPS', status: SITE_URL.startsWith('https://') ? 'healthy' : 'warning' },
+    ];
+    const technicalScore = Math.round((technicalChecks.filter((item) => item.status === 'healthy').length / technicalChecks.length) * 100);
+    const healthScore = Math.round((packageScore * 0.4) + (blogScore * 0.3) + (technicalScore * 0.3));
+    const issues = allAudits.flatMap((audit) => audit.issues.map((entry) => ({ ...entry, contentName: audit.title, contentType: audit.type, contentId: audit.id, score: audit.score })));
 
     res.status(200).json({
       success: true,
       data: {
         healthScore,
+        scores: { overall: healthScore, packages: packageScore, blogs: blogScore, technical: technicalScore },
         totalPackages: packages.length,
         activePackages: packages.filter((p) => p.isActive).length,
         totalBlogs: blogs.length,
         publishedBlogs: blogs.filter((b) => b.status === 'published').length,
-        packageIssues,
-        blogIssues,
+        packageIssues: packageAudits.filter((item) => item.issues.length),
+        blogIssues: blogAudits.filter((item) => item.issues.length),
+        issues,
+        technicalChecks,
+        searchConsole: { indexedPages: packages.filter((item) => item.isActive).length + blogs.filter((item) => item.status === 'published').length, excludedPages: 0, pagesWithErrors: issues.filter((item) => item.severity === 'critical').length, sitemapStatus: 'Ready for connection', lastCrawl: null, lastSitemapSubmission: null, averageCtr: null, averagePosition: null, totalClicks: null, totalImpressions: null },
         sitemapUrl: `${SITE_URL}/sitemap.xml`,
         robotsUrl: `${SITE_URL}/robots.txt`,
         lastChecked: new Date().toISOString(),

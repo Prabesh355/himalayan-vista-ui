@@ -1,253 +1,34 @@
+import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { AlertCircle, CheckCircle2, Globe, Activity, FileCode, AlertTriangle } from "lucide-react";
+import { Activity, AlertCircle, CheckCircle2, ChevronRight, FileCode2, Globe2, Search, ShieldCheck, TriangleAlert } from "lucide-react";
 import { adminService } from "@/services/adminService";
-import { Link } from "@tanstack/react-router";
+
+type Severity = "critical" | "warning" | "info";
+type SeoIssue = { contentName: string; contentType: "package" | "blog"; contentId: string; content: string; seoCategory: string; severity: Severity; recommendation: string; field: string; status: string };
+const scoreClass = (score: number) => score >= 90 ? "text-emerald-500" : score >= 70 ? "text-amber-500" : "text-red-500";
+const scoreLabel = (score: number) => score >= 90 ? "Excellent" : score >= 70 ? "Needs improvement" : "Critical";
+const severityClass: Record<Severity, string> = { critical: "bg-red-500/10 text-red-600", warning: "bg-amber-500/10 text-amber-600", info: "bg-blue-500/10 text-blue-600" };
+
+function ScoreCard({ label, score, icon: Icon }: { label: string; score: number; icon: typeof Activity }) {
+  return <div className="rounded-2xl border border-border bg-card p-5 shadow-sm"><div className="flex items-center justify-between"><p className="text-sm font-medium text-muted-foreground">{label}</p><Icon className="h-5 w-5 text-primary" /></div><div className="mt-4 flex items-end gap-2"><strong className={`text-3xl ${scoreClass(score)}`}>{score}%</strong><span className="mb-1 text-xs text-muted-foreground">{scoreLabel(score)}</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-muted"><div className={`h-full rounded-full ${score >= 90 ? "bg-emerald-500" : score >= 70 ? "bg-amber-500" : "bg-red-500"}`} style={{ width: `${score}%` }} /></div></div>;
+}
 
 export const SeoDashboard = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin-seo-health"],
-    queryFn: () => adminService.getSeoHealth(),
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  if (isError || !data?.success) {
-    return (
-      <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-red-700">
-        <div className="flex items-center gap-2 font-semibold">
-          <AlertCircle className="h-5 w-5" />
-          Error Loading SEO Data
-        </div>
-        <p className="mt-2 text-sm">Could not fetch SEO health metrics. Please try again later.</p>
-      </div>
-    );
-  }
-
-  const {
-    healthScore,
-    totalPackages,
-    activePackages,
-    totalBlogs,
-    publishedBlogs,
-    packageIssues,
-    blogIssues,
-    sitemapUrl,
-    robotsUrl,
-  } = data.data;
-
-  const scoreColor =
-    healthScore >= 90 ? "text-emerald-500" : healthScore >= 70 ? "text-amber-500" : "text-red-500";
-
-  return (
-    <div className="space-y-8 pb-10">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">SEO Health Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Monitor your platform's search engine visibility, indexing status, and metadata quality.
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Main Score Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-border bg-card p-6 shadow-sm md:col-span-1 flex flex-col justify-center items-center text-center"
-        >
-          <div className="mb-2 rounded-full bg-primary/10 p-3">
-            <Activity className="h-6 w-6 text-primary" />
-          </div>
-          <p className="text-sm font-medium text-muted-foreground">Overall SEO Health</p>
-          <div className={`mt-2 flex items-baseline gap-1 ${scoreColor}`}>
-            <span className="text-5xl font-bold tracking-tight">{healthScore}</span>
-            <span className="text-xl font-medium">/100</span>
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            {healthScore >= 90
-              ? "Excellent! Your site is well-optimized."
-              : healthScore >= 70
-                ? "Good, but there are some issues to fix."
-                : "Critical SEO issues found. Action required."}
-          </p>
-        </motion.div>
-
-        {/* Coverage Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 md:col-span-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="rounded-2xl border border-border bg-card p-6 shadow-sm"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Packages Indexed</p>
-                <p className="mt-2 text-3xl font-bold">
-                  {activePackages} <span className="text-sm font-normal text-muted-foreground">/ {totalPackages}</span>
-                </p>
-              </div>
-              <div className="rounded-full bg-emerald-500/10 p-3">
-                <Globe className="h-5 w-5 text-emerald-600" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-              <Link to="/admin/packages" className="text-primary hover:underline font-medium">
-                Manage packages →
-              </Link>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="rounded-2xl border border-border bg-card p-6 shadow-sm"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Articles Indexed</p>
-                <p className="mt-2 text-3xl font-bold">
-                  {publishedBlogs} <span className="text-sm font-normal text-muted-foreground">/ {totalBlogs}</span>
-                </p>
-              </div>
-              <div className="rounded-full bg-blue-500/10 p-3">
-                <FileCode className="h-5 w-5 text-blue-600" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-              <Link to="/admin/blogs" className="text-primary hover:underline font-medium">
-                Manage blogs →
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Issues List - Packages */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden flex flex-col"
-        >
-          <div className="border-b border-border bg-muted/30 px-6 py-4">
-            <h3 className="font-semibold flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-500" /> Package SEO Issues
-            </h3>
-          </div>
-          <div className="p-0 flex-1 overflow-auto max-h-[400px]">
-            {packageIssues.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center p-8 text-center text-muted-foreground">
-                <CheckCircle2 className="mb-2 h-8 w-8 text-emerald-500/50" />
-                <p>No package SEO issues detected</p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-border">
-                {packageIssues.map((pkg: any) => (
-                  <li key={pkg.id} className="p-4 hover:bg-muted/20 transition-colors">
-                    <p className="font-medium text-sm">{pkg.title}</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {pkg.issues.map((issue: string, idx: number) => (
-                        <span key={idx} className="inline-flex rounded-full bg-amber-500/10 px-2 py-1 text-[10px] font-medium text-amber-600">
-                          {issue}
-                        </span>
-                      ))}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Issues List - Blogs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden flex flex-col"
-        >
-          <div className="border-b border-border bg-muted/30 px-6 py-4">
-            <h3 className="font-semibold flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-500" /> Blog SEO Issues
-            </h3>
-          </div>
-          <div className="p-0 flex-1 overflow-auto max-h-[400px]">
-            {blogIssues.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center p-8 text-center text-muted-foreground">
-                <CheckCircle2 className="mb-2 h-8 w-8 text-emerald-500/50" />
-                <p>No blog SEO issues detected</p>
-              </div>
-            ) : (
-              <ul className="divide-y divide-border">
-                {blogIssues.map((blog: any) => (
-                  <li key={blog.id} className="p-4 hover:bg-muted/20 transition-colors">
-                    <p className="font-medium text-sm">{blog.title}</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {blog.issues.map((issue: string, idx: number) => (
-                        <span key={idx} className="inline-flex rounded-full bg-amber-500/10 px-2 py-1 text-[10px] font-medium text-amber-600">
-                          {issue}
-                        </span>
-                      ))}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </motion.div>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="rounded-2xl border border-border bg-card p-6 shadow-sm"
-      >
-        <h3 className="font-semibold text-lg mb-4">Crawler Access</h3>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <a
-            href={sitemapUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 rounded-xl border border-border bg-muted/30 p-4 hover:bg-muted/50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-primary/10 p-2">
-                <Globe className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">sitemap.xml</p>
-                <p className="text-xs text-muted-foreground mt-0.5">View live XML sitemap</p>
-              </div>
-            </div>
-          </a>
-          <a
-            href={robotsUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex-1 rounded-xl border border-border bg-muted/30 p-4 hover:bg-muted/50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="rounded-full bg-primary/10 p-2">
-                <FileCode className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">robots.txt</p>
-                <p className="text-xs text-muted-foreground mt-0.5">View indexing rules</p>
-              </div>
-            </div>
-          </a>
-        </div>
-      </motion.div>
-    </div>
-  );
+  const { data, isLoading, isError } = useQuery({ queryKey: ["admin-seo-health"], queryFn: () => adminService.getSeoHealth(), staleTime: 60_000 });
+  const [filter, setFilter] = useState<"all" | Severity | "package" | "blog">("all");
+  const [search, setSearch] = useState("");
+  const payload = data?.data;
+  const issues = (payload?.issues || []) as SeoIssue[];
+  const filteredIssues = useMemo(() => issues.filter((item) => (filter === "all" || item.severity === filter || item.contentType === filter) && `${item.contentName} ${item.content} ${item.seoCategory}`.toLowerCase().includes(search.toLowerCase())), [filter, issues, search]);
+  if (isLoading) return <div className="flex h-[50vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>;
+  if (isError || !data?.success) return <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-red-700"><div className="flex gap-2 font-semibold"><AlertCircle />Unable to load SEO health data</div></div>;
+  const scores = payload.scores || { overall: payload.healthScore, packages: payload.healthScore, blogs: payload.healthScore, technical: payload.healthScore };
+  const counters = { critical: issues.filter((item) => item.severity === "critical").length, warning: issues.filter((item) => item.severity === "warning").length, info: issues.filter((item) => item.severity === "info").length };
+  return <div className="space-y-6 pb-10"><div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between"><div><h1 className="text-3xl font-bold tracking-tight">SEO Health</h1><p className="mt-1 text-muted-foreground">Content, technical, and indexing signals in one workspace.</p></div><p className="text-xs text-muted-foreground">Last analysed {new Date(payload.lastChecked).toLocaleString()}</p></div>
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><motion.div initial={{ opacity: 0, scale: .96 }} animate={{ opacity: 1, scale: 1 }} className="rounded-2xl border border-border bg-card p-5 text-center shadow-sm"><div className={`mx-auto grid h-24 w-24 place-items-center rounded-full border-8 ${scores.overall >= 90 ? "border-emerald-500" : scores.overall >= 70 ? "border-amber-500" : "border-red-500"}`}><strong className="text-2xl">{scores.overall}%</strong></div><p className="mt-3 text-sm font-semibold">Overall website SEO</p><p className={`text-xs ${scoreClass(scores.overall)}`}>{scoreLabel(scores.overall)}</p></motion.div><ScoreCard label="Packages SEO" score={scores.packages} icon={Globe2} /><ScoreCard label="Blogs SEO" score={scores.blogs} icon={FileCode2} /><ScoreCard label="Technical SEO" score={scores.technical} icon={ShieldCheck} /></div>
+    <div className="grid gap-4 md:grid-cols-3">{(["critical", "warning", "info"] as Severity[]).map((severity) => <button key={severity} onClick={() => setFilter(severity)} className="rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition hover:border-primary/40"><span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${severityClass[severity]}`}>{severity}</span><p className="mt-2 text-3xl font-bold">{counters[severity]}</p><p className="text-sm text-muted-foreground">{severity === "info" ? "Optimisation opportunities" : `${severity[0].toUpperCase() + severity.slice(1)} issues`}</p></button>)}</div>
+    <section className="rounded-2xl border border-border bg-card shadow-sm"><div className="flex flex-col gap-3 border-b border-border p-5 lg:flex-row lg:items-center lg:justify-between"><div><h2 className="font-semibold">SEO issue centre</h2><p className="text-sm text-muted-foreground">Prioritised recommendations across packages and blogs.</p></div><div className="flex flex-wrap gap-2"><div className="relative"><Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search issues" className="h-9 rounded-lg border bg-background pl-9 pr-3 text-sm" /></div>{(["all", "package", "blog", "critical", "warning"] as const).map((value) => <button key={value} onClick={() => setFilter(value)} className={`rounded-lg px-3 py-2 text-xs font-medium ${filter === value ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/70"}`}>{value}</button>)}</div></div><div className="overflow-x-auto"><table className="w-full min-w-[850px] text-sm"><thead className="bg-muted/40 text-left text-xs text-muted-foreground"><tr><th className="p-4">Content</th><th>Issue</th><th>Severity</th><th>SEO category</th><th>Recommendation</th><th className="p-4">Action</th></tr></thead><tbody>{filteredIssues.map((item, index) => <tr key={`${item.contentId}-${item.content}-${index}`} className="border-t border-border"><td className="p-4"><p className="font-medium">{item.contentName}</p><p className="text-xs text-muted-foreground">{item.contentType}</p></td><td>{item.content}</td><td><span className={`rounded-full px-2 py-1 text-xs font-medium ${severityClass[item.severity]}`}>{item.severity}</span></td><td>{item.seoCategory}</td><td className="max-w-xs text-muted-foreground">{item.recommendation}</td><td className="p-4"><Link to={item.contentType === "package" ? "/admin/packages" : "/admin/blogs"} search={{ seoField: item.field } as never} className="inline-flex items-center gap-1 text-primary hover:underline">Fix now <ChevronRight className="h-3 w-3" /></Link></td></tr>)}{!filteredIssues.length && <tr><td colSpan={6} className="p-10 text-center text-muted-foreground"><CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-emerald-500" />No matching issues.</td></tr>}</tbody></table></div></section>
+    <div className="grid gap-6 lg:grid-cols-2"><section className="rounded-2xl border border-border bg-card p-5 shadow-sm"><h2 className="flex items-center gap-2 font-semibold"><Activity className="h-4 w-4 text-primary" />Technical SEO</h2><div className="mt-4 grid gap-2 sm:grid-cols-2">{(payload.technicalChecks || []).map((item: { name: string; status: string }) => <div key={item.name} className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2"><span className="text-sm">{item.name}</span><span className={item.status === "healthy" ? "text-emerald-600" : "text-amber-600"}>{item.status === "healthy" ? "Healthy" : "Warning"}</span></div>)}</div></section><section className="rounded-2xl border border-border bg-card p-5 shadow-sm"><h2 className="flex items-center gap-2 font-semibold"><TriangleAlert className="h-4 w-4 text-primary" />Google Search Console</h2><p className="mt-1 text-sm text-muted-foreground">Connection-ready reporting placeholders.</p><div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div className="rounded-lg bg-muted/40 p-3"><p className="text-muted-foreground">Indexed pages</p><strong className="text-xl">{payload.searchConsole?.indexedPages ?? "—"}</strong></div><div className="rounded-lg bg-muted/40 p-3"><p className="text-muted-foreground">Pages with errors</p><strong className="text-xl">{payload.searchConsole?.pagesWithErrors ?? "—"}</strong></div><div className="rounded-lg bg-muted/40 p-3"><p className="text-muted-foreground">Sitemap</p><strong>{payload.searchConsole?.sitemapStatus ?? "Ready"}</strong></div><div className="rounded-lg bg-muted/40 p-3"><p className="text-muted-foreground">CTR / position</p><strong>Connect GSC</strong></div></div></section></div></div>;
 };
