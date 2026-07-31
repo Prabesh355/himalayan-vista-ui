@@ -926,9 +926,12 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
         return res.data;
       } catch (err: any) {
         const status = err.response?.status;
-        const databaseUnavailable =
-          !err.response || status === 502 || status === 503 || status === 504;
-        if (databaseUnavailable) {
+        // The navigation can reference packages that have not yet been seeded in
+        // the API. Keep those destination pages available from the local catalogue
+        // while retaining the API as the primary source whenever it has a record.
+        const shouldUseLocalCatalogue =
+          !err.response || status === 404 || status === 502 || status === 503 || status === 504;
+        if (shouldUseLocalCatalogue) {
           const mockModule = await import("@/services/mockData");
           const fallback = mockModule.destinations.find((d) => d.slug === slug);
           if (fallback) {

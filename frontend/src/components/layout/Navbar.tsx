@@ -17,6 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 import { siteSettingsService } from "@/services/siteSettingsService";
 import { useCurrency } from "@/context/CurrencyProvider";
 import logo from "@/assets/logo.png";
+import simonBhattarai from "@/assets/Simon Bhattarai.jpg";
+import nishantKarki from "@/assets/Nishant Karki.jpg";
 
 // ─── Static nav structure ────────────────────────────────────────────────────
 
@@ -236,14 +238,20 @@ function AboutUsDropdown({ onClose, isAdmin }: { onClose: () => void; isAdmin: b
             <div className="my-2 border-t border-border/30" />
             <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Contact Our Expert</p>
             <div className="px-3 py-2">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
-                  <UserCircle className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs font-semibold">Simon Bhattarai</span>
+                  <img src={simonBhattarai} alt="Simon Bhattarai" className="h-9 w-9 rounded-full object-cover" />
+                  <div>
+                    <p className="text-xs font-semibold">Simon Bhattarai</p>
+                    <p className="text-[11px] text-muted-foreground">Senior Expedition Leader</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <UserCircle className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs font-semibold">Nishant Karki</span>
+                  <img src={nishantKarki} alt="Nishant Karki" className="h-9 w-9 rounded-full object-cover" />
+                  <div>
+                    <p className="text-xs font-semibold">Nishant Karki</p>
+                    <p className="text-[11px] text-muted-foreground">Trekking Guide</p>
+                  </div>
                 </div>
                 <Link
                   to="/contact"
@@ -566,9 +574,21 @@ export function Navbar() {
                         
                         <div className="my-2 border-t border-border/20 mx-3" />
                         <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Contact Our Expert</p>
-                        <div className="px-3 py-2 text-xs text-foreground/80">
-                          <p className="font-semibold">Simon Bhattarai</p>
-                          <p className="mt-1 font-semibold">Nishant Karki</p>
+                        <div className="px-3 py-2 text-xs text-foreground/80 space-y-3">
+                          <div className="flex items-center gap-2">
+                            <img src={simonBhattarai} alt="Simon Bhattarai" className="h-9 w-9 rounded-full object-cover" />
+                            <div>
+                              <p className="font-semibold">Simon Bhattarai</p>
+                              <p className="text-[11px] text-muted-foreground">Senior Expedition Leader</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <img src={nishantKarki} alt="Nishant Karki" className="h-9 w-9 rounded-full object-cover" />
+                            <div>
+                              <p className="font-semibold">Nishant Karki</p>
+                              <p className="text-[11px] text-muted-foreground">Trekking Guide</p>
+                            </div>
+                          </div>
                           <Link to="/contact" onClick={closeMobile} className="mt-2 inline-block text-accent hover:underline">Contact Form →</Link>
                         </div>
                         
