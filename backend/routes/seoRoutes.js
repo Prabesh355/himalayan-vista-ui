@@ -4,6 +4,7 @@ const Package = require('../models/Package');
 const Blog = require('../models/Blog');
 const logger = require('../utils/logger');
 const { auditCollection } = require('../utils/seoAnalysis');
+const { protect, authorize } = require('../middleware/auth');
 
 const SITE_URL = process.env.FRONTEND_URL || 'https://nomadsnavigatenepal.com';
 
@@ -315,6 +316,45 @@ router.get('/health', async (req, res) => {
   } catch (err) {
     logger.error('SEO health check error:', err);
     res.status(500).json({ success: false, message: 'SEO health check failed' });
+  }
+});
+
+// Generates only missing SEO fields; existing editorial metadata is never replaced.
+router.post('/autofix', protect, authorize('admin'), async (req, res) => {
+  try {
+    const [packages, blogs] = await Promise.all([Package.find({}), Blog.find({})]);
+    let packagesUpdated = 0;
+    let blogsUpdated = 0;
+    const descriptionFor = (item) => String(item.seoDescription || item.metaDescription || item.description || item.excerpt || item.summary || '').replace(/\s+/g, ' ').trim();
+    const makeDescription = (item) => {
+      const source = descriptionFor(item);
+      const fallback = `${item.title} with Nomads Navigate Nepal. Explore expert-led Himalayan travel, transparent planning, and unforgettable local experiences.`;
+      return (source || fallback).slice(0, 160);
+    };
+    await Promise.all(packages.map(async (item) => {
+      const updates = {};
+      if (!item.metaTitle) updates.metaTitle = `${item.title} | Nepal Trekking Adventure`.slice(0, 60);
+      if (!item.metaDescription) updates.metaDescription = makeDescription(item);
+      if (!item.canonicalUrl && item.slug) updates.canonicalUrl = `${SITE_URL}/packages/${item.slug}`;
+      if (!item.ogImage && (item.images?.[0] || item.image)) updates.ogImage = item.images?.[0] || item.image;
+      if (!item.twitterImage && (updates.ogImage || item.ogImage)) updates.twitterImage = updates.ogImage || item.ogImage;
+      if (!item.robots) updates.robots = 'index, follow';
+      if (Object.keys(updates).length) { await Package.findByIdAndUpdate(item.id || item._id, updates, { new: true }); packagesUpdated += 1; }
+    }));
+    await Promise.all(blogs.map(async (item) => {
+      const updates = {};
+      if (!item.seoTitle) updates.seoTitle = `${item.title} | Nomads Navigate Nepal`.slice(0, 60);
+      if (!item.seoDescription) updates.seoDescription = makeDescription(item);
+      if (!item.canonicalUrl && item.slug) updates.canonicalUrl = `${SITE_URL}/blogs/${item.slug}`;
+      if (!item.ogImage && item.featuredImage) updates.ogImage = item.featuredImage;
+      if (!item.twitterImage && (updates.ogImage || item.ogImage)) updates.twitterImage = updates.ogImage || item.ogImage;
+      if (!item.robots) updates.robots = 'index, follow';
+      if (Object.keys(updates).length) { await Blog.findByIdAndUpdate(item.id || item._id, updates, { new: true }); blogsUpdated += 1; }
+    }));
+    res.status(200).json({ success: true, data: { packagesUpdated, blogsUpdated } });
+  } catch (err) {
+    logger.error('SEO auto-fix error:', err);
+    res.status(500).json({ success: false, message: 'SEO auto-fix failed' });
   }
 });
 

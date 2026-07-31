@@ -272,6 +272,7 @@ export const adminService = {
     (await api.delete(`/team-members/${memberId}`)).data,
   getSeoHealth: async () =>
     (await api.get<{ success: boolean; data: any }>("/seo/health")).data,
+  autoFixSeo: async () => (await api.post<{ success: boolean; data: { packagesUpdated: number; blogsUpdated: number } }>("/seo/autofix")).data,
   getInquiries: async () =>
     (await api.get<{ success: boolean; data: InquiryItem[] }>("/inquiries")).data,
   getInquiryStats: async () =>
