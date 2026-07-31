@@ -43,8 +43,10 @@ function auditContent(item, type, duplicateTitles, duplicateDescriptions) {
     duplicateDescriptions.has(description.toLowerCase()) ? issue('Duplicate meta description', 'Metadata', 'critical', 'Make the meta description unique.', 'seoDescription') : null,
   ].filter(Boolean);
 
-  const passed = 16 - issues.length;
-  return { id: item.id || item._id, title: item.title, slug: item.slug, type, score: Math.max(0, Math.round((passed / 16) * 100)), wordCount: wordCount(body), readingTime: readingMinutes(body), issues };
+  // Informational optimisation ideas stay visible but do not reduce the compliance score.
+  const actionableIssues = issues.filter((entry) => entry.severity !== 'info');
+  const passed = 14 - actionableIssues.length;
+  return { id: item.id || item._id, title: item.title, slug: item.slug, type, score: Math.max(0, Math.round((passed / 14) * 100)), wordCount: wordCount(body), readingTime: readingMinutes(body), issues };
 }
 
 function duplicateSet(items, getValue) {
