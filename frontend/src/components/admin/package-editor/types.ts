@@ -1,4 +1,4 @@
-export type TabKey = "general" | "itinerary" | "images" | "pricing" | "seo" | "overview";
+export type TabKey = "general" | "itinerary" | "images" | "route-map" | "pricing" | "seo" | "overview";
 
 export type PackageFormState = {
   title: string;
@@ -21,6 +21,12 @@ export type PackageFormState = {
   ogImage: string;
   keywords: string;
   robots: string;
+  routeMapEnabled: boolean;
+  routeMapImage: string;
+  routeMapTitle: string;
+  routeMapDescription: string;
+  routeMapAlt: string;
+  routeMapCaption: string;
 };
 
 export type PackageEditorMutationOptions = {

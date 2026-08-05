@@ -21,6 +21,7 @@ import { PackageEditorImagesTab } from "./package-editor/PackageEditorImagesTab"
 import { PackageEditorPricingTab } from "./package-editor/PackageEditorPricingTab";
 import { PackageEditorSeoTab } from "./package-editor/PackageEditorSeoTab";
 import { PackageEditorOverviewTab } from "./package-editor/PackageEditorOverviewTab";
+import { PackageEditorRouteMapTab } from "./package-editor/PackageEditorRouteMapTab";
 import { PackageEditorFooter } from "./package-editor/PackageEditorFooter";
 import { PackageEditorFieldErrors, PackageFormState, TabKey } from "./package-editor/types";
 
@@ -45,6 +46,7 @@ const emptyForm: PackageFormState = {
   ogImage: "",
   keywords: "",
   robots: "index, follow",
+  routeMapEnabled: false, routeMapImage: "", routeMapTitle: "", routeMapDescription: "", routeMapAlt: "", routeMapCaption: "",
 };
 
 function mapPackageToForm(pkg: PackageItem): PackageFormState {
@@ -69,6 +71,7 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
     ogImage: pkg.ogImage || "",
     keywords: pkg.keywords || "",
     robots: pkg.robots || "index, follow",
+    routeMapEnabled: Boolean(pkg.routeMapEnabled), routeMapImage: pkg.routeMapImage || "", routeMapTitle: pkg.routeMapTitle || "", routeMapDescription: pkg.routeMapDescription || "", routeMapAlt: pkg.routeMapAlt || "", routeMapCaption: pkg.routeMapCaption || "",
   };
 }
 
@@ -194,6 +197,7 @@ export const PackageManagement: React.FC = () => {
         ogImage: form.ogImage,
         keywords: form.keywords,
         robots: form.robots,
+        routeMapEnabled: form.routeMapEnabled, routeMapImage: form.routeMapImage, routeMapTitle: form.routeMapTitle, routeMapDescription: form.routeMapDescription, routeMapAlt: form.routeMapAlt, routeMapCaption: form.routeMapCaption,
       };
 
       const selectedPackageId = getPackageRecordId(selectedPackage);
@@ -700,6 +704,10 @@ export const PackageManagement: React.FC = () => {
                         deleteImageAt={deleteImageAt}
                         moveImage={moveImage}
                       />
+                    </TabsContent>
+
+                    <TabsContent value="route-map" className="mt-0">
+                      <PackageEditorRouteMapTab form={form} onChange={updateFormField} onUpload={(files) => void handleFilesUpload(files)} />
                     </TabsContent>
 
                     <TabsContent value="pricing" className="mt-0">

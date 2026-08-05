@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CheckCircle2, Clock3, FileText, Eye, ImagePlus, Layers3, Sparkles, AlertTriangle } from "lucide-react";
+import { CheckCircle2, Clock3, FileText, Eye, ImagePlus, Layers3, Sparkles, AlertTriangle, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TabKey } from "./types";
@@ -8,6 +8,7 @@ const editorNavItems = [
   { key: "general", label: "General", icon: Layers3 },
   { key: "itinerary", label: "Itinerary", icon: FileText },
   { key: "images", label: "Images", icon: ImagePlus },
+  { key: "route-map", label: "Route Map", icon: Map },
   { key: "pricing", label: "Pricing", icon: Sparkles },
   { key: "seo", label: "SEO", icon: Eye },
   { key: "overview", label: "Overview", icon: CheckCircle2 },

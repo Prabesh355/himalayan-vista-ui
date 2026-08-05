@@ -92,6 +92,12 @@ export interface PackageItem {
   ogImage?: string;
   keywords?: string;
   robots?: string;
+  routeMapEnabled?: boolean;
+  routeMapImage?: string;
+  routeMapTitle?: string;
+  routeMapDescription?: string;
+  routeMapAlt?: string;
+  routeMapCaption?: string;
   createdAt?: string;
 }
 

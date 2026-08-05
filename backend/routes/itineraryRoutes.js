@@ -1,0 +1,10 @@
+const router = require('express').Router();
+const controller = require('../controllers/itineraryController');
+const { protect, authorize } = require('../middleware/auth');
+router.get('/package/:packageId', controller.list);
+router.post('/package/:packageId', protect, authorize('admin', 'vendor'), controller.create);
+router.patch('/package/:packageId/reorder', protect, authorize('admin', 'vendor'), controller.reorder);
+router.put('/:id', protect, authorize('admin', 'vendor'), controller.update);
+router.delete('/:id', protect, authorize('admin', 'vendor'), controller.remove);
+router.post('/:id/duplicate', protect, authorize('admin', 'vendor'), controller.duplicate);
+module.exports = router;

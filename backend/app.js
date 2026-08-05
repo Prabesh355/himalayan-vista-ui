@@ -101,6 +101,7 @@ app.use('/api/home-content', require('./routes/homeContentRoutes'));
 app.use('/api/site-settings', require('./routes/siteSettingsRoutes'));
 app.use('/api/uploads', require('./routes/uploadRoutes'));
 app.use('/api/seo', require('./routes/seoRoutes'));
+app.use('/api/itinerary-days', require('./routes/itineraryRoutes'));
 
 // Root-level SEO aliases — search engines expect these at the domain root
 const seoRouter = require('./routes/seoRoutes');
