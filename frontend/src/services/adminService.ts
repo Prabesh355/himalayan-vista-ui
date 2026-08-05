@@ -102,7 +102,7 @@ export interface PackageItem {
   createdAt?: string;
 }
 
-export interface ItineraryDayItem { _id: string; id?: string; packageId: string; dayNumber: number; title: string; subtitle?: string; altitude?: string; meals?: string; accommodation?: string; hours?: string; distance?: string; coverImage?: string; gallery?: Array<{ image: string; alt?: string; caption?: string }>; checklist?: string[]; description?: string; notes?: string; tips?: string; sortOrder?: number; }
+export interface ItineraryDayItem { _id: string; id?: string; packageId: string; dayNumber: number; title: string; subtitle?: string; altitude?: string; meals?: string; accommodation?: string; hours?: string; distance?: string; coverImage?: string; gallery?: Array<{ image: string; alt?: string; caption?: string }>; checklist?: string[]; infoCards?: Array<{ id: string; label: string; value: string }>; contentBlocks?: Array<{ id: string; type: "paragraph" | "heading" | "list" | "quote" | "notice" | "tips" | "warning" | "image" | "gallery" | "table" | "video" | "map" | "divider"; content: string }>; routeMap?: { image: string; alt?: string; caption?: string }; description?: string; notes?: string; tips?: string; sortOrder?: number; }
 
 export interface ProductItem {
   _id: string;
