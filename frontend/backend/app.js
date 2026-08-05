@@ -10,7 +10,27 @@ const logger = require('./utils/logger');
 const app = express();
 
 // Security Middleware
-app.use(helmet());
+// Allow route-map and package images hosted on Cloudinary or the backend to
+// load inside the browser. Without this, Helmet's default CSP can block the
+// image request and the UI falls back to the old placeholder image.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        imgSrc: [
+          "'self'",
+          'data:',
+          'blob:',
+          'http://localhost:5001',
+          'http://localhost:8080',
+          'https://himalayan-vista-backend.onrender.com',
+          'https://res.cloudinary.com',
+        ],
+      },
+    },
+  }),
+);
 // CORS setup: allowlist from ALLOWED_ORIGINS env (comma-separated). If not set,
 // fall back to FRONTEND_URL or localhost for development.
 const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'https://nomadsnavigatenepal.com,https://www.nomadsnavigatenepal.com,http://localhost:5173,http://localhost:3000,http://localhost:8080';
