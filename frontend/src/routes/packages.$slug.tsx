@@ -42,7 +42,7 @@ import {
 import { useCurrency } from "@/context/CurrencyProvider";
 import api from "@/services/api";
 import { BookingForm } from "@/components/BookingForm";
-import { defaultImageFallback, resolvePackageImage } from "@/lib/imageUrl";
+import { defaultImageFallback, resolveImageUrl, resolvePackageImage } from "@/lib/imageUrl";
 import { RelatedPackages } from "@/components/RelatedPackages";
 
 type ItineraryDay = {
@@ -1254,6 +1254,37 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
           );
         })}
       </motion.section>
+
+      {Array.isArray(pkg.groupPriceTiers) && pkg.groupPriceTiers.length ? (
+        <motion.section
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-8 rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-[12px] shadow-soft"
+        >
+          <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">Group Pricing</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Per-person pricing based on your group size.</p>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-white/[0.08]">
+            <table className="w-full text-sm"><thead className="bg-white/[0.05] text-left text-xs uppercase tracking-wider text-muted-foreground"><tr><th className="px-4 py-3">Group size</th><th className="px-4 py-3 text-right">Price per person</th></tr></thead><tbody>{pkg.groupPriceTiers.map((tier: any, index: number) => <tr key={`${tier.min}-${tier.max}-${index}`} className="border-t border-white/[0.08]"><td className="px-4 py-3 font-medium">{tier.min}–{tier.max} Pax</td><td className="px-4 py-3 text-right font-semibold text-accent">{formatPrice(tier.price)}</td></tr>)}</tbody></table>
+          </div>
+        </motion.section>
+      ) : null}
+
+      {pkg.routeMapEnabled && pkg.routeMapImage ? (
+        <motion.section
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-8 rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-[12px] shadow-soft"
+        >
+          <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">{pkg.routeMapTitle || "Route Map"}</h2>
+          {pkg.routeMapDescription ? <p className="mt-2 text-sm leading-6 text-muted-foreground">{pkg.routeMapDescription}</p> : null}
+          <button type="button" onClick={() => setActiveImage(resolveImageUrl(pkg.routeMapImage))} className="mt-5 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20">
+            <img src={resolveImageUrl(pkg.routeMapImage)} alt={pkg.routeMapAlt || `${pkg.title} route map`} loading="lazy" onError={handleImageError} className="max-h-[560px] w-full object-contain" />
+          </button>
+          {pkg.routeMapCaption ? <p className="mt-3 text-xs text-muted-foreground">{pkg.routeMapCaption}</p> : null}
+        </motion.section>
+      ) : null}
 
       <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_360px]">
         {/* Left column content */}

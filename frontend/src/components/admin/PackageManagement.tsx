@@ -698,7 +698,7 @@ export const PackageManagement: React.FC = () => {
                     </TabsContent>
 
                     <TabsContent value="route-map" className="mt-0">
-                      <PackageEditorRouteMapTab form={form} onChange={updateFormField} onUpload={(files) => void handleFilesUpload(files)} />
+                      <PackageEditorRouteMapTab form={form} onChange={updateFormField} onUpload={(files) => { const file = files?.[0]; if (!file) return; setUploading(true); const data = new FormData(); data.append("file", file); adminService.uploadImage(data).then((result) => { if (result?.fileUrl) updateFormField("routeMapImage", result.fileUrl); }).finally(() => setUploading(false)); }} />
                     </TabsContent>
 
                     <TabsContent value="pricing" className="mt-0">
