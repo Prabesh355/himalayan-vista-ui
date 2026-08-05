@@ -1,48 +1,39 @@
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
-const sharp = require('sharp');
 const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 const {
+  cloudinary,
   deleteCloudinaryAssetByPublicId,
   hasCloudinaryCredentials,
-  isCloudinaryUrl,
 } = require('../services/cloudinaryService');
 
-function getUploadedFileUrl(file) {
-  if (file?.secure_url || file?.url) {
-    return file.secure_url || file.url;
+function buildCloudinaryPublicId(file, assetType, packageId) {
+  const originalName = String(file?.originalname || 'upload')
+    .split('.')[0]
+    .replace(/[^a-zA-Z0-9]/g, '-')
+    .toLowerCase();
+  const suffix = crypto.randomBytes(4).toString('hex');
+  const safePackageId = String(packageId || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+
+  if (assetType === 'route-map' && safePackageId) {
+    return `route-maps/${safePackageId}/${Date.now()}-${suffix}`;
   }
 
-  if (file?.path) {
-    const fileName = path.basename(file.path);
-    const baseUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 5001}`;
-    return `${baseUrl}/uploads/${encodeURIComponent(fileName)}`;
-  }
-
-  return '';
+  return `img-${originalName}-${suffix}`;
 }
 
-async function cleanupUploadedAsset(file) {
-  if (!file?.filename) return;
-
-  if (!hasCloudinaryCredentials()) {
-    try {
-      if (file.path && fs.existsSync(file.path)) {
-        fs.unlinkSync(file.path);
-      }
-    } catch (error) {
-      logger.warn(`Failed to clean up local uploaded asset ${file.filename}: ${error.message}`);
-    }
-    return;
-  }
+async function cleanupUploadedAsset(publicId) {
+  if (!publicId || !hasCloudinaryCredentials()) return;
 
   try {
-    await deleteCloudinaryAssetByPublicId(file.filename);
+    await deleteCloudinaryAssetByPublicId(publicId);
   } catch (error) {
-    logger.warn(`Failed to clean up uploaded Cloudinary asset ${file.filename}: ${error.message}`);
+    logger.warn(`Failed to clean up uploaded Cloudinary asset ${publicId}: ${error.message}`);
   }
+}
+
+function toDataUri(buffer, mimetype) {
+  return `data:${mimetype || 'image/jpeg'};base64,${buffer.toString('base64')}`;
 }
 
 exports.uploadFile = async (req, res, next) => {
@@ -52,58 +43,21 @@ exports.uploadFile = async (req, res, next) => {
     }
 
     if (!String(req.file.mimetype || '').startsWith('image/')) {
-      await cleanupUploadedAsset(req.file);
       return next(new AppError('Invalid image file type', 400));
     }
 
+    if (!hasCloudinaryCredentials()) {
+      return next(
+        new AppError('Image upload failed because Cloudinary is not configured correctly on the server.', 503),
+      );
+    }
+
     const assetType = String(req.body?.assetType || '').trim();
-
-    let fileUrl = '';
-    let blurDataURL = '';
-
-    if (req.file.buffer) {
-      // Local upload with memory storage (sharp processing)
-      const originalName = (req.file.originalname || 'upload').split('.')[0].replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-      const suffix = crypto.randomBytes(4).toString('hex');
-      const filename = `img-${originalName}-${suffix}.webp`;
-      const uploadsDir = path.join(__dirname, '..', 'uploads');
-      const filepath = path.join(uploadsDir, filename);
-
-      // Convert to WebP and save
-      await sharp(req.file.buffer)
-        .webp({ quality: 80 })
-        .toFile(filepath);
-
-      // Generate blur placeholder
-      const blurBuffer = await sharp(req.file.buffer)
-        .resize(20, 20, { fit: 'inside' })
-        .webp({ quality: 20 })
-        .blur(10)
-        .toBuffer();
-      blurDataURL = `data:image/webp;base64,${blurBuffer.toString('base64')}`;
-
-      req.file.path = filepath;
-      req.file.filename = filename;
-      fileUrl = getUploadedFileUrl(req.file);
-    } else {
-      // Cloudinary upload
-      fileUrl = getUploadedFileUrl(req.file);
-      // Optional: derive Cloudinary blur URL
-      if (fileUrl.includes('res.cloudinary.com')) {
-        const parts = fileUrl.split('/upload/');
-        if (parts.length === 2) {
-          blurDataURL = `${parts[0]}/upload/w_20,e_blur:1000,f_webp,q_1/${parts[1]}`;
-        }
-      }
-    }
-
-    if (!fileUrl) {
-      await cleanupUploadedAsset(req.file);
-      return next(new AppError('Uploaded file could not be processed', 500));
-    }
-
-    const maxImages = Number(process.env.MAX_IMAGES_PER_PACKAGE || 12);
     const packageId = req.body?.packageId || req.query?.packageId;
+    const publicId = buildCloudinaryPublicId(req.file, assetType, packageId);
+
+    let blurDataURL = '';
+    const maxImages = Number(process.env.MAX_IMAGES_PER_PACKAGE || 12);
     if (packageId) {
       try {
         const Package = require('../models/Package');
@@ -118,18 +72,34 @@ exports.uploadFile = async (req, res, next) => {
       }
     }
 
+    const uploaded = await cloudinary.uploader.upload(toDataUri(req.file.buffer, req.file.mimetype), {
+      folder: process.env.CLOUDINARY_FOLDER || 'himalayan-vista',
+      public_id: publicId,
+      resource_type: 'image',
+      format: 'webp',
+      transformation: [{ quality: 'auto:good' }],
+    });
+
+    const fileUrl = uploaded.secure_url || uploaded.url;
+    if (fileUrl.includes('/upload/')) {
+      const parts = fileUrl.split('/upload/');
+      if (parts.length === 2) {
+        blurDataURL = `${parts[0]}/upload/w_20,e_blur:1000,f_webp,q_1/${parts[1]}`;
+      }
+    }
+
     res.status(201).json({
       success: true,
       fileUrl,
-      filename: req.file.filename,
-      publicId: req.file.filename,
-      secureUrl: req.file.secure_url || fileUrl,
-      storage: isCloudinaryUrl(fileUrl) ? 'cloudinary' : 'local',
+      filename: req.file.originalname || uploaded.public_id || publicId,
+      publicId: uploaded.public_id || publicId,
+      secureUrl: uploaded.secure_url || fileUrl,
+      storage: 'cloudinary',
       blurDataURL,
     });
   } catch (error) {
     if (req.file) {
-      await cleanupUploadedAsset(req.file);
+      await cleanupUploadedAsset(req.file.filename || req.file.public_id);
     }
     next(error);
   }

@@ -13,8 +13,8 @@ const uploadLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Admins and vendors can upload images from the CMS. Cloudinary is used in production;
-// local disk storage is used automatically when Cloudinary credentials are missing.
+// Admins and vendors can upload images from the CMS. Cloudinary is required so
+// package and route-map images are always stored centrally and never on local disk.
 router.post(
   '/',
   protect,

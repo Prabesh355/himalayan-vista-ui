@@ -3,28 +3,38 @@ jest.mock('../models/Package', () => ({
 }));
 
 jest.mock('../services/cloudinaryService', () => ({
+  cloudinary: {
+    uploader: {
+      upload: jest.fn(),
+    },
+  },
   deleteCloudinaryAssetByPublicId: jest.fn().mockResolvedValue(true),
-  hasCloudinaryCredentials: jest.fn(() => false),
+  hasCloudinaryCredentials: jest.fn(() => true),
   isCloudinaryUrl: jest.fn((value) => typeof value === 'string' && /cloudinary\.com/i.test(value)),
 }));
 
 const Package = require('../models/Package');
 const { uploadFile } = require('../controllers/uploadController');
 const { AppError } = require('../utils/errorHandler');
-const { deleteCloudinaryAssetByPublicId } = require('../services/cloudinaryService');
+const { cloudinary, deleteCloudinaryAssetByPublicId } = require('../services/cloudinaryService');
 
 describe('uploadFile controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     delete process.env.MAX_IMAGES_PER_PACKAGE;
+    cloudinary.uploader.upload.mockResolvedValue({
+      secure_url: 'https://res.cloudinary.com/demo/image/upload/v1234567890/valid.webp',
+      url: 'https://res.cloudinary.com/demo/image/upload/v1234567890/valid.webp',
+      public_id: 'himalayan-vista/valid',
+    });
   });
 
   function createRequest(fileName, packageId, mimetype = 'image/jpeg') {
     return {
       file: {
-        path: `https://res.cloudinary.com/demo/image/upload/v1234567890/${fileName}`,
+        buffer: Buffer.from('fake-image-bytes'),
         filename: fileName,
-        secure_url: `https://res.cloudinary.com/demo/image/upload/v1234567890/${fileName}`,
+        originalname: fileName,
         mimetype,
       },
       body: packageId ? { packageId } : {},
@@ -54,8 +64,10 @@ describe('uploadFile controller', () => {
         success: true,
         fileUrl: expect.stringContaining('res.cloudinary.com/demo/image/upload/'),
         filename: 'valid.jpg',
+        storage: 'cloudinary',
       })
     );
+    expect(cloudinary.uploader.upload).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an upload with invalid image content', async () => {
@@ -85,5 +97,6 @@ describe('uploadFile controller', () => {
     const err = next.mock.calls[0][0];
     expect(err).toBeInstanceOf(AppError);
     expect(err.message).toMatch(/limit is 1/);
+    expect(cloudinary.uploader.upload).not.toHaveBeenCalled();
   });
 });
