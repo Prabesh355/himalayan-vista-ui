@@ -81,6 +81,7 @@ export interface PackageItem {
     min?: number;
     max?: number;
   };
+  groupPriceTiers?: Array<{ min: number; max: number; price: number }>;
   featured?: boolean;
   isActive?: boolean;
   rating?: number;

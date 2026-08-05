@@ -47,6 +47,7 @@ const emptyForm: PackageFormState = {
   keywords: "",
   robots: "index, follow",
   routeMapEnabled: false, routeMapImage: "", routeMapTitle: "", routeMapDescription: "", routeMapAlt: "", routeMapCaption: "",
+  groupPriceTiers: [],
 };
 
 function mapPackageToForm(pkg: PackageItem): PackageFormState {
@@ -72,6 +73,7 @@ function mapPackageToForm(pkg: PackageItem): PackageFormState {
     keywords: pkg.keywords || "",
     robots: pkg.robots || "index, follow",
     routeMapEnabled: Boolean(pkg.routeMapEnabled), routeMapImage: pkg.routeMapImage || "", routeMapTitle: pkg.routeMapTitle || "", routeMapDescription: pkg.routeMapDescription || "", routeMapAlt: pkg.routeMapAlt || "", routeMapCaption: pkg.routeMapCaption || "",
+    groupPriceTiers: (pkg.groupPriceTiers || []).map((tier) => ({ min: String(tier.min), max: String(tier.max), price: String(tier.price) })),
   };
 }
 
@@ -198,6 +200,7 @@ export const PackageManagement: React.FC = () => {
         keywords: form.keywords,
         robots: form.robots,
         routeMapEnabled: form.routeMapEnabled, routeMapImage: form.routeMapImage, routeMapTitle: form.routeMapTitle, routeMapDescription: form.routeMapDescription, routeMapAlt: form.routeMapAlt, routeMapCaption: form.routeMapCaption,
+        groupPriceTiers: form.groupPriceTiers.map((tier) => ({ min: Number(tier.min), max: Number(tier.max), price: Number(tier.price) })).filter((tier) => tier.min > 0 && tier.max >= tier.min && tier.price > 0),
       };
 
       const selectedPackageId = getPackageRecordId(selectedPackage);

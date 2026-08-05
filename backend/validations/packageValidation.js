@@ -74,6 +74,10 @@ exports.validatePackage = [
     .optional()
     .isArray()
     .withMessage('Images must be an array'),
+  body('groupPriceTiers').optional().isArray().withMessage('Group price tiers must be an array'),
+  body('groupPriceTiers.*.min').optional().isInt({ min: 1 }).withMessage('Tier minimum must be at least 1'),
+  body('groupPriceTiers.*.max').optional().isInt({ min: 1 }).withMessage('Tier maximum must be at least 1'),
+  body('groupPriceTiers.*.price').optional().isFloat({ min: 0.01 }).withMessage('Tier price must be greater than 0'),
   
   body('groupSize.min')
     .notEmpty()

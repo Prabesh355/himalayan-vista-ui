@@ -27,6 +27,7 @@ export type PackageFormState = {
   routeMapDescription: string;
   routeMapAlt: string;
   routeMapCaption: string;
+  groupPriceTiers: Array<{ min: string; max: string; price: string }>;
 };
 
 export type PackageEditorMutationOptions = {
