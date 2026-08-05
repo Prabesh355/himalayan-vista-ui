@@ -1150,13 +1150,14 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
   };
 
   const heroImageSrc = resolvePackageImage(pkg.images?.[0] || pkg.image, pkg.slug, pkg.title);
-  const routeMap = pkg.routeMap || {
-    image: pkg.routeMapImage,
-    title: pkg.routeMapTitle,
-    description: pkg.routeMapDescription,
-    alt: pkg.routeMapAlt,
-    caption: pkg.routeMapCaption,
+  const routeMap = {
+    image: pkg.routeMapImage || pkg.routeMap?.image || "",
+    title: pkg.routeMapTitle || pkg.routeMap?.title || "",
+    description: pkg.routeMapDescription || pkg.routeMap?.description || "",
+    alt: pkg.routeMapAlt || pkg.routeMap?.alt || "",
+    caption: pkg.routeMapCaption || pkg.routeMap?.caption || "",
   };
+  const routeMapImageUrl = routeMap.image ? `${resolveImageUrl(routeMap.image)}${resolveImageUrl(routeMap.image).includes("?") ? "&" : "?"}v=${encodeURIComponent(pkg.updatedAt || routeMap.image)}` : "";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:py-12">
@@ -1286,8 +1287,8 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
         >
           <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">{routeMap.title || "Route Map"}</h2>
           {routeMap.description ? <p className="mt-2 text-sm leading-6 text-muted-foreground">{routeMap.description}</p> : null}
-          <button type="button" onClick={() => setActiveImage(resolveImageUrl(routeMap.image))} className="mt-5 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20">
-            <img src={resolveImageUrl(routeMap.image)} alt={routeMap.alt || `${pkg.title} route map`} loading="lazy" onError={handleImageError} className="max-h-[560px] w-full object-contain" />
+          <button type="button" onClick={() => setActiveImage(routeMapImageUrl)} className="mt-5 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20">
+            <img src={routeMapImageUrl} alt={routeMap.alt || `${pkg.title} route map`} loading="lazy" onError={handleImageError} className="max-h-[560px] w-full object-contain" />
           </button>
           {routeMap.caption ? <p className="mt-3 text-xs text-muted-foreground">{routeMap.caption}</p> : null}
         </motion.section>

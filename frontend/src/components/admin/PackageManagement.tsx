@@ -482,6 +482,41 @@ export const PackageManagement: React.FC = () => {
     imageInputRef.current?.click();
   };
 
+  const handleRouteMapUpload = async (files: FileList | null) => {
+    const file = files?.[0];
+    const packageId = getPackageRecordId(selectedPackage);
+    if (!file) return;
+    if (!packageId) {
+      toast.error("Save the package before uploading a route map.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("packageId", packageId);
+      const upload = await adminService.uploadImage(data);
+      if (!upload?.fileUrl) throw new Error("Upload service did not return an image URL.");
+      const updated = await adminService.updatePackage(packageId, {
+        routeMapImage: upload.fileUrl,
+        routeMapEnabled: true,
+      });
+      const savedImage = updated?.data?.routeMapImage || upload.fileUrl;
+      setForm((previous) => ({ ...previous, routeMapImage: savedImage, routeMapEnabled: true }));
+      setSelectedPackage((previous) => previous ? { ...previous, routeMapImage: savedImage, routeMapEnabled: true } : previous);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["admin-packages"] }),
+        queryClient.invalidateQueries({ queryKey: ["packages"] }),
+        queryClient.invalidateQueries({ queryKey: ["package"] }),
+      ]);
+      toast.success("Route map uploaded and saved.");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || "Route map upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleDragStart = (index: number) => setDraggedImageIndex(index);
   const handleDropImage = (targetIndex: number) => {
     if (draggedImageIndex === null || draggedImageIndex === targetIndex) return;
@@ -698,7 +733,7 @@ export const PackageManagement: React.FC = () => {
                     </TabsContent>
 
                     <TabsContent value="route-map" className="mt-0">
-                      <PackageEditorRouteMapTab form={form} onChange={updateFormField} onUpload={(files) => { const file = files?.[0]; if (!file) return; setUploading(true); const data = new FormData(); data.append("file", file); adminService.uploadImage(data).then((result) => { if (result?.fileUrl) updateFormField("routeMapImage", result.fileUrl); }).finally(() => setUploading(false)); }} />
+                      <PackageEditorRouteMapTab form={form} onChange={updateFormField} onUpload={(files) => void handleRouteMapUpload(files)} />
                     </TabsContent>
 
                     <TabsContent value="pricing" className="mt-0">
