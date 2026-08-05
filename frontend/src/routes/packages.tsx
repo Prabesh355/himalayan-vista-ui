@@ -110,6 +110,19 @@ function PackagesIndex() {
                   </span>
                 </div>
 
+                {Array.isArray(d.groupPriceTiers) && d.groupPriceTiers.length ? (
+                  <div className="mt-4 max-w-md overflow-hidden rounded-xl border border-white/10">
+                    <div className="grid grid-cols-2 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      <span>Group size</span><span className="text-right">Price / person</span>
+                    </div>
+                    {d.groupPriceTiers.map((tier: { min: number; max: number; price: number }, index: number) => (
+                      <div key={`${tier.min}-${tier.max}-${index}`} className="grid grid-cols-2 border-t border-white/10 px-3 py-2 text-sm">
+                        <span>{tier.min}–{tier.max} Pax</span><span className="text-right font-semibold text-accent">{formatPrice(tier.price)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
                 <div className="mt-4 flex flex-wrap gap-3">
                   <Link
                     to="/packages/$slug"
