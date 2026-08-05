@@ -22,6 +22,7 @@ import { PackageEditorPricingTab } from "./package-editor/PackageEditorPricingTa
 import { PackageEditorSeoTab } from "./package-editor/PackageEditorSeoTab";
 import { PackageEditorOverviewTab } from "./package-editor/PackageEditorOverviewTab";
 import { PackageEditorRouteMapTab } from "./package-editor/PackageEditorRouteMapTab";
+import { StructuredItineraryTab } from "./package-editor/StructuredItineraryTab";
 import { PackageEditorFooter } from "./package-editor/PackageEditorFooter";
 import { PackageEditorFieldErrors, PackageFormState, TabKey } from "./package-editor/types";
 
@@ -675,20 +676,7 @@ export const PackageManagement: React.FC = () => {
                     </TabsContent>
 
                     <TabsContent value="itinerary" className="mt-0">
-                      <PackageEditorItineraryTab
-                        form={form}
-                        formErrors={formErrors}
-                        itineraryEditorRef={itineraryEditorRef}
-                        itineraryView={itineraryView}
-                        setItineraryView={setItineraryView}
-                        itinerarySearch={itinerarySearch}
-                        setItinerarySearch={setItinerarySearch}
-                        insertMarkdownSnippet={insertMarkdownSnippet}
-                        highlightedItinerary={highlightedItinerary}
-                        wordCount={wordCount}
-                        charCount={charCount}
-                        onChange={updateFormField}
-                      />
+                      <StructuredItineraryTab packageId={getPackageRecordId(selectedPackage)} />
                     </TabsContent>
 
                     <TabsContent value="images" className="mt-0">

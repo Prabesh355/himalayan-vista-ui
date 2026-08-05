@@ -102,6 +102,8 @@ export interface PackageItem {
   createdAt?: string;
 }
 
+export interface ItineraryDayItem { _id: string; id?: string; packageId: string; dayNumber: number; title: string; subtitle?: string; altitude?: string; meals?: string; accommodation?: string; hours?: string; distance?: string; coverImage?: string; gallery?: Array<{ image: string; alt?: string; caption?: string }>; checklist?: string[]; description?: string; notes?: string; tips?: string; sortOrder?: number; }
+
 export interface ProductItem {
   _id: string;
   id?: string;
@@ -236,6 +238,12 @@ export const adminService = {
   updatePackage: async (packageId: string, payload: Record<string, unknown>) =>
     (await api.put(`/packages/${packageId}`, payload)).data,
   deletePackage: async (packageId: string) => (await api.delete(`/packages/${packageId}`)).data,
+  getItineraryDays: async (packageId: string) => (await api.get<{ success: boolean; data: ItineraryDayItem[] }>(`/itinerary-days/package/${packageId}`)).data,
+  createItineraryDay: async (packageId: string, payload: Partial<ItineraryDayItem>) => (await api.post(`/itinerary-days/package/${packageId}`, payload)).data,
+  updateItineraryDay: async (id: string, payload: Partial<ItineraryDayItem>) => (await api.put(`/itinerary-days/${id}`, payload)).data,
+  deleteItineraryDay: async (id: string) => (await api.delete(`/itinerary-days/${id}`)).data,
+  duplicateItineraryDay: async (id: string) => (await api.post(`/itinerary-days/${id}/duplicate`)).data,
+  reorderItineraryDays: async (packageId: string, ids: string[]) => (await api.patch(`/itinerary-days/package/${packageId}/reorder`, { ids })).data,
   getProducts: async (params?: Record<string, unknown>) =>
     (
       await api.get<{
