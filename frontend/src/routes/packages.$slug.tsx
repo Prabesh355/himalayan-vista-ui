@@ -1150,6 +1150,13 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
   };
 
   const heroImageSrc = resolvePackageImage(pkg.images?.[0] || pkg.image, pkg.slug, pkg.title);
+  const routeMap = pkg.routeMap || {
+    image: pkg.routeMapImage,
+    title: pkg.routeMapTitle,
+    description: pkg.routeMapDescription,
+    alt: pkg.routeMapAlt,
+    caption: pkg.routeMapCaption,
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:py-12">
@@ -1270,19 +1277,19 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
         </motion.section>
       ) : null}
 
-      {pkg.routeMapEnabled && pkg.routeMapImage ? (
+      {routeMap.image ? (
         <motion.section
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-8 rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-[12px] shadow-soft"
         >
-          <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">{pkg.routeMapTitle || "Route Map"}</h2>
-          {pkg.routeMapDescription ? <p className="mt-2 text-sm leading-6 text-muted-foreground">{pkg.routeMapDescription}</p> : null}
-          <button type="button" onClick={() => setActiveImage(resolveImageUrl(pkg.routeMapImage))} className="mt-5 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20">
-            <img src={resolveImageUrl(pkg.routeMapImage)} alt={pkg.routeMapAlt || `${pkg.title} route map`} loading="lazy" onError={handleImageError} className="max-h-[560px] w-full object-contain" />
+          <h2 className="text-xl font-display font-semibold uppercase tracking-[0.2em] text-accent">{routeMap.title || "Route Map"}</h2>
+          {routeMap.description ? <p className="mt-2 text-sm leading-6 text-muted-foreground">{routeMap.description}</p> : null}
+          <button type="button" onClick={() => setActiveImage(resolveImageUrl(routeMap.image))} className="mt-5 block w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20">
+            <img src={resolveImageUrl(routeMap.image)} alt={routeMap.alt || `${pkg.title} route map`} loading="lazy" onError={handleImageError} className="max-h-[560px] w-full object-contain" />
           </button>
-          {pkg.routeMapCaption ? <p className="mt-3 text-xs text-muted-foreground">{pkg.routeMapCaption}</p> : null}
+          {routeMap.caption ? <p className="mt-3 text-xs text-muted-foreground">{routeMap.caption}</p> : null}
         </motion.section>
       ) : null}
 
