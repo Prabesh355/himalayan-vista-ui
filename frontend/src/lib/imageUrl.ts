@@ -110,10 +110,8 @@ function isPlaceholderPackageImage(value?: string | null) {
   const image = String(value || "").trim();
   if (!image) return true;
   if (/res\.cloudinary\.com\/demo\/image\/upload\/sample\.jpg/i.test(image)) return true;
-  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) return true;
-  if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\/uploads\//i.test(image)) {
-    return true;
-  }
+  if (/^https?:\/\/[^/]+\/uploads\//i.test(image)) return false;
+  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) return false;
   return false;
 }
 
@@ -121,10 +119,8 @@ function isPlaceholderShopImage(value?: string | null) {
   const image = String(value || "").trim();
   if (!image) return true;
   if (/res\.cloudinary\.com\/demo\/image\/upload\/sample\.jpg/i.test(image)) return true;
-  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) return true;
-  if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\/uploads\//i.test(image)) {
-    return true;
-  }
+  if (/^https?:\/\/[^/]+\/uploads\//i.test(image)) return false;
+  if (image.startsWith("/uploads/") || image.startsWith("uploads/")) return false;
   return false;
 }
 

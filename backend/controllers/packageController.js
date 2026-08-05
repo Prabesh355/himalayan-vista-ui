@@ -52,6 +52,7 @@ function serializePackage(pkg, req) {
     ...data,
     image: normalizeUploadUrl(data.image, req),
     images,
+    routeMapImage: normalizeUploadUrl(data.routeMapImage, req),
   };
 }
 
@@ -101,7 +102,11 @@ function normalizeSingleImage(value) {
 }
 
 function getPackageImageUrls(pkg) {
-  const urls = [normalizeSingleImage(pkg?.image), ...normalizeImageList(pkg?.images)];
+  const urls = [
+    normalizeSingleImage(pkg?.image),
+    ...normalizeImageList(pkg?.images),
+    normalizeSingleImage(pkg?.routeMapImage),
+  ];
   return [...new Set(urls.filter(Boolean))];
 }
 

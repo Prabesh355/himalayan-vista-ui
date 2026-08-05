@@ -7,6 +7,7 @@ const logger = require('../utils/logger');
 const {
   deleteCloudinaryAssetByPublicId,
   hasCloudinaryCredentials,
+  isCloudinaryUrl,
 } = require('../services/cloudinaryService');
 
 function getUploadedFileUrl(file) {
@@ -54,6 +55,8 @@ exports.uploadFile = async (req, res, next) => {
       await cleanupUploadedAsset(req.file);
       return next(new AppError('Invalid image file type', 400));
     }
+
+    const assetType = String(req.body?.assetType || '').trim();
 
     let fileUrl = '';
     let blurDataURL = '';
@@ -121,6 +124,7 @@ exports.uploadFile = async (req, res, next) => {
       filename: req.file.filename,
       publicId: req.file.filename,
       secureUrl: req.file.secure_url || fileUrl,
+      storage: isCloudinaryUrl(fileUrl) ? 'cloudinary' : 'local',
       blurDataURL,
     });
   } catch (error) {

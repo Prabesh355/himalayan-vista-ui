@@ -493,8 +493,9 @@ export const PackageManagement: React.FC = () => {
     setUploading(true);
     try {
       const data = new FormData();
-      data.append("file", file);
       data.append("packageId", packageId);
+      data.append("assetType", "route-map");
+      data.append("file", file);
       const upload = await adminService.uploadImage(data);
       if (!upload?.fileUrl) throw new Error("Upload service did not return an image URL.");
       const updated = await adminService.updatePackage(packageId, {

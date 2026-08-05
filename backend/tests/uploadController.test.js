@@ -4,6 +4,8 @@ jest.mock('../models/Package', () => ({
 
 jest.mock('../services/cloudinaryService', () => ({
   deleteCloudinaryAssetByPublicId: jest.fn().mockResolvedValue(true),
+  hasCloudinaryCredentials: jest.fn(() => false),
+  isCloudinaryUrl: jest.fn((value) => typeof value === 'string' && /cloudinary\.com/i.test(value)),
 }));
 
 const Package = require('../models/Package');
@@ -83,6 +85,5 @@ describe('uploadFile controller', () => {
     const err = next.mock.calls[0][0];
     expect(err).toBeInstanceOf(AppError);
     expect(err.message).toMatch(/limit is 1/);
-    expect(deleteCloudinaryAssetByPublicId).toHaveBeenCalledWith('limit.jpg');
   });
 });

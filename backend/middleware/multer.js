@@ -22,6 +22,15 @@ const cloudinaryStorage = new CloudinaryStorage({
     public_id: (req, file) => {
       const originalName = file.originalname.split('.')[0].replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
       const suffix = crypto.randomBytes(4).toString('hex');
+      const assetType = String(req.body?.assetType || '').trim();
+      const packageId = String(req.body?.packageId || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+
+      // Route maps are package-specific assets. A package-scoped public ID prevents
+      // Cloudinary from ever reusing or overwriting another package's route map.
+      if (assetType === 'route-map' && packageId) {
+        return `route-maps/${packageId}/${Date.now()}-${suffix}`;
+      }
+
       return `img-${originalName}-${suffix}`;
     },
   },
