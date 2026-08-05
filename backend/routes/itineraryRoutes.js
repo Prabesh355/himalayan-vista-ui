@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const controller = require('../controllers/itineraryController');
 const { protect, authorize } = require('../middleware/auth');
-router.get('/package/:packageId', controller.list);
+router.get('/package/:packageId', protect, authorize('admin', 'vendor'), controller.list);
 router.post('/package/:packageId', protect, authorize('admin', 'vendor'), controller.create);
 router.patch('/package/:packageId/reorder', protect, authorize('admin', 'vendor'), controller.reorder);
 router.put('/:id', protect, authorize('admin', 'vendor'), controller.update);
