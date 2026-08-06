@@ -172,6 +172,24 @@ export const PackageManagement: React.FC = () => {
     },
   });
 
+  // The table response is intentionally lightweight. Always fetch the selected
+  // record before editing so no existing content is replaced by blank defaults.
+  const selectedPackageId = getPackageRecordId(selectedPackage);
+  const selectedPackageQuery = useQuery({
+    queryKey: ["admin-package", selectedPackageId],
+    queryFn: () => adminService.getPackage(selectedPackageId),
+    enabled: isModalOpen && Boolean(selectedPackageId),
+  });
+
+  useEffect(() => {
+    if (!selectedPackageQuery.data?.data) return;
+    const fetchedPackage = selectedPackageQuery.data.data;
+    setSelectedPackage(fetchedPackage);
+    setForm(mapPackageToForm(fetchedPackage));
+    setFormErrors({});
+    setHasUnsavedChanges(false);
+  }, [selectedPackageQuery.data]);
+
   // Surface load errors as a toast so admins notice failures quickly
   useEffect(() => {
     if (error) {
@@ -685,6 +703,8 @@ export const PackageManagement: React.FC = () => {
                       <p className="text-sm text-muted-foreground">
                         Use the sidebar to move between content blocks, media, pricing, SEO, and review.
                       </p>
+                      {selectedPackageQuery.isLoading ? <p className="text-sm text-muted-foreground">Loading the current package data…</p> : null}
+                      {selectedPackageQuery.isError ? <p className="text-sm text-destructive">Unable to load the latest package data. Editing is disabled until it can be retrieved.</p> : null}
                     </div>
                     {saveSuccess ? (
                       <motion.div
@@ -757,7 +777,7 @@ export const PackageManagement: React.FC = () => {
 
                   <PackageEditorFooter
                     hasUnsavedChanges={hasUnsavedChanges}
-                    isSaving={saveMutation.isPending}
+                    isSaving={saveMutation.isPending || selectedPackageQuery.isLoading}
                     selectedPackageExists={Boolean(selectedPackage)}
                     onSaveDraft={() => handleSave({ isDraft: true })}
                     onUpdate={() => handleSave({ isDraft: false })}

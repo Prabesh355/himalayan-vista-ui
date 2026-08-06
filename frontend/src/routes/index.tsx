@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowDown, ArrowRight, Compass, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroImg from "@/assets/Everest Base Camp.jpeg";
 import { stats } from "@/services/uiData";
@@ -153,32 +153,72 @@ type ReviewApiItem = {
 };
 
 function Hero({ data }: { data?: any }) {
-  const badgeText = data?.badgeText || "Booking Open · Elite IFMGA Guides";
-  const displayBadgeText = badgeText.toLowerCase().includes("booking open")
-    ? badgeText
-    : `Booking Open · ${badgeText}`;
+  const badgeText = String(data?.badgeText || "Elite IFMGA Guides")
+    .replace(/\bbooking\s+open\b\s*[·|•–—-]?\s*/i, "")
+    .trim() || "Elite IFMGA Guides";
   const title = data?.title || "EXPLORE THE SUMMIT STANDARDS";
   const description =
     data?.description ||
     "Bespoke high-altitude expeditions and luxury Himalayan treks crafted for discerning explorers.";
-  const backgroundImage = data?.backgroundImage || heroImg;
+  const hasCmsImage = Boolean(data?.backgroundImage);
+  const backgroundImage = useMemo(
+    () => resolveImageUrl(data?.backgroundImage || heroImg, heroImg),
+    [data?.backgroundImage],
+  );
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setIsImageLoaded(false);
+    setImageFailed(false);
+  }, [backgroundImage]);
+
+  useEffect(() => {
+    // Dynamic CMS images cannot be discovered by the HTML preload scanner.
+    // Preload them once; bundled images are discovered from the picture element.
+    if (!hasCmsImage || typeof document === "undefined") return;
+    const existing = document.querySelector<HTMLLinkElement>('link[data-home-hero-preload]');
+    if (existing?.href === backgroundImage) return;
+    existing?.remove();
+    const preload = document.createElement("link");
+    preload.rel = "preload";
+    preload.as = "image";
+    preload.href = backgroundImage;
+    preload.fetchPriority = "high";
+    preload.dataset.homeHeroPreload = "true";
+    document.head.appendChild(preload);
+  }, [backgroundImage, hasCmsImage]);
   const scrollToEnd = () => {
     if (typeof window === "undefined") return;
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   };
-  const handleImageError = useFallbackImage(defaultImageFallback);
+  const imageSource = imageFailed ? "/images/hero/everest-base-camp-1920.webp" : backgroundImage;
 
   return (
-    <section className="relative -mt-[88px] min-h-[100svh] overflow-hidden flex flex-col justify-between">
+    <section className="relative -mt-[88px] flex min-h-[100svh] flex-col justify-between overflow-hidden bg-slate-950">
       <img
-        src={resolveImageUrl(backgroundImage, heroImg)}
-        alt="Himalayan peaks at sunset with prayer flags"
-        onError={handleImageError}
-        width={1920}
-        height={1080}
-        className="absolute inset-0 h-full w-full object-cover scale-105 animate-[subtle-zoom_20s_ease-out_infinite]"
-        style={{ transformOrigin: "center 30%" }}
+        src="/images/hero/everest-base-camp-lqip.jpg"
+        alt=""
+        aria-hidden="true"
+        width={48}
+        height={27}
+        className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
       />
+      <picture className="absolute inset-0">
+        {!hasCmsImage ? <source type="image/avif" srcSet="/images/hero/everest-base-camp-768.avif 768w, /images/hero/everest-base-camp-1280.avif 1280w, /images/hero/everest-base-camp-1920.avif 1920w" sizes="100vw" /> : null}
+        {!hasCmsImage ? <source type="image/webp" srcSet="/images/hero/everest-base-camp-768.webp 768w, /images/hero/everest-base-camp-1280.webp 1280w, /images/hero/everest-base-camp-1920.webp 1920w" sizes="100vw" /> : null}
+        <img
+          src={imageSource}
+          alt="Himalayan peaks at sunset with prayer flags"
+          onLoad={() => setIsImageLoaded(true)}
+          onError={() => setImageFailed(true)}
+          fetchPriority="high"
+          decoding="async"
+          width={1920}
+          height={1080}
+          className={`h-full w-full object-cover object-[center_30%] transition-opacity duration-[450ms] ease-out ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
+        />
+      </picture>
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,transparent_20%,oklch(0.08_0.005_35/0.8)_100%)]" />
 
@@ -201,11 +241,8 @@ function Hero({ data }: { data?: any }) {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/5 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5" />
-            {displayBadgeText}
+            {badgeText}
           </span>
-          <p className="mt-5 w-fit rounded-2xl border border-accent/30 bg-black/35 px-5 py-3 text-3xl font-black uppercase leading-none tracking-wide text-gradient-sunset shadow-glow backdrop-blur-md sm:text-4xl md:text-5xl">
-            Booking Open
-          </p>
           <h1 className="mt-8 text-5xl md:text-8xl font-display tracking-tight text-foreground leading-[0.95] uppercase font-bold">
             {title}
           </h1>
@@ -710,10 +747,6 @@ function HomeReviews() {
       };
     }) || [];
 
-  const averageRating = reviewCards.length
-    ? reviewCards.reduce((sum, review) => sum + review.rating, 0) / reviewCards.length
-    : 0;
-
   return (
     <section id="reviews" className="mx-auto max-w-7xl px-4 py-24">
       <div className="mb-10 max-w-2xl">
@@ -734,8 +767,6 @@ function HomeReviews() {
 
       <ReviewsSection
         reviews={reviewCards}
-        averageRating={averageRating}
-        totalReviews={reviewCards.length}
         isSubmitting={reviewMutation.isPending}
         isLoading={reviewsQuery.isLoading}
         submitMessage={submitMessage}

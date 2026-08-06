@@ -11,7 +11,7 @@ import {
   Star,
   Menu,
   X,
-  Settings,
+  Home,
   LogOut,
   MountainSnow,
   Activity,
@@ -74,6 +74,7 @@ export const AdminSidebar = () => {
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", to: "/admin" },
+    { icon: Home, label: "Homepage CMS", to: "/admin/settings" },
     { icon: Activity, label: "SEO Health", to: "/admin/seo" },
     { icon: Package, label: "Packages", to: "/admin/packages" },
     { icon: ShoppingBag, label: "Shop", to: "/admin/shop" },
@@ -184,13 +185,6 @@ export const AdminSidebar = () => {
         </div>
 
         <div className="p-2 border-t mt-auto">
-          <SidebarItem
-            icon={Settings}
-            label="Settings"
-            to="/admin/settings"
-            isExpanded={isExpanded}
-            isActive={location.pathname === "/admin/settings"}
-          />
           <button
             onClick={() => {
               if (typeof window !== "undefined") {

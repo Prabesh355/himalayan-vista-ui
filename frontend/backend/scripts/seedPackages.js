@@ -182,6 +182,36 @@ const rawDestinations = [
     groupSize: { min: 1, max: 12 },
     featured: false,
   },
+  {
+    title: "Nar Phu Valley Trek",
+    region: "Annapurna",
+    tagline: "Explore the hidden valleys of Nar and Phu",
+    description: "A 12-day restricted-area trek through the remote Nar and Phu Valleys, crossing Kang La Pass and returning via the Annapurna Circuit.",
+    itinerary: `## Nar Phu Valley Trek — 12 Days
+
+1. Day 1 — Arrival in Kathmandu: Airport pickup, hotel check-in, and trek briefing.
+2. Day 2 — Drive Kathmandu to Koto (2,600m): Scenic drive to the Nar Phu gateway.
+3. Day 3 — Trek Koto to Meta (3,560m): Forest trails, bridges, and narrow gorges.
+4. Day 4 — Trek Meta to Phu Village (4,080m): Follow the upper valley to ancient Phu.
+5. Day 5 — Acclimatization in Phu: Visit Tashi Lhakhang and explore locally.
+6. Day 6 — Trek Phu to Nar Phedi (3,490m): Descend into the quieter valley.
+7. Day 7 — Trek Nar Phedi to Nar Village (4,110m): Climb to a traditional settlement.
+8. Day 8 — Acclimatization in Nar: Local hike and pass preparation.
+9. Day 9 — Trek Nar via Kang La Pass (5,320m) to Ngawal (3,660m): High-pass crossing with Annapurna views.
+10. Day 10 — Trek Ngawal to Chame (2,670m): Descend through Annapurna villages.
+11. Day 11 — Drive Chame to Kathmandu: Return to the capital for a farewell evening.
+12. Day 12 — Departure: Airport transfer for onward travel.`,
+    imageUrl: "http://localhost:5001/uploads/nur.jpeg",
+    price: 1350,
+    duration: { days: 12, nights: 11 },
+    rating: 4.8,
+    reviewCount: 14,
+    tags: ["Trekking", "Remote", "Cultural"],
+    destination: "Annapurna",
+    category: "trekking",
+    groupSize: { min: 1, max: 12 },
+    featured: false,
+  },
 ];
 
 async function seed() {

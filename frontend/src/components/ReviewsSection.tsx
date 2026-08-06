@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Sparkles, Star } from "lucide-react";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,6 @@ export type ReviewFormValues = {
 
 interface ReviewsSectionProps {
   reviews: Review[];
-  averageRating: number;
-  totalReviews: number;
   isSubmitting?: boolean;
   isLoading?: boolean;
   submitMessage?: string;
@@ -49,8 +47,6 @@ const emptyReviewForm: ReviewFormValues = {
 
 export function ReviewsSection({
   reviews,
-  averageRating,
-  totalReviews,
   isSubmitting = false,
   isLoading = false,
   submitMessage,
@@ -90,22 +86,6 @@ export function ReviewsSection({
 
   const visibleReviews = sortedReviews.slice(0, visibleCount);
   const hasMoreReviews = sortedReviews.length > visibleCount;
-
-  const ratingDistribution = useMemo(() => {
-    const counts = [5, 4, 3, 2, 1].map((star) => ({
-      star,
-      count: reviews.filter((review) => review.rating === star).length,
-    }));
-
-    return counts.map((item) => ({
-      ...item,
-      percent: totalReviews ? Math.round((item.count / totalReviews) * 100) : 0,
-    }));
-  }, [reviews, totalReviews]);
-
-  const recommendationPercentage = totalReviews
-    ? Math.round((reviews.filter((review) => review.rating >= 4).length / totalReviews) * 100)
-    : 0;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -157,79 +137,6 @@ export function ReviewsSection({
               <option value="lowest">Lowest rated</option>
             </select>
           </label>
-        </div>
-      </div>
-
-      <div className="mt-8 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[1.5rem] border border-white/10 bg-background/70 p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.45)]">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 text-amber-400">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star
-                      key={index}
-                      className={`h-5 w-5 ${index < Math.round(averageRating) ? "fill-current" : "text-white/20"}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-3xl font-semibold text-foreground">{averageRating.toFixed(1)}</span>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground">Overall rating</p>
-            </div>
-            <div className="text-right">
-              <p className="text-3xl font-semibold text-foreground">{totalReviews}</p>
-              <p className="mt-2 text-sm text-muted-foreground">Total reviews</p>
-            </div>
-          </div>
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-background/60 p-4">
-              <p className="text-sm font-medium text-foreground">Recommendation</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">{recommendationPercentage}%</p>
-              <p className="mt-1 text-sm text-muted-foreground">of travelers recommend this experience</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-background/60 p-4">
-              <p className="text-sm font-medium text-foreground">Guest satisfaction</p>
-              <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-                <ShieldCheck className="h-4 w-4 text-accent" />
-                Verified stories and thoughtful feedback
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-3">
-            {ratingDistribution.map((item) => (
-              <div key={item.star} className="flex items-center gap-3">
-                <span className="w-8 text-sm font-medium text-muted-foreground">{item.star}★</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/10">
-                  <div
-                    className="h-full rounded-full bg-gradient-sunset"
-                    style={{ width: `${item.percent}%` }}
-                  />
-                </div>
-                <span className="w-10 text-right text-sm text-muted-foreground">{item.count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-[1.5rem] border border-accent/20 bg-gradient-to-br from-accent/10 via-background/70 to-background/90 p-6 shadow-[0_20px_60px_-30px_rgba(244,170,66,0.35)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent">Share your story</p>
-          <h3 className="mt-3 text-2xl font-semibold text-foreground">Enjoyed your adventure with us?</h3>
-          <p className="mt-3 text-sm leading-7 text-muted-foreground">
-            Your experience helps future travelers choose the right expedition and plan with confidence.
-          </p>
-          {onSubmitReview ? (
-            <Button
-              type="button"
-              onClick={() => setIsDialogOpen(true)}
-              className="mt-6 rounded-full border border-accent/30 bg-background/80 px-5 py-3 text-sm font-semibold text-foreground hover:bg-background"
-            >
-              Write a review
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          ) : null}
         </div>
       </div>
 

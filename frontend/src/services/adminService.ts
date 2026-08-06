@@ -69,6 +69,7 @@ export interface PackageItem {
   title: string;
   description?: string;
   itinerary?: string;
+  itineraryDays?: ItineraryDayItem[];
   destination?: string;
   price?: number;
   discountPrice?: number;
@@ -102,7 +103,7 @@ export interface PackageItem {
   createdAt?: string;
 }
 
-export interface ItineraryDayItem { _id: string; id?: string; packageId: string; dayNumber: number; title: string; subtitle?: string; altitude?: string; meals?: string; accommodation?: string; hours?: string; distance?: string; coverImage?: string; gallery?: Array<{ image: string; alt?: string; caption?: string }>; checklist?: string[]; infoCards?: Array<{ id: string; label: string; value: string }>; contentBlocks?: Array<{ id: string; type: "paragraph" | "heading" | "list" | "quote" | "notice" | "tips" | "warning" | "image" | "gallery" | "table" | "video" | "map" | "divider"; content: string }>; routeMap?: { image: string; alt?: string; caption?: string }; description?: string; notes?: string; tips?: string; sortOrder?: number; }
+export interface ItineraryDayItem { _id?: string; id?: string; packageId?: string; dayNumber: number; title: string; altitude?: string; meals?: string; accommodation?: string; hours?: string; distance?: string; images?: string[]; description?: string; }
 
 export interface ProductItem {
   _id: string;
@@ -233,17 +234,17 @@ export const adminService = {
         data: PackageItem[];
       }>("/packages/admin/all", { params })
     ).data,
+  getPackage: async (packageId: string) =>
+    (await api.get<{ success: boolean; data: PackageItem }>(`/packages/${packageId}`)).data,
   createPackage: async (payload: Record<string, unknown>) =>
     (await api.post("/packages", payload)).data,
   updatePackage: async (packageId: string, payload: Record<string, unknown>) =>
     (await api.put(`/packages/${packageId}`, payload)).data,
   deletePackage: async (packageId: string) => (await api.delete(`/packages/${packageId}`)).data,
-  getItineraryDays: async (packageId: string) => (await api.get<{ success: boolean; data: ItineraryDayItem[] }>(`/itinerary-days/package/${packageId}`)).data,
-  createItineraryDay: async (packageId: string, payload: Partial<ItineraryDayItem>) => (await api.post(`/itinerary-days/package/${packageId}`, payload)).data,
-  updateItineraryDay: async (id: string, payload: Partial<ItineraryDayItem>) => (await api.put(`/itinerary-days/${id}`, payload)).data,
-  deleteItineraryDay: async (id: string) => (await api.delete(`/itinerary-days/${id}`)).data,
-  duplicateItineraryDay: async (id: string) => (await api.post(`/itinerary-days/${id}/duplicate`)).data,
-  reorderItineraryDays: async (packageId: string, ids: string[]) => (await api.patch(`/itinerary-days/package/${packageId}/reorder`, { ids })).data,
+  getItineraryDays: async (packageId: string) =>
+    (await api.get<{ success: boolean; data: ItineraryDayItem[] }>(`/packages/${packageId}/itinerary-days`)).data,
+  saveItineraryDays: async (packageId: string, days: ItineraryDayItem[]) =>
+    (await api.put<{ success: boolean; data: ItineraryDayItem[]; package: PackageItem }>(`/packages/${packageId}/itinerary-days`, { days })).data,
   getProducts: async (params?: Record<string, unknown>) =>
     (
       await api.get<{

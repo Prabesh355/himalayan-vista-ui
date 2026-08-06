@@ -3,6 +3,59 @@ const { AppError } = require('../utils/errorHandler');
 const logger = require('../utils/logger');
 const slugify = require('slugify');
 
+function normaliseItineraryDays(days) {
+  if (!Array.isArray(days)) return [];
+  return days
+    .map((day, index) => ({
+      id: String(day.id || day._id || `${Date.now()}-${index}`),
+      dayNumber: index + 1,
+      title: String(day.title || '').trim(),
+      altitude: String(day.altitude || '').trim(),
+      meals: String(day.meals || '').trim(),
+      accommodation: String(day.accommodation || '').trim(),
+      hours: String(day.hours || '').trim(),
+      distance: String(day.distance || '').trim(),
+      description: String(day.description || '').trim(),
+      images: Array.isArray(day.images) ? day.images.filter(Boolean) : [],
+    }))
+    .filter((day) => day.title || day.description || day.images.length);
+}
+
+// Legacy packages stored the itinerary as markdown.  Exposing it as days on read
+// lets the editor upgrade old content without asking an admin to retype it.
+function itineraryFromLegacyMarkdown(markdown) {
+  const text = String(markdown || '').trim();
+  if (!text) return [];
+  const matches = [...text.matchAll(/(?:^|\n)(?:\s*(?:[-*]|\d+\.)\s*)?(?:#{1,6}\s*)?Day\s*(\d+)\s*(?:[—–:-]\s*)?([^\n]*)/gi)];
+  if (!matches.length) return [];
+  return matches.map((match, index) => {
+    const start = match.index + match[0].length;
+    const end = matches[index + 1]?.index ?? text.length;
+    const body = text.slice(start, end).replace(/^\s*[-:]*\s*/, '').trim();
+    return {
+      id: `legacy-${match[1]}-${index}`,
+      dayNumber: index + 1,
+      title: match[2].trim() || `Day ${index + 1}`,
+      altitude: '', meals: '', accommodation: '', hours: '', distance: '',
+      description: body,
+      images: [],
+    };
+  });
+}
+
+function itineraryToMarkdown(days) {
+  return days.map((day) => {
+    const details = [
+      day.altitude && `Altitude: ${day.altitude}`,
+      day.meals && `Meals: ${day.meals}`,
+      day.accommodation && `Lodge: ${day.accommodation}`,
+      day.hours && `Walking hours: ${day.hours}`,
+      day.distance && `Distance: ${day.distance}`,
+    ].filter(Boolean);
+    return [`## Day ${day.dayNumber}: ${day.title}`, details.join(' · '), day.description].filter(Boolean).join('\n\n');
+  }).join('\n\n---\n\n');
+}
+
 function isOwnedByUser(pkg, user) {
   if (!pkg || !user) return false;
   if (user.role === 'admin') return true;
@@ -174,6 +227,39 @@ exports.getPackage = async (req, res, next) => {
     });
   } catch (error) {
     logger.error(`Get package error: ${error.message}`);
+    next(error);
+  }
+};
+
+// @desc Get the structured itinerary for a package
+// @route GET /api/packages/:id/itinerary-days
+exports.getItineraryDays = async (req, res, next) => {
+  try {
+    const pkg = await Package.findById(req.params.id);
+    if (!pkg) return next(new AppError('Package not found', 404));
+    const days = normaliseItineraryDays(pkg.itineraryDays?.length ? pkg.itineraryDays : itineraryFromLegacyMarkdown(pkg.itinerary));
+    res.status(200).json({ success: true, data: days });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc Replace a package's structured itinerary, preserving its rendered website itinerary
+// @route PUT /api/packages/:id/itinerary-days
+exports.replaceItineraryDays = async (req, res, next) => {
+  try {
+    const pkg = await Package.findById(req.params.id);
+    if (!pkg) return next(new AppError('Package not found', 404));
+    if (!isOwnedByUser(pkg, req.user)) return next(new AppError('Not authorized to update this package', 403));
+    if (!Array.isArray(req.body.days)) return next(new AppError('Itinerary days must be an array', 400));
+    const days = normaliseItineraryDays(req.body.days);
+    const missingTitle = days.find((day) => !day.title);
+    if (missingTitle) return next(new AppError(`Day ${missingTitle.dayNumber} requires a title`, 400));
+    pkg.itineraryDays = days;
+    pkg.itinerary = itineraryToMarkdown(days);
+    await pkg.save();
+    res.status(200).json({ success: true, message: 'Itinerary updated successfully', data: days, package: pkg });
+  } catch (error) {
     next(error);
   }
 };
