@@ -153,9 +153,7 @@ type ReviewApiItem = {
 };
 
 function Hero({ data }: { data?: any }) {
-  const badgeText = String(data?.badgeText || "Elite IFMGA Guides")
-    .replace(/\bbooking\s+open\b\s*[·|•–—-]?\s*/i, "")
-    .trim() || "Elite IFMGA Guides";
+  const badgeText = String(data?.badgeText || "Elite IFMGA Guides").trim() || "Elite IFMGA Guides";
   const title = data?.title || "EXPLORE THE SUMMIT STANDARDS";
   const description =
     data?.description ||

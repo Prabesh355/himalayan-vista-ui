@@ -18,6 +18,26 @@ const normalise = (days: ItineraryDayItem[]): DraftDay[] => days.map((day, index
   hours: day.hours || "", distance: day.distance || "", description: day.description || "", images: day.images || [],
 }));
 const createDay = (number: number): DraftDay => ({ id: newId(), dayNumber: number, title: "", altitude: "", meals: "", accommodation: "", hours: "", distance: "", description: "", images: [] });
+const legacyDays = (itinerary?: string): ItineraryDayItem[] => {
+  const text = String(itinerary || "").trim();
+  const matches = [...text.matchAll(/(?:^|\n)\s*(?:\d+[.)]\s*)?(?:#{1,6}\s*)?Day\s*(\d+)\s*(?:[—–:-]\s*)?([^\n]*)/gi)];
+  return matches.map((match, index) => ({
+    id: `legacy-${match[1]}-${index}`,
+    dayNumber: index + 1,
+    title: match[2].trim() || `Day ${index + 1}`,
+    description: text.slice((match.index || 0) + match[0].length, matches[index + 1]?.index || text.length).replace(/^\s*[-:]*\s*/, "").trim(),
+  }));
+};
+const toItineraryMarkdown = (days: DraftDay[]) => days.map((day) => {
+  const details = [
+    day.altitude && `Altitude: ${day.altitude}`,
+    day.meals && `Meals: ${day.meals}`,
+    day.accommodation && `Lodge: ${day.accommodation}`,
+    day.hours && `Walking hours: ${day.hours}`,
+    day.distance && `Distance: ${day.distance}`,
+  ].filter(Boolean).join(" · ");
+  return [`## Day ${day.dayNumber}: ${day.title}`, details, day.description].filter(Boolean).join("\n\n");
+}).join("\n\n---\n\n");
 
 export function StructuredItineraryTab({ packageId }: { packageId: string }) {
   const queryClient = useQueryClient();
@@ -27,18 +47,21 @@ export function StructuredItineraryTab({ packageId }: { packageId: string }) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [replaceTarget, setReplaceTarget] = useState<{ dayId: string; imageIndex: number } | null>(null);
   const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
-  const query = useQuery({ queryKey: ["itinerary-days", packageId], queryFn: () => adminService.getItineraryDays(packageId), enabled: Boolean(packageId) });
+  // The deployed package API is the source of truth. This avoids depending on
+  // a separate itinerary route and makes every existing package editable.
+  const query = useQuery({ queryKey: ["package", packageId], queryFn: () => adminService.getPackage(packageId), enabled: Boolean(packageId) });
 
   useEffect(() => {
     if (!query.data) return;
-    const loaded = normalise(query.data.data || []);
+    const packageData = query.data.data;
+    const loaded = normalise(packageData.itineraryDays?.length ? packageData.itineraryDays : legacyDays(packageData.itinerary));
     setDays(loaded);
     setSavedDays(loaded);
     setOpenDays(loaded.length ? [loaded[0].id] : []);
   }, [query.data]);
 
   const isDirty = useMemo(() => JSON.stringify(days) !== JSON.stringify(savedDays), [days, savedDays]);
-  const validationError = useMemo(() => days.find((day) => !day.title.trim() || !day.description.trim()), [days]);
+  const validationError = useMemo(() => days.find((day) => !day.title.trim()), [days]);
   const updateDay = (id: string, patch: Partial<DraftDay>) => setDays((current) => normalise(current.map((day) => day.id === id ? { ...day, ...patch } : day)));
   const addDay = () => {
     const day = createDay(days.length + 1);
@@ -70,11 +93,12 @@ export function StructuredItineraryTab({ packageId }: { packageId: string }) {
     } catch (error: any) { toast.error(error?.response?.data?.message || error?.message || "Image upload failed"); }
   };
   const save = useMutation({
-    mutationFn: () => adminService.saveItineraryDays(packageId, days),
+    mutationFn: () => adminService.updatePackage(packageId, { itineraryDays: days, itinerary: toItineraryMarkdown(days) }),
     onSuccess: async (result) => {
-      const saved = normalise(result.data || []); setDays(saved); setSavedDays(saved);
+      const savedPackage = result?.data;
+      const saved = normalise(savedPackage?.itineraryDays?.length ? savedPackage.itineraryDays : days); setDays(saved); setSavedDays(saved);
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["itinerary-days", packageId] }),
+        queryClient.invalidateQueries({ queryKey: ["package", packageId] }),
         queryClient.invalidateQueries({ queryKey: ["admin-packages"] }),
         queryClient.invalidateQueries({ queryKey: ["packages"] }),
         queryClient.invalidateQueries({ queryKey: ["package"] }),
@@ -105,13 +129,13 @@ export function StructuredItineraryTab({ packageId }: { packageId: string }) {
             <label className="grid gap-1 text-sm font-medium">Lodge<Input value={day.accommodation} onChange={(event) => updateDay(day.id, { accommodation: event.target.value })} /></label>
             <label className="grid gap-1 text-sm font-medium">Walking hours<Input value={day.hours} onChange={(event) => updateDay(day.id, { hours: event.target.value })} /></label>
             <label className="grid gap-1 text-sm font-medium">Distance<Input value={day.distance} onChange={(event) => updateDay(day.id, { distance: event.target.value })} /></label>
-            <label className="grid gap-1 text-sm font-medium md:col-span-2">Description <span className="text-destructive">*</span><Textarea value={day.description} onChange={(event) => updateDay(day.id, { description: event.target.value })} rows={5} /></label>
+            <label className="grid gap-1 text-sm font-medium md:col-span-2">Description<Textarea value={day.description} onChange={(event) => updateDay(day.id, { description: event.target.value })} rows={5} /></label>
             <div className="space-y-2 md:col-span-2"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm font-medium">Images</p><div className="flex gap-2"><Input className="h-9 w-52" placeholder="Paste image URL and press Enter" onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); const url = event.currentTarget.value.trim(); if (url) { updateDay(day.id, { images: [...day.images, url] }); event.currentTarget.value = ""; } } }} /><input ref={(element) => { fileInputs.current[day.id] = element; }} type="file" accept="image/*" className="hidden" onChange={(event) => void uploadImage(day, event.target.files?.[0])} /><Button type="button" size="sm" variant="outline" onClick={() => { setReplaceTarget(null); fileInputs.current[day.id]?.click(); }}><Upload className="h-4 w-4" /> Upload</Button></div></div>
               {day.images.length ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{day.images.map((image, imageIndex) => <div key={`${image}-${imageIndex}`} className="group relative overflow-hidden rounded-lg border"><img src={resolveImageUrl(image)} alt={`Day ${day.dayNumber} image ${imageIndex + 1}`} className="h-24 w-full object-cover" /><div className="absolute inset-x-0 bottom-0 flex justify-between bg-black/60 p-1 opacity-0 transition-opacity group-hover:opacity-100"><Button type="button" size="sm" variant="ghost" className="h-7 text-white hover:bg-white/20 hover:text-white" onClick={() => { setReplaceTarget({ dayId: day.id, imageIndex }); fileInputs.current[day.id]?.click(); }}><ImagePlus className="h-3.5 w-3.5" /> Replace</Button><Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-white hover:bg-white/20 hover:text-white" onClick={() => updateDay(day.id, { images: day.images.filter((_, itemIndex) => itemIndex !== imageIndex) })} aria-label="Remove image"><X className="h-3.5 w-3.5" /></Button></div></div>)}</div> : <p className="text-sm text-muted-foreground">No images for this day.</p>}</div>
           </div></AccordionContent>
         </AccordionItem>)}
       </Accordion>}
     <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-3 border-t bg-background/95 py-4 backdrop-blur"><p className="text-sm text-muted-foreground">{isDirty ? "You have unsaved itinerary changes." : "All itinerary changes are saved."}</p><div className="flex gap-2"><Button type="button" variant="outline" disabled={!isDirty || save.isPending} onClick={() => { setDays(savedDays); toast.message("Itinerary changes discarded."); }}>Discard</Button><Button type="button" disabled={!isDirty || Boolean(validationError) || save.isPending} onClick={() => save.mutate()}>{save.isPending ? "Saving…" : "Save itinerary"}</Button></div></div>
-    {validationError && <p className="text-sm text-destructive">Day {validationError.dayNumber} needs both a title and description before saving.</p>}
+    {validationError && <p className="text-sm text-destructive">Day {validationError.dayNumber} needs a title before saving.</p>}
   </section>;
 }
