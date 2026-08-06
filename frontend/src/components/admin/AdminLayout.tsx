@@ -5,9 +5,9 @@ import { AdminSidebar } from "./AdminSidebar";
 
 export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen items-start bg-background text-foreground">
       <AdminSidebar />
-      <main className="flex-1 overflow-x-hidden pt-[60px] md:pt-0">
+      <main className="min-w-0 flex-1 overflow-x-hidden pt-[60px] md:pt-0">
         <div className="sticky top-0 z-30 flex justify-end border-b bg-background/90 px-4 py-3 backdrop-blur md:px-8">
           <Link
             to="/"

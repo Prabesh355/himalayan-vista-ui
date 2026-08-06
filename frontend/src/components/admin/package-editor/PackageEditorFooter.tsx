@@ -21,7 +21,7 @@ export const PackageEditorFooter: React.FC<PackageEditorFooterProps> = ({
   onCancel,
 }) => {
   return (
-    <div className="sticky bottom-0 border-t bg-background/95 px-5 py-4 backdrop-blur">
+    <div className="sticky bottom-0 z-20 border-t bg-background/95 px-5 py-4 backdrop-blur">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="text-sm text-muted-foreground">
           {hasUnsavedChanges ? "You have unsaved changes." : "All changes are synced."}

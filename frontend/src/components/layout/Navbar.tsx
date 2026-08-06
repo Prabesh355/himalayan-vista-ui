@@ -84,9 +84,9 @@ function PackageLink({ label, slug, onClick }: { label: string; slug: string; on
       to="/packages/$slug"
       params={{ slug }}
       onClick={onClick}
-      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+      className="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/80 transition-all duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-foreground"
     >
-      <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" />
+      <MapPin className="h-3.5 w-3.5 shrink-0 text-accent transition-transform duration-200 group-hover:scale-110" />
       {label}
     </Link>
   );
@@ -101,8 +101,8 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
     <li ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-1 px-2 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-wider transition-colors hover:text-foreground ${
-          open ? "text-foreground" : "text-foreground/80"
+        className={`inline-flex items-center gap-1 rounded-full border border-transparent px-3 py-2 text-[11px] lg:text-xs font-bold uppercase tracking-[0.18em] transition-all duration-200 hover:border-white/10 hover:bg-white/5 hover:text-foreground ${
+          open ? "bg-white/10 text-foreground shadow-sm" : "text-foreground/80"
         }`}
       >
         Destination
@@ -112,15 +112,25 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-[min(92vw,880px)] sm:w-[min(84vw,820px)]">
-          <div className="glass-strong rounded-2xl p-5 shadow-2xl border border-white/10 bg-slate-950/95 backdrop-blur-2xl">
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
-              {/* Expedition */}
+        <div className="absolute left-0 top-full z-50 mt-3 w-[min(92vw,880px)] sm:w-[min(84vw,820px)]">
+          <div className="glass-strong overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950/96 via-slate-950/92 to-slate-900/95 p-5 shadow-2xl backdrop-blur-2xl">
+            <div className="mb-4 flex items-center justify-between gap-4 border-b border-white/10 pb-4">
               <div>
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
+                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">Destination</p>
+                <p className="mt-1 text-sm text-white/85">Browse the most popular trekking and expedition routes.</p>
+              </div>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-white/70">
+                Premium route catalog
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-5">
+              {/* Expedition */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
                   Expedition
                 </p>
-                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Ski Sport Expedition</p>
+                <p className="mb-3 px-3 text-[10px] text-white/55 italic">Ski Sport Expedition</p>
                 <div className="space-y-0.5">
                   {EXPEDITIONS.map((exp) => (
                     <Link
@@ -128,9 +138,9 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
                       to="/packages/$slug"
                       params={{ slug: exp.slug }}
                       onClick={() => { setOpen(false); onClose(); }}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-white/10 hover:text-foreground transition-colors"
+                      className="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/80 transition-all duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-foreground"
                     >
-                      <Mountain className="h-3.5 w-3.5 shrink-0 text-accent" />
+                      <Mountain className="h-3.5 w-3.5 shrink-0 text-accent transition-transform duration-200 group-hover:scale-110" />
                       {exp.label}
                     </Link>
                   ))}
@@ -138,11 +148,11 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
               </div>
 
               {/* Classic Trekking */}
-              <div>
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
                   Trekking
                 </p>
-                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Classic Trekking</p>
+                <p className="mb-3 px-3 text-[10px] text-white/55 italic">Classic Trekking</p>
                 <div className="space-y-0.5">
                   {TREKKING_PACKAGES.map((pkg) => (
                     <PackageLink
@@ -156,11 +166,11 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
               </div>
 
               {/* Remote Trekking */}
-              <div>
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-widest text-accent">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
                   &nbsp;
                 </p>
-                <p className="mb-2 px-3 text-[10px] text-muted-foreground italic">Remote Trekking</p>
+                <p className="mb-3 px-3 text-[10px] text-white/55 italic">Remote Trekking</p>
                 <div className="space-y-0.5">
                   {REMOTE_TREKKING.map((pkg) => (
                     <PackageLink
@@ -175,11 +185,12 @@ function DestinationDropdown({ onClose }: { onClose: () => void }) {
             </div>
 
             {/* Footer CTA */}
-            <div className="mt-4 border-t border-border/30 pt-3">
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+              <p className="text-[11px] text-white/55">Quick access to the most visited route pages.</p>
               <Link
                 to="/packages"
                 onClick={() => { setOpen(false); onClose(); }}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-px hover:opacity-95"
               >
                 View All Packages →
               </Link>
@@ -504,49 +515,65 @@ export function Navbar() {
                   <div>
                     <button
                       onClick={() => setMobileExpanded(mobileExpanded === "destination" ? null : "destination")}
-                      className="w-full flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold text-foreground/90 hover:bg-white/10"
+                      className={`group w-full flex items-center justify-between rounded-2xl border px-4 py-3.5 text-base font-semibold transition-all duration-200 ${mobileExpanded === "destination" ? "border-white/10 bg-white/10 text-foreground shadow-sm" : "border-transparent text-foreground/90 hover:border-white/10 hover:bg-white/5 hover:text-foreground"}`}
                     >
-                      Destination
-                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileExpanded === "destination" ? "rotate-180" : ""}`} />
+                      <span className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-accent" />
+                        Destination
+                      </span>
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileExpanded === "destination" ? "rotate-180" : ""}`} />
                     </button>
                     {mobileExpanded === "destination" && (
-                      <div className="mx-2 mb-2 rounded-xl bg-white/5 p-2 space-y-4">
+                      <div className="mx-2 mb-2 space-y-4 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.03] p-3 shadow-inner">
+                        <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent">Destination</p>
+                            <p className="mt-1 text-xs text-muted-foreground">Quick links to the most popular route pages.</p>
+                          </div>
+                          <span className="rounded-full border border-white/10 bg-background/80 px-3 py-1 text-[10px] font-medium text-muted-foreground shadow-sm">
+                            Mobile menu
+                          </span>
+                        </div>
+
                         {/* Expedition */}
-                        <div>
-                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Expedition</p>
-                          <p className="px-3 mb-1 text-[10px] text-muted-foreground italic">Ski Sport Expedition</p>
+                        <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-accent">Expedition</p>
+                          <p className="px-3 mb-2 text-[10px] text-white/55 italic">Ski Sport Expedition</p>
                           {EXPEDITIONS.map((exp) => (
                             <Link key={exp.slug} to="/packages/$slug" params={{ slug: exp.slug }} onClick={closeMobile}
-                              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
-                              <Mountain className="h-3.5 w-3.5 text-accent shrink-0" />{exp.label}
+                              className="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/80 transition-all duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-foreground">
+                              <Mountain className="h-3.5 w-3.5 text-accent shrink-0 transition-transform duration-200 group-hover:scale-110" />{exp.label}
                             </Link>
                           ))}
                         </div>
 
                         {/* Trekking */}
-                        <div>
-                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent">Trekking</p>
-                          <p className="px-3 mb-1 text-[10px] text-muted-foreground italic">Classic Trekking</p>
+                        <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-accent">Trekking</p>
+                          <p className="px-3 mb-2 text-[10px] text-white/55 italic">Classic Trekking</p>
                           {TREKKING_PACKAGES.map((pkg) => (
                             <Link key={pkg.slug} to="/packages/$slug" params={{ slug: pkg.slug }} onClick={closeMobile}
-                              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
-                              <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />{pkg.label}
+                              className="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/80 transition-all duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-foreground">
+                              <MapPin className="h-3.5 w-3.5 text-accent shrink-0 transition-transform duration-200 group-hover:scale-110" />{pkg.label}
                             </Link>
                           ))}
                           
-                          <div className="my-2 border-t border-border/20 mx-3" />
-                          <p className="px-3 mb-1 text-[10px] text-muted-foreground italic">Remote Trekking</p>
+                          <div className="my-3 border-t border-white/10 mx-3" />
+                          <p className="px-3 mb-2 text-[10px] text-white/55 italic">Remote Trekking</p>
                           {REMOTE_TREKKING.map((pkg) => (
                             <Link key={pkg.slug} to="/packages/$slug" params={{ slug: pkg.slug }} onClick={closeMobile}
-                              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-white/10">
-                              <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />{pkg.label}
+                              className="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/80 transition-all duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-foreground">
+                              <MapPin className="h-3.5 w-3.5 text-accent shrink-0 transition-transform duration-200 group-hover:scale-110" />{pkg.label}
                             </Link>
                           ))}
                         </div>
 
-                        <Link to="/packages" onClick={closeMobile} className="block mt-2 px-3 py-2 text-xs font-semibold text-accent hover:underline">
-                          View All Packages →
-                        </Link>
+                        <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
+                          <p className="text-[11px] text-white/60">Quick access to all package routes.</p>
+                          <Link to="/packages" onClick={closeMobile} className="inline-flex items-center gap-2 rounded-full bg-gradient-sunset px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:opacity-95">
+                            View All →
+                          </Link>
+                        </div>
                       </div>
                     )}
                   </div>

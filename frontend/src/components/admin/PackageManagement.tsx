@@ -680,8 +680,8 @@ export const PackageManagement: React.FC = () => {
             </button>
           </DialogTrigger>
 
-          <DialogContent className="h-[100dvh] w-screen max-w-none overflow-hidden rounded-none border-0 bg-background p-0">
-            <div className="grid h-full md:grid-cols-[300px_minmax(0,1fr)]">
+          <DialogContent className="left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 overflow-hidden rounded-none border-0 bg-background p-0">
+            <div className="grid h-full min-h-0 md:grid-cols-[300px_minmax(0,1fr)]">
               <PackageEditorSidebar
                 selectedPackageTitle={selectedPackage ? "Edit Package" : "Create Package"}
                 lastEditedAt={lastEditedAt}
@@ -692,38 +692,66 @@ export const PackageManagement: React.FC = () => {
                 onTabChange={setActiveTab}
               />
 
-              <div className="flex h-full min-w-0 flex-col">
-                <div className="border-b bg-background/95 px-5 py-4 backdrop-blur">
-                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="space-y-1">
-                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Package editor</p>
-                      <h2 className="text-xl font-semibold tracking-tight">
-                        {form.title || selectedPackage?.title || "New package"}
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        Use the sidebar to move between content blocks, media, pricing, SEO, and review.
-                      </p>
+              <div className="flex h-full min-w-0 flex-col overflow-hidden">
+                <div className="relative sticky top-0 z-20 overflow-hidden border-b bg-gradient-to-r from-background via-background to-sky-50/40 px-5 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/90 md:px-6">
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-primary">
+                          Package CMS
+                        </span>
+                        <span className="inline-flex items-center rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+                          {selectedPackage ? "Editing live record" : "Creating new record"}
+                        </span>
+                        <span className="inline-flex items-center rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+                          Autosave enabled
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <h2 className="text-2xl font-semibold tracking-tight">
+                          {form.title || selectedPackage?.title || "New package"}
+                        </h2>
+                        <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+                          Use the sidebar to move between content blocks, media, pricing, SEO, and review.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        <span className="rounded-full border bg-background/80 px-3 py-1 shadow-sm">Ctrl/Cmd + S to save</span>
+                        <span className="rounded-full border bg-background/80 px-3 py-1 shadow-sm">Cloudinary media</span>
+                        <span className="rounded-full border bg-background/80 px-3 py-1 shadow-sm">Sticky footer actions</span>
+                      </div>
+
                       {selectedPackageQuery.isLoading ? <p className="text-sm text-muted-foreground">Loading the current package data…</p> : null}
                       {selectedPackageQuery.isError ? <p className="text-sm text-destructive">Unable to load the latest package data. Editing is disabled until it can be retrieved.</p> : null}
                     </div>
-                    {saveSuccess ? (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-700"
-                      >
-                        <div>
-                          <p className="font-medium">Package saved successfully</p>
-                          <p className="text-sm text-emerald-700/80">The latest version is ready for publishing.</p>
+
+                    <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center lg:items-start">
+                      {saveSuccess ? (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-700 shadow-sm"
+                        >
+                          <div>
+                            <p className="font-medium">Package saved successfully</p>
+                            <p className="text-sm text-emerald-700/80">The latest version is ready for publishing.</p>
+                          </div>
+                        </motion.div>
+                      ) : (
+                        <div className="rounded-2xl border bg-background px-4 py-3 text-sm text-muted-foreground shadow-sm">
+                          Professional, full-screen editing workspace
                         </div>
-                      </motion.div>
-                    ) : null}
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TabKey)} className="flex h-full min-h-0 flex-col">
-                  <div className="flex-1 overflow-y-auto p-4 md:p-6">
-                    <TabsContent value="general" className="mt-0">
+                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TabKey)} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
+                    <TabsContent value="general" className="mt-0 min-h-0">
                       <PackageEditorGeneralTab
                         form={form}
                         formErrors={formErrors}
@@ -731,11 +759,11 @@ export const PackageManagement: React.FC = () => {
                       />
                     </TabsContent>
 
-                    <TabsContent value="itinerary" className="mt-0">
+                    <TabsContent value="itinerary" className="mt-0 min-h-0">
                       <StructuredItineraryTab packageId={getPackageRecordId(selectedPackage)} />
                     </TabsContent>
 
-                    <TabsContent value="images" className="mt-0">
+                    <TabsContent value="images" className="mt-0 min-h-0">
                       <PackageEditorImagesTab
                         images={form.images}
                         uploading={uploading}
@@ -753,19 +781,19 @@ export const PackageManagement: React.FC = () => {
                       />
                     </TabsContent>
 
-                    <TabsContent value="route-map" className="mt-0">
+                    <TabsContent value="route-map" className="mt-0 min-h-0">
                       <PackageEditorRouteMapTab form={form} onChange={updateFormField} onUpload={(files) => void handleRouteMapUpload(files)} />
                     </TabsContent>
 
-                    <TabsContent value="pricing" className="mt-0">
+                    <TabsContent value="pricing" className="mt-0 min-h-0">
                       <PackageEditorPricingTab form={form} formErrors={formErrors} onChange={updateFormField} />
                     </TabsContent>
 
-                    <TabsContent value="seo" className="mt-0">
+                    <TabsContent value="seo" className="mt-0 min-h-0">
                       <PackageEditorSeoTab form={form} onChange={updateFormField} />
                     </TabsContent>
 
-                    <TabsContent value="overview" className="mt-0">
+                    <TabsContent value="overview" className="mt-0 min-h-0">
                       <PackageEditorOverviewTab
                         form={form}
                         overviewWarnings={overviewWarnings}
@@ -775,21 +803,23 @@ export const PackageManagement: React.FC = () => {
                     </TabsContent>
                   </div>
 
-                  <PackageEditorFooter
-                    hasUnsavedChanges={hasUnsavedChanges}
-                    isSaving={saveMutation.isPending || selectedPackageQuery.isLoading}
-                    selectedPackageExists={Boolean(selectedPackage)}
-                    onSaveDraft={() => handleSave({ isDraft: true })}
-                    onUpdate={() => handleSave({ isDraft: false })}
-                    onDelete={() => {
-                      const id = getPackageRecordId(selectedPackage);
-                      if (!id) return;
-                      const confirmDelete = window.confirm("Delete this package permanently?");
-                      if (!confirmDelete) return;
-                      deleteMutation.mutate(id);
-                    }}
-                    onCancel={() => handleCloseEditor(false)}
-                  />
+                  <div className="shrink-0">
+                    <PackageEditorFooter
+                      hasUnsavedChanges={hasUnsavedChanges}
+                      isSaving={saveMutation.isPending || selectedPackageQuery.isLoading}
+                      selectedPackageExists={Boolean(selectedPackage)}
+                      onSaveDraft={() => handleSave({ isDraft: true })}
+                      onUpdate={() => handleSave({ isDraft: false })}
+                      onDelete={() => {
+                        const id = getPackageRecordId(selectedPackage);
+                        if (!id) return;
+                        const confirmDelete = window.confirm("Delete this package permanently?");
+                        if (!confirmDelete) return;
+                        deleteMutation.mutate(id);
+                      }}
+                      onCancel={() => handleCloseEditor(false)}
+                    />
+                  </div>
                 </Tabs>
               </div>
             </div>

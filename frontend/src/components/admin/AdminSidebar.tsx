@@ -123,7 +123,7 @@ export const AdminSidebar = () => {
           x: isMobileOpen ? 0 : "auto",
         }}
         className={cn(
-          "fixed md:sticky top-0 h-screen bg-card border-r z-50 flex flex-col transition-all duration-300 shadow-xl md:shadow-none",
+          "fixed top-0 z-50 flex h-screen flex-col bg-card border-r transition-all duration-300 shadow-xl md:relative md:z-20 md:h-auto md:shadow-none",
           "max-md:w-[280px] max-md:absolute max-md:left-0 max-md:h-screen max-md:overflow-hidden",
           !isMobileOpen && "max-md:-translate-x-full",
         )}
@@ -164,7 +164,7 @@ export const AdminSidebar = () => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+        <div className="flex-1 overflow-y-auto py-4 px-2 space-y-1 md:max-h-[calc(100vh-120px)]">
           {navItems.map((item) => {
             const isActive =
               item.to === "/admin"

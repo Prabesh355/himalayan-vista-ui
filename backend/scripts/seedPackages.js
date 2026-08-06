@@ -267,6 +267,7 @@ Descend to Chetchet and return to Kathmandu by jeep, completing the Rolwaling Va
   },
   {
     title: "Nar Phu Valley Trek",
+    slug: "nar-phu-valley-trek",
     region: "Annapurna",
     tagline: "Remote Himalayan adventure through Nar and Phu Valleys",
     description: "A 12-day restricted area trek through Nar and Phu, crossing Kang La Pass and returning via the Annapurna Circuit.",
@@ -1668,7 +1669,7 @@ async function seed() {
       };
       delete processedData.imageUrl;
 
-      const slug = slugify(String(data.title), { lower: true, strict: true });
+      const slug = data.slug || slugify(String(data.title), { lower: true, strict: true });
       const existing = await Package.find({ slug }).exec();
 
       if (existing && existing.length > 0) {

@@ -38,7 +38,7 @@ export const PackageEditorSidebar: React.FC<PackageEditorSidebarProps> = ({
   onTabChange,
 }) => {
   return (
-    <aside className="hidden h-full flex-col border-r bg-muted/20 p-5 md:flex">
+    <aside className="hidden h-[100dvh] flex-col overflow-y-auto border-r bg-muted/20 p-5 md:sticky md:top-0 md:flex">
       <div className="space-y-3 border-b pb-4">
         <div className="space-y-2 text-left">
           <p className="text-2xl font-semibold tracking-tight">{selectedPackageTitle}</p>

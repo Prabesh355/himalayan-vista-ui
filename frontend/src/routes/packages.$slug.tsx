@@ -105,7 +105,7 @@ export const defaultQuickFacts: Record<string, TrekQuickFacts> = {
     groupSize: "2 - 8 Climbers",
     difficulty: "Strenuous (Alpine Grade PD)",
   },
-  "manaslu-and-tsum-valley": {
+  "manaslu-tsum-valley": {
     altitude: "5,106m (Larkya La Pass)",
     duration: "20 Days",
     accommodation: "Local Tibetan-style Tea Houses",
@@ -125,7 +125,7 @@ export const defaultQuickFacts: Record<string, TrekQuickFacts> = {
     groupSize: "2 - 8 Travelers",
     difficulty: "Strenuous",
   },
-  "tsho-rolpa-lake": {
+  "tsho-rolpa-valley": {
     altitude: "4,580m (Tsho Rolpa Lake)",
     duration: "10 Days",
     accommodation: "Lodge & Local Homestays",
@@ -186,6 +186,20 @@ export const defaultQuickFacts: Record<string, TrekQuickFacts> = {
     difficulty: "Demanding / Remote",
   },
 };
+
+const packageSlugAliases: Record<string, string> = {
+  "manaslu-and-tsum-valley": "manaslu-tsum-valley",
+  "api-himal-base-camp-trek": "api-himal-base-camp",
+  "kanchenjunga-base-camp-trek": "kanchenjunga-base-camp",
+  "nar-phu-valley": "nar-phu-valley-trek",
+  "tsho-rolpa": "tsho-rolpa-valley-trek",
+  "three-pass": "three-pass-trek",
+  "annapurna-circuit": "annapurna-circuit-trek",
+};
+
+function resolvePackageSlug(slug: string) {
+  return packageSlugAliases[slug] || slug;
+}
 
 export function getTrekFacts(slug: string, pkg: any): TrekQuickFacts {
   const normalizedSlug = slug.toLowerCase().replace(/-trek$/, "");
@@ -921,8 +935,9 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
   const packageQuery = useQuery({
     queryKey: ["package", slug],
     queryFn: async () => {
+      const resolvedSlug = resolvePackageSlug(slug);
       try {
-        const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${slug}`);
+        const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${resolvedSlug}`);
         return res.data;
       } catch (err: any) {
         const status = err.response?.status;
@@ -933,7 +948,7 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
           !err.response || status === 404 || status === 502 || status === 503 || status === 504;
         if (shouldUseLocalCatalogue) {
           const mockModule = await import("@/services/mockData");
-          const fallback = mockModule.destinations.find((d) => d.slug === slug);
+          const fallback = mockModule.destinations.find((d) => d.slug === resolvedSlug || d.slug === slug);
           if (fallback) {
             const daysMatch = fallback.duration ? fallback.duration.match(/(\d+)\s*days?/i) : null;
             const days = daysMatch ? Number(daysMatch[1]) : 1;
@@ -1082,7 +1097,7 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
     }, 3000);
   };
 
-  const facts = getTrekFacts(slug, pkg);
+  const facts = getTrekFacts(resolvePackageSlug(slug), pkg);
   const quickFactsList = [
     { label: "Highest Altitude", value: facts.altitude, icon: Mountain },
     { label: "Duration", value: facts.duration, icon: CalendarDays },
