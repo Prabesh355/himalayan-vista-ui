@@ -803,8 +803,15 @@ export const Route = createFileRoute("/packages/$slug")({
 
 export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
   const { formatPrice } = useCurrency();
-  const routeParams = Route.useParams();
-  const slug = slugProp || routeParams.slug;
+  let routeSlug = "";
+  if (!slugProp) {
+    try {
+      routeSlug = Route.useParams()?.slug || "";
+    } catch {
+      routeSlug = "";
+    }
+  }
+  const slug = slugProp || routeSlug;
   const [openDay, setOpenDay] = useState<number | null>(0);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
@@ -940,39 +947,38 @@ export function PackageDetails({ slug: slugProp }: { slug?: string } = {}) {
         const res = await api.get<{ success: boolean; data: any }>(`/packages/slug/${resolvedSlug}`);
         return res.data;
       } catch (err: any) {
-        const status = err.response?.status;
-        // The navigation can reference packages that have not yet been seeded in
-        // the API. Keep those destination pages available from the local catalogue
-        // while retaining the API as the primary source whenever it has a record.
-        const shouldUseLocalCatalogue =
-          !err.response || status === 404 || status === 502 || status === 503 || status === 504;
-        if (shouldUseLocalCatalogue) {
-          const mockModule = await import("@/services/mockData");
-          const fallback = mockModule.destinations.find((d) => d.slug === resolvedSlug || d.slug === slug);
-          if (fallback) {
-            const daysMatch = fallback.duration ? fallback.duration.match(/(\d+)\s*days?/i) : null;
-            const days = daysMatch ? Number(daysMatch[1]) : 1;
-            const nights = Math.max(0, days - 1);
-            return {
-              success: true,
-              data: {
-                id: fallback.slug,
-                slug: fallback.slug,
-                title: fallback.name,
-                description: fallback.description,
-                destination: fallback.region,
-                price: fallback.priceFrom || 0,
-                duration: { days, nights },
-                images: fallback.image ? [fallback.image] : [],
-                groupSize: { min: 1, max: 12 },
-                featured: false,
-                isActive: true,
-                itinerary: fallback.itinerary || "",
-                rating: fallback.rating || 0,
-                reviewCount: fallback.reviews || 0,
-              },
-            };
-          }
+        const mockModule = await import("@/services/mockData");
+        const fallback = mockModule.destinations.find(
+          (d) =>
+            d.slug === resolvedSlug ||
+            d.slug === slug ||
+            d.slug.replace(/-trek$/, "") === resolvedSlug.replace(/-trek$/, "") ||
+            d.slug.replace(/-trek$/, "") === slug.replace(/-trek$/, "")
+        );
+        if (fallback) {
+          const daysMatch = fallback.duration ? fallback.duration.match(/(\d+)\s*days?/i) : null;
+          const days = daysMatch ? Number(daysMatch[1]) : 1;
+          const nights = Math.max(0, days - 1);
+          return {
+            success: true,
+            data: {
+              id: fallback.slug,
+              slug: fallback.slug,
+              title: fallback.name,
+              description: fallback.description,
+              destination: fallback.region,
+              price: fallback.priceFrom || 0,
+              duration: { days, nights },
+              images: fallback.image ? [fallback.image] : [],
+              groupSize: { min: 1, max: 12 },
+              featured: false,
+              isActive: true,
+              itinerary: fallback.itinerary || "",
+              rating: fallback.rating || 0,
+              reviewCount: fallback.reviews || 0,
+              category: fallback.category || "trekking",
+            },
+          };
         }
         throw err;
       }
