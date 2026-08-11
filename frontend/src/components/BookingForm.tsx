@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { X, Calendar, Users, AlertCircle, CheckCircle2 } from 'lucide-react';
 import api from '@/services/api';
 import { cn } from '@/lib/utils';
@@ -44,13 +45,21 @@ export function BookingForm({
   ]);
   const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
   const [specialRequests, setSpecialRequests] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState(false);
 
   const createBookingMutation = useMutation({
-    mutationFn: async (bookingData) => {
+    mutationFn: async (bookingData: any) => {
       const response = await api.post('/bookings', bookingData);
       return response.data;
     },
   });
+
+  const handleClose = () => {
+    setTermsAccepted(false);
+    setTermsError(false);
+    onClose();
+  };
 
   const handleNumberOfTravelersChange = (num: number) => {
     setNumberOfTravelers(num);
@@ -104,6 +113,11 @@ export function BookingForm({
     }
 
     if (step === 'confirmation') {
+      if (!termsAccepted) {
+        setTermsError(true);
+        return;
+      }
+
       const resolvedPackageId = packageId || "";
       const bookingData = {
         packageId: resolvedPackageId,
@@ -113,10 +127,14 @@ export function BookingForm({
         travelers: travelers.slice(0, numberOfTravelers),
         paymentMethod,
         specialRequests,
+        termsAccepted: true,
+        termsAcceptedAt: new Date().toISOString(),
       };
 
       createBookingMutation.mutate(bookingData, {
         onSuccess: () => {
+          setTermsAccepted(false);
+          setTermsError(false);
           onSuccess?.();
           onClose();
         },
@@ -138,7 +156,7 @@ export function BookingForm({
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             <X className="w-6 h-6" />
@@ -324,6 +342,43 @@ export function BookingForm({
                   <span className="font-bold text-accent">NPR {totalPrice.toLocaleString()}</span>
                 </div>
               </div>
+
+              {/* Terms & Conditions Agreement */}
+              <div className="pt-2 border-t border-border/40 space-y-2">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="booking-terms-checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => {
+                      setTermsAccepted(e.target.checked);
+                      if (e.target.checked) setTermsError(false);
+                    }}
+                    className="mt-1 h-4 w-4 rounded border-border/80 bg-background text-accent focus:ring-2 focus:ring-accent accent-accent cursor-pointer"
+                  />
+                  <label
+                    htmlFor="booking-terms-checkbox"
+                    className="text-sm text-foreground leading-snug cursor-pointer select-none"
+                  >
+                    I agree to the{' '}
+                    <Link
+                      to="/terms-and-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent underline underline-offset-2 hover:text-accent/80 font-medium transition"
+                    >
+                      Terms & Conditions
+                    </Link>
+                    .
+                  </label>
+                </div>
+                {termsError && (
+                  <p className="text-xs text-destructive flex items-center gap-1 font-medium pl-7">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    Please agree to the Terms & Conditions to continue.
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -332,7 +387,7 @@ export function BookingForm({
         <div className="sticky bottom-0 bg-card border-t border-border/40 p-6 flex gap-3 justify-end z-10">
           <button
             onClick={() => {
-              if (step === 'details') onClose();
+              if (step === 'details') handleClose();
               else setStep(step === 'travelers' ? 'details' : 'travelers');
             }}
             className="px-6 py-2 border border-border/80 rounded-xl hover:bg-secondary/20 text-foreground transition duration-200 cursor-pointer"
@@ -341,12 +396,12 @@ export function BookingForm({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={createBookingMutation.isPending}
+            disabled={createBookingMutation.isPending || (step === 'confirmation' && !termsAccepted)}
             className={cn(
-              'px-6 py-2 rounded-xl text-white font-semibold shadow-glow cursor-pointer transition duration-200',
-              createBookingMutation.isPending
-                ? 'bg-gray-700 cursor-not-allowed text-gray-400'
-                : 'bg-gradient-sunset hover:opacity-95'
+              'px-6 py-2 rounded-xl text-white font-semibold transition duration-200',
+              createBookingMutation.isPending || (step === 'confirmation' && !termsAccepted)
+                ? 'bg-gray-700 opacity-60 cursor-not-allowed text-gray-400 shadow-none'
+                : 'bg-gradient-sunset hover:opacity-95 cursor-pointer shadow-glow'
             )}
           >
             {createBookingMutation.isPending

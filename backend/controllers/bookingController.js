@@ -12,7 +12,7 @@ const emailService = require('../services/emailService');
  */
 exports.createBooking = async (req, res, next) => {
   try {
-    const { packageId, travelDate, endDate, numberOfTravelers, travelers, paymentMethod, specialRequests } = req.body;
+    const { packageId, travelDate, endDate, numberOfTravelers, travelers, paymentMethod, specialRequests, termsAccepted, termsAcceptedAt } = req.body;
 
     // Validate package exists
     const pkg = await Package.findById(packageId);
@@ -58,6 +58,8 @@ exports.createBooking = async (req, res, next) => {
       taxes,
       paymentMethod,
       specialRequests,
+      termsAccepted: termsAccepted ?? true,
+      termsAcceptedAt: termsAcceptedAt || new Date().toISOString(),
       bookingStatus: 'pending',
       paymentStatus: 'pending',
     });

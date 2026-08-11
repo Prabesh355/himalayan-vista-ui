@@ -116,6 +116,17 @@ const validateBooking = [
     .trim()
     .isLength({ max: 500 })
     .withMessage('Special requests must not exceed 500 characters'),
+
+  body('termsAccepted')
+    .optional()
+    .isBoolean()
+    .withMessage('Terms acceptance must be a boolean')
+    .custom((value) => {
+      if (value === false) {
+        throw new Error('Terms and Conditions must be accepted');
+      }
+      return true;
+    }),
 ];
 
 /**

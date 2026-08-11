@@ -70,6 +70,7 @@ export function Footer() {
           {
             title: "Support",
             links: [
+              { label: "Terms & Conditions", href: "/terms-and-conditions", visible: true },
               { label: "Trekking FAQs", href: "/contact", visible: true },
               { label: "Permits & Visas", href: "/contact", visible: true },
               { label: "Responsible Travel", href: "/about", visible: true },

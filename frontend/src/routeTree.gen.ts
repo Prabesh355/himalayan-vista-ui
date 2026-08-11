@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as TeamsRouteImport } from './routes/teams'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -39,6 +40,11 @@ import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminBlogsRouteImport } from './routes/admin.blogs'
 
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamsRoute = TeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
@@ -260,6 +268,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/shop': typeof ShopRoute
   '/teams': typeof TeamsRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/inquiries': typeof AdminInquiriesRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/terms-and-conditions'
     | '/admin/blogs'
     | '/admin/bookings'
     | '/admin/inquiries'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/terms-and-conditions'
     | '/admin/blogs'
     | '/admin/bookings'
     | '/admin/inquiries'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/shop'
     | '/teams'
+    | '/terms-and-conditions'
     | '/admin/blogs'
     | '/admin/bookings'
     | '/admin/inquiries'
@@ -386,6 +398,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ShopRoute: typeof ShopRoute
   TeamsRoute: typeof TeamsRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   BlogSlugRoute: typeof BlogSlugRoute
   PeakClimbingSlugRoute: typeof PeakClimbingSlugRoute
   ToursSlugRoute: typeof ToursSlugRoute
@@ -394,6 +407,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/teams': {
       id: '/teams'
       path: '/teams'
@@ -665,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ShopRoute: ShopRoute,
   TeamsRoute: TeamsRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
   BlogSlugRoute: BlogSlugRoute,
   PeakClimbingSlugRoute: PeakClimbingSlugRoute,
   ToursSlugRoute: ToursSlugRoute,
