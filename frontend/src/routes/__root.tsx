@@ -107,6 +107,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       {
+        rel: "preload",
+        as: "image",
+        href: "/images/hero/everest-base-camp-768.webp",
+        type: "image/webp",
+        media: "(max-width: 768px)",
+      },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/images/hero/everest-base-camp-1280.webp",
+        type: "image/webp",
+        media: "(min-width: 769px) and (max-width: 1280px)",
+      },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/images/hero/everest-base-camp-1920.webp",
+        type: "image/webp",
+        media: "(min-width: 1281px)",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
