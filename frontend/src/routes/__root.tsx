@@ -133,14 +133,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "icon",
-        type: "image/x-icon",
+        sizes: "any",
         href: "/favicon.ico",
       },
       {
         rel: "icon",
         type: "image/png",
-        sizes: "32x32",
-        href: "/favicon-32x32.png",
+        sizes: "48x48",
+        href: "/favicon-48x48.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "96x96",
+        href: "/favicon-96x96.png",
       },
       {
         rel: "icon",
